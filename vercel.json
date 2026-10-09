@@ -7,15 +7,14 @@
     },
     "routes": [
         {
-            "src": "/build/(.*)",
-            "dest": "/public/build/$1"
+            "handle": "filesystem"
         },
         {
-            "src": "/storage/(.*)",
-            "dest": "/storage/$1"
+            "src": "/(css|js|images|fonts|frontend/.*)",
+            "dest": "/public/$1"
         },
         {
-            "src": "(.*)",
+            "src": "/(.*)",
             "dest": "/api/index.php"
         }
     ],
