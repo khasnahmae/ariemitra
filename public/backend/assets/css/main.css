@@ -1,0 +1,133 @@
+
+body {
+    overflow-x: hidden;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    /* Untuk memusatkan secara horizontal */
+    align-items: center;
+    /* (Opsional) Jika ingin memusatkan secara vertikal */
+    gap: 20px;
+    /* Tambahkan jarak antar logo jika diperlukan */
+}
+/* Navbar styles */
+.navbar {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: transparent !important;
+    z-index: 1030;
+    /* Nilai default Bootstrap untuk navbar */
+}
+
+.navbar.scrolled {
+    background-color: #fff !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button {
+    width: 100%;
+    font-size: 14px;
+    line-height: 30px;
+    text-transform: uppercase;
+    color: #fff;
+    font-weight: 600;
+    background: #008b4d;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px #00723f;
+    /* Bayangan bawah untuk efek tombol */
+    transition: all 0.2s ease-in-out;
+}
+.button:active {
+    box-shadow: 0 2px #00713e;
+    /* Bayangan lebih kecil saat ditekan */
+    transform: translateY(2px);
+    /* Tombol turun sedikit */
+}
+.button:hover {
+    color: #fff;
+    background: #00b161;
+}
+.main_btn {
+    font-size: 10px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: #fff;
+    font-weight: 600;
+    background: #004eb3;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px #003b8b; /* Bayangan bawah untuk efek tombol */
+    transition: all 0.2s ease-in-out;
+}
+
+.main_btn:active {
+    box-shadow: 0 2px #003b8b; /* Bayangan lebih kecil saat ditekan */
+    transform: translateY(2px); /* Tombol turun sedikit */
+}
+
+.main_btn:hover {
+    color: #fff;
+    background: #0068ef;
+}
+/* Warna background untuk halaman aktif */
+.pagination .page-item.active .page-link {
+    background-color: #f5f3f3 !important; /* Ganti dengan warna yang diinginkan */
+    border-color: #c3c3c3 !important;
+    color: black !important;
+}
+
+/* Warna teks untuk pagination biasa */
+.pagination .page-link {
+    color: black !important; /* Ganti dengan warna yang diinginkan */
+}
+
+/* Warna hover saat kursor di atas */
+.pagination .page-link:hover {
+    background-color: #323232 !important; /* Warna hover */
+    color: white !important;
+}
+
+/* Warna untuk tombol prev & next */
+.pagination .page-item.disabled .page-link {
+    color: #aaa !important;
+    background-color: #ffffff !important;
+    border-color: #ddd !important;
+}
+
+/* Kecilkan font hanya untuk teks info DataTables */
+.dataTables_info {
+    font-size: 14px; /* Atur ukuran sesuai keinginan */   
+    color: rgb(94, 94, 94) !important;
+
+}
+.dataTables_paginate {
+    font-size: 14px; /* Atur ukuran sesuai keinginan */
+}
+/* Menjadikan dropdown sejajar dengan teks */
+.dataTables_length label {
+    font-size: 14px;
+    gap: 8px; /* Jarak antara teks dan dropdown */
+    color: rgb(77, 77, 77);
+    margin-bottom: 8px;
+}
+
+/* Memperbaiki ukuran dropdown agar tidak bertumpuk */
+.dataTables_length select {
+    padding: 5px 25px 5px 10px; /* Tambahkan ruang untuk ikon dropdown */
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    appearance: none; /* Hilangkan default style browser */
+    width: 50px;
+}
+
+/* Pastikan dropdown tidak terlalu kecil */
+.dataTables_length select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
