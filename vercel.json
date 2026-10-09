@@ -7,11 +7,16 @@
     },
     "routes": [
         {
-            "handle": "filesystem"
+            "src": "/(css|js|images|fonts|frontend/.*|favicon.ico)",
+            "dest": "/public/$1"
         },
         {
-            "src": "/(css|js|images|fonts|frontend/.*)",
-            "dest": "/public/$1"
+            "src": "/build/(.*)",
+            "dest": "/public/build/$1"
+        },
+        {
+            "src": "/storage/(.*)",
+            "dest": "/storage/$1"
         },
         {
             "src": "/(.*)",
