@@ -31,22 +31,24 @@ class DestinasiController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_destinasi' => 'required|string|max:150',
-            'lokasi'         => 'required|string|max:100',
-            'htm_per_orang'  => 'required|numeric|min:0',
-            'keterangan'     => 'nullable|string',
-            'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        ]);
 
-        if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('destinasi', 'public');
-        }
+        dd('Tes Masuk Controller');
+        // $validated = $request->validate([
+        //     'nama_destinasi' => 'required|string|max:150',
+        //     'lokasi'         => 'required|string|max:100',
+        //     'htm_per_orang'  => 'required|numeric|min:0',
+        //     'keterangan'     => 'nullable|string',
+        //     'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        // ]);
 
-        Destinasi::create($validated);
+        // if ($request->hasFile('foto')) {
+        //     $validated['foto'] = $request->file('foto')->store('destinasi', 'public');
+        // }
 
-        return redirect()->route('admin.destinasi.index')
-            ->with('success', 'Data destinasi wisata berhasil ditambahkan!');
+        // Destinasi::create($validated);
+
+        // return redirect()->route('admin.destinasi.index')
+        //     ->with('success', 'Data destinasi wisata berhasil ditambahkan!');
     }
 
     public function edit(Destinasi $destinasi)

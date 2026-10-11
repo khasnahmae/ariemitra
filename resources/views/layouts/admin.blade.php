@@ -46,7 +46,7 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="white">
                     <a href="#" class="logo">
-                        <img src="{{ asset('frontend/images/logo.png') }}" alt="navbar brand" class="navbar-brand"
+                        <img src="{{ asset('frontend/images/logo.png') }}" alt="navbar brand" class="navbar-brand img"
                             style="width: 72px; height: auto;" />
                     </a>
                     <div class="nav-toggle">
@@ -157,10 +157,10 @@
                                     <div class="avatar-sm">
                                         @if (Auth::user()->role == 'admin')
                                             <img src="{{ asset('frontend/images/profile.webp') }}" alt="Admin Avatar"
-                                                class="avatar-img rounded-circle" />
+                                                class="avatar-img rounded-circle img" />
                                         @else
                                             <img src="{{ asset('frontend/images/profile.webp') }}"
-                                                alt="Default Avatar" class="avatar-img rounded-circle" />
+                                                alt="Default Avatar" class="avatar-img rounded-circle img" />
                                         @endif
                                     </div>
                                     {{-- <span class="profile-username">
