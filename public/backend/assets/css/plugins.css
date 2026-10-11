@@ -1,5 +1,4 @@
 @charset "UTF-8";
-/*      jQuery Ui     */
 .ui-draggable-handle {
   -ms-touch-action: none;
   touch-action: none; }

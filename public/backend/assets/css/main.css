@@ -10,14 +10,11 @@ body {
     align-items: center;
     /* (Opsional) Jika ingin memusatkan secara vertikal */
     gap: 20px;
-    /* Tambahkan jarak antar logo jika diperlukan */
 }
-/* Navbar styles */
 .navbar {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     background-color: transparent !important;
     z-index: 1030;
-    /* Nilai default Bootstrap untuk navbar */
 }
 
 .navbar.scrolled {
