@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class PaketWisataController extends Controller
 {
-    /**
-     * Menampilkan Katalog Paket Wisata Publik.
-     */
+
     public function index(Request $request)
     {
         $query = PaketWisata::with('destinasi')->where('is_active', true);

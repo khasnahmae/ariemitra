@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class RuteTolController extends Controller
 {
-    /**
-     * Menampilkan daftar master data rute tol.
-     */
+
     public function index(Request $request)
     {
         $query = RuteTol::query();

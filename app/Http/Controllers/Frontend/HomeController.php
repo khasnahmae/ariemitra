@@ -9,9 +9,7 @@ use App\Models\Galeri;
 
 class HomeController extends Controller
 {
-    /**
-     * Menampilkan Halaman Beranda (Landing Page).
-     */
+
     public function index()
     {
         $paketPopuler = PaketWisata::with('destinasi')

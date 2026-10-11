@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <!-- HERO / BREADCRUMB HEADER -->
     <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('{{ asset('images/img7.png') }}')">
         <div class="overlay"></div>

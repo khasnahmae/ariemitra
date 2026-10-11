@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     @php
         // Ambil foto pertama dari galeri paket wisata (jika ada)
         $firstGallery = $paket->galeri->first();

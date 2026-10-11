@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /**
-     * Menampilkan halaman/form login admin.
-     */
+
     public function showLoginForm()
     {
         if (Auth::check()) {
