@@ -32,7 +32,7 @@ class DestinasiController extends Controller
     public function store(Request $request)
     {
 
-        dd('Tes Masuk Controller');
+        // dd('Tes Masuk Controller');
         $validated = $request->validate([
             'nama_destinasi' => 'required|string|max:150',
             'lokasi'         => 'required|string|max:100',
