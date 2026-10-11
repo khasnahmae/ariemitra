@@ -7,8 +7,12 @@
     },
     "routes": [
         {
-            "src": "/(css|js|images|fonts|frontend/.*|backend/.*|build/.*|storage/.*|favicon.ico)",
+            "src": "/(css|js|images|fonts|frontend/.*|backend/.*|build/.*|favicon.ico)",
             "dest": "/public/$1"
+        },
+        {
+            "src": "/storage/(.*)",
+            "dest": "/storage/$1"
         },
         {
             "src": "/(.*)",
