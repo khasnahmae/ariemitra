@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Hero Banner Section -->
-    <div class="img" style="background-image: url('{{ asset('frontend/images/bg_2.jpg') }}');">
+    <div class="img" style="background-image: url('{{ asset('frontend/images/img1.png') }}');">
         <div class="overlay"></div>
         <div class="container">
             <div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true">
