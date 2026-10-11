@@ -119,10 +119,6 @@
                                 <p>Galeri Foto</p>
                             </a>
                         </li>
-
-                        {{-- @if (Auth::user()->role == 'operator')
-                            
-                        @endif --}}
                     </ul>
                 </div>
             </div>
