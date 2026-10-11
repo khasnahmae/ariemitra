@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Arie Mitra Tour & Travel</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('frontend/images/logo.png') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -46,7 +46,7 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="white">
                     <a href="#" class="logo">
-                        <img src="{{ asset('images/logo.png') }}" alt="navbar brand" class="navbar-brand"
+                        <img src="{{ asset('frontend/images/logo.png') }}" alt="navbar brand" class="navbar-brand img"
                             style="width: 72px; height: auto;" />
                     </a>
                     <div class="nav-toggle">
