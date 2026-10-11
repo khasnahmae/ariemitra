@@ -46,7 +46,7 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="white">
                     <a href="#" class="logo">
-                        <img src="{{ asset('frontend/images/logo.png') }}" alt="navbar brand" class="navbar-brand img"
+                        <img src="{{ asset('frontend/images/logo.png') }}" alt="navbar brand" class="navbar-brand"
                             style="width: 72px; height: auto;" />
                     </a>
                     <div class="nav-toggle">
@@ -110,7 +110,7 @@
                         <li class="nav-item {{ request()->is('admin/paket-wisata*') ? 'active' : '' }}">
                             <a href="{{ route('admin.paket-wisata.index') }}">
                                 <i class="fas fa-archive"></i>
-                                <p>Paket Wisata Publik</p>
+                                <p>Paket Wisata</p>
                             </a>
                         </li>
                         <li class="nav-item {{ request()->is('admin/galeri*') ? 'active' : '' }}">
@@ -156,11 +156,11 @@
                                     aria-expanded="false">
                                     <div class="avatar-sm">
                                         @if (Auth::user()->role == 'admin')
-                                            <img src="{{ asset('images/profile.webp') }}" alt="Admin Avatar"
+                                            <img src="{{ asset('frontend/images/profile.webp') }}" alt="Admin Avatar"
                                                 class="avatar-img rounded-circle" />
                                         @else
-                                            <img src="{{ asset('images/profile.webp') }}" alt="Default Avatar"
-                                                class="avatar-img rounded-circle" />
+                                            <img src="{{ asset('frontend/images/profile.webp') }}"
+                                                alt="Default Avatar" class="avatar-img rounded-circle" />
                                         @endif
                                     </div>
                                     {{-- <span class="profile-username">
