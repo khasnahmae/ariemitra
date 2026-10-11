@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Hero Banner Section -->
-    <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('/images/img1.png') }}');">
+    <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('frontend/images/img1.png') }}');">
         <div class="overlay"></div>
         <div class="container">
             <div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true">
@@ -120,7 +120,7 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-2 d-block img"
-                                style="background-image: url('{{ asset('images/img5.png') }}');">
+                                style="background-image: url('{{ asset('frontend/images/img5.png') }}');">
                                 <div class="icon d-flex align-items-center justify-content-center"><span
                                         class="fa fa-bus"></span></div>
                                 <div class="media-body">
@@ -132,7 +132,7 @@
                         </div>
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-4 d-block img"
-                                style="background-image: url('{{ asset('images/img6.png') }}')">
+                                style="background-image: url('{{ asset('frontend/images/img6.png') }}')">
                                 <div class="icon d-flex align-items-center justify-content-center"><span
                                         class="fa fa-ticket"></span></div>
                                 <div class="media-body">
@@ -145,7 +145,7 @@
                         </div>
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-3 d-block img"
-                                style="background-image: url('{{ asset('images/img8.png') }}')">
+                                style="background-image: url('{{ asset('frontend/images/img8.png') }}')">
                                 <div class="icon d-flex align-items-center justify-content-center"><span
                                         class="fa fa-shield"></span></div>
                                 <div class="media-body">
@@ -156,7 +156,7 @@
                         </div>
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-1 d-block img"
-                                style="background-image: url('{{ asset('images/img7.png') }}')">
+                                style="background-image: url('{{ asset('frontend/images/img7.png') }}')">
                                 <div class="icon d-flex align-items-center justify-content-center"><span
                                         class="fa fa-calculator"></span></div>
                                 <div class="media-body">
