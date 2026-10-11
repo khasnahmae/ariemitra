@@ -40,7 +40,7 @@
             <!-- Logo Header -->
             <div class="mb-8">
                 <a href="{{ route('frontend.home') }}" class="inline-flex items-center gap-2.5 tracking-tight">
-                    <img src="{{ asset('images/logo.png') }}" alt="navbar brand" class="navbar-brand"
+                    <img src="{{ asset('frontend/images/logo.png') }}" alt="navbar brand" class="navbar-brand"
                         style="width: 96px; height: auto;" />
                 </a>
             </div>
