@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Destinasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class DestinasiController extends Controller
 {
@@ -31,8 +32,6 @@ class DestinasiController extends Controller
 
     public function store(Request $request)
     {
-
-        // dd('Tes Masuk Controller');
         $validated = $request->validate([
             'nama_destinasi' => 'required|string|max:150',
             'lokasi'         => 'required|string|max:100',
@@ -42,7 +41,9 @@ class DestinasiController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('destinasi', 'public');
+            // Upload langsung ke Cloudinary (folder 'destinasi') dan ambil URL publiknya
+            $uploadedFileUrl = $request->file('foto')->storeOnCloudinary('destinasi')->getSecurePath();
+            $validated['foto'] = $uploadedFileUrl;
         }
 
         Destinasi::create($validated);
@@ -67,11 +68,9 @@ class DestinasiController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
-            if ($destinasi->foto && Storage::disk('public')->exists($destinasi->foto)) {
-                Storage::disk('public')->delete($destinasi->foto);
-            }
-            $validated['foto'] = $request->file('foto')->store('destinasi', 'public');
+            // Upload foto baru ke Cloudinary
+            $uploadedFileUrl = $request->file('foto')->storeOnCloudinary('destinasi')->getSecurePath();
+            $validated['foto'] = $uploadedFileUrl;
         }
 
         $destinasi->update($validated);
@@ -83,10 +82,6 @@ class DestinasiController extends Controller
     public function destroy(Destinasi $destinasi)
     {
         try {
-            if ($destinasi->foto && Storage::disk('public')->exists($destinasi->foto)) {
-                Storage::disk('public')->delete($destinasi->foto);
-            }
-
             $destinasi->delete();
 
             return redirect()->route('admin.destinasi.index')
