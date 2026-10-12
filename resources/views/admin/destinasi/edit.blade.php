@@ -52,8 +52,17 @@
                         <label class="fw-bold d-block mb-2">Foto saat ini</label>
                         @if ($destinasi->foto)
                             <div class="mb-2">
-                                <img src="{{ asset('storage/' . $destinasi->foto) }}" alt="{{ $destinasi->nama_destinasi }}"
-                                    class="img-thumbnail rounded shadow-sm" style="max-height: 180px; object-fit: cover;">
+                                @if (\Illuminate\Support\Str::startsWith($destinasi->foto, ['http://', 'https://']))
+                                    {{-- Jika foto berupa URL Cloudinary / External --}}
+                                    <img src="{{ $destinasi->foto }}" alt="{{ $destinasi->nama_destinasi }}"
+                                        class="img-thumbnail rounded shadow-sm"
+                                        style="max-height: 180px; object-fit: cover;">
+                                @else
+                                    {{-- Jika foto lama berupa path lokal --}}
+                                    <img src="{{ asset('storage/' . $destinasi->foto) }}"
+                                        alt="{{ $destinasi->nama_destinasi }}" class="img-thumbnail rounded shadow-sm"
+                                        style="max-height: 180px; object-fit: cover;">
+                                @endif
                             </div>
                         @else
                             <p class="text-muted small">Belum ada foto yang diunggah.</p>
