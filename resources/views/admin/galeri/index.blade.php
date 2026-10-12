@@ -35,8 +35,15 @@
             @forelse($galeriList as $galeri)
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                     <div class="card card-round h-100 shadow-sm">
-                        <img src="{{ asset('storage/' . $galeri->file_gambar) }}" class="card-img-top"
-                            alt="{{ $galeri->judul }}"
+                        @php
+                            $currentImg = \Illuminate\Support\Str::startsWith($galeri->file_gambar, [
+                                'http://',
+                                'https://',
+                            ])
+                                ? $galeri->file_gambar
+                                : asset('storage/' . $galeri->file_gambar);
+                        @endphp
+                        <img src="{{ $currentImg }}" alt="{{ $galeri->judul }}" class="card-img-top"
                             style="height: 180px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
                         <div class="card-body p-3 d-flex flex-column justify-content-between">
                             <div>
