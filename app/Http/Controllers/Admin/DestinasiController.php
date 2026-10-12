@@ -41,9 +41,12 @@ class DestinasiController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            // Upload langsung ke Cloudinary (folder 'destinasi') dan ambil URL publiknya
-            $uploadedFileUrl = $request->file('foto')->storeOnCloudinary('destinasi')->getSecurePath();
-            $validated['foto'] = $uploadedFileUrl;
+            try {
+                $uploaded = $request->file('foto')->storeOnCloudinary('destinasi');
+                dd($uploaded->getSecurePath());
+            } catch (\Exception $e) {
+                dd($e->getMessage()); // Ini akan menampilkan pesan error aslinya di layar!
+            }
         }
 
         Destinasi::create($validated);
