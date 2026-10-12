@@ -191,9 +191,19 @@
                                 <div class="item">
                                     <div class="project-destination">
                                         @php
-                                            $bgImage = $dest->foto
-                                                ? asset('storage/' . $dest->foto)
-                                                : asset('frontend/images/place-1.jpg');
+                                            if ($dest->foto) {
+                                                // Jika foto berupa URL Cloudinary / External, pakai langsung
+                                                // Jika berupa path lokal lama, bungkus dengan asset('storage/...')
+                                                $bgImage = \Illuminate\Support\Str::startsWith($dest->foto, [
+                                                    'http://',
+                                                    'https://',
+                                                ])
+                                                    ? $dest->foto
+                                                    : asset('storage/' . $dest->foto);
+                                            } else {
+                                                // Gambar default jika tidak ada foto
+                                                $bgImage = asset('frontend/images/place-1.jpg');
+                                            }
                                         @endphp
 
                                         <a href="#" class="img"
