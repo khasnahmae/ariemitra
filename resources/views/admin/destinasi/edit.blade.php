@@ -52,13 +52,14 @@
                         <label class="fw-bold d-block mb-2">Foto saat ini</label>
                         @if ($destinasi->foto)
                             <div class="mb-2">
-                                @if (\Illuminate\Support\Str::startsWith($destinasi->foto, ['http://', 'https://']))
-                                    {{-- Jika foto berupa URL Cloudinary / External --}}
+                                <!-- KODE BARU (LANGSUNG PANGGIL $destinasi->foto) -->
+                                @if (Str::startsWith($destinasi->foto, 'http'))
+                                    {{-- Jika gambar dari Cloudinary / URL eksternal --}}
                                     <img src="{{ $destinasi->foto }}" alt="{{ $destinasi->nama_destinasi }}"
                                         class="img-thumbnail rounded shadow-sm"
                                         style="max-height: 180px; object-fit: cover;">
                                 @else
-                                    {{-- Jika foto lama berupa path lokal --}}
+                                    {{-- Jika gambar dari penyimpanan lokal lama --}}
                                     <img src="{{ asset('storage/' . $destinasi->foto) }}"
                                         alt="{{ $destinasi->nama_destinasi }}" class="img-thumbnail rounded shadow-sm"
                                         style="max-height: 180px; object-fit: cover;">
