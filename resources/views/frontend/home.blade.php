@@ -173,7 +173,7 @@
     </section>
 
     <!-- Carousel Featured Destinations -->
-    @if ($destinasiPilihan->count() > 0)
+    @if (isset($destinasiPilihan) && $destinasiPilihan->count() > 0)
         <section class="ftco-section img ftco-select-destination">
             <div class="container">
                 <div class="row justify-content-center pb-4">
@@ -192,8 +192,6 @@
                                     <div class="project-destination">
                                         @php
                                             if ($dest->foto) {
-                                                // Jika foto berupa URL Cloudinary / External, pakai langsung
-                                                // Jika berupa path lokal lama, bungkus dengan asset('storage/...')
                                                 $bgImage = \Illuminate\Support\Str::startsWith($dest->foto, [
                                                     'http://',
                                                     'https://',
@@ -201,7 +199,6 @@
                                                     ? $dest->foto
                                                     : asset('storage/' . $dest->foto);
                                             } else {
-                                                // Gambar default jika tidak ada foto
                                                 $bgImage = asset('frontend/images/place-1.jpg');
                                             }
                                         @endphp
@@ -235,10 +232,23 @@
             </div>
             <div class="row">
                 @forelse($paketPopuler as $paket)
+                    @php
+                        $firstGal = $paket->galeri->first();
+                        if ($firstGal && $firstGal->file_gambar) {
+                            $paketImg = \Illuminate\Support\Str::startsWith($firstGal->file_gambar, [
+                                'http://',
+                                'https://',
+                            ])
+                                ? $firstGal->file_gambar
+                                : asset('storage/' . $firstGal->file_gambar);
+                        } else {
+                            $paketImg = asset('frontend/images/destination-1.jpg');
+                        }
+                    @endphp
                     <div class="col-md-4 ftco-animate">
                         <div class="project-wrap">
                             <a href="{{ route('frontend.paket.show', $paket->slug) }}" class="img"
-                                style="background-image: url('{{ $paket->galeri->count() > 0 ? asset('storage/' . $paket->galeri->first()->file_gambar) : asset('frontend/images/destination-1.jpg') }}');">
+                                style="background-image: url('{{ $paketImg }}');">
                                 <span class="price">Rp
                                     {{ number_format($paket->harga_mulai_from, 0, ',', '.') }}/pax</span>
                             </a>
@@ -296,7 +306,7 @@
     </section>
 
     <!-- Gallery Documentation Preview -->
-    @if ($galeriTerbaru->count() > 0)
+    @if (isset($galeriTerbaru) && $galeriTerbaru->count() > 0)
         <section class="ftco-section">
             <div class="container">
                 <div class="row justify-content-center pb-4">
@@ -306,37 +316,31 @@
                     </div>
                 </div>
                 <div class="row d-flex">
-                    @foreach ($galeriList as $foto)
+                    @foreach ($galeriTerbaru as $foto)
                         @php
                             $fotoUrl = \Illuminate\Support\Str::startsWith($foto->file_gambar, ['http://', 'https://'])
                                 ? $foto->file_gambar
                                 : asset('storage/' . $foto->file_gambar);
                         @endphp
-                        <div
-                            class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden group hover:border-slate-700 transition">
-                            <div class="aspect-video bg-slate-800 overflow-hidden relative">
-                                <img src="{{ $fotoUrl }}" alt="{{ $foto->judul }}"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="text-sm font-bold text-white mb-1">{{ $foto->judul }}</h3>
-                                @if ($foto->paketWisata)
-                                    <span class="text-xs text-blue-400"><i class="fa-solid fa-box-archive mr-1"></i>
-                                        {{ $foto->paketWisata->nama_paket }}</span>
-                                @else
-                                    <span class="text-xs text-slate-500"><i class="fa-regular fa-image mr-1"></i>
-                                        Dokumentasi Umum</span>
-                                @endif
+                        <div class="col-md-4 d-flex ftco-animate mb-4">
+                            <div class="blog-entry justify-content-end w-100">
+                                <a href="{{ $fotoUrl }}"
+                                    class="block-20 image-popup d-flex align-items-center justify-content-center"
+                                    style="background-image: url('{{ $fotoUrl }}');">
+                                    <span class="fa fa-search text-white fa-2x opacity-0 hover-opacity-100"
+                                        style="transition: 0.3s;"></span>
+                                </a>
+                                <div class="text p-3 bg-white border border-top-0">
+                                    <h3 class="heading mb-0" style="font-size: 1.1rem;">
+                                        <a href="{{ $fotoUrl }}" class="image-popup text-dark">
+                                            {{ $foto->judul }}
+                                        </a>
+                                    </h3>
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
-                {{-- <div class="row mt-4">
-                    <div class="col text-center">
-                        <a href="{{ route('frontend.galeri') }}" class="btn btn-outline-primary py-3 px-4">Lihat Seluruh
-                            Galeri &rarr;</a>
-                    </div>
-                </div> --}}
             </div>
         </section>
     @endif
