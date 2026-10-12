@@ -5,8 +5,13 @@
         // Ambil foto pertama dari galeri paket wisata (jika ada)
         $firstGallery = $paket->galeri->first();
 
-        // Tentukan URL gambar: jika galeri ada, pakai dari storage; jika tidak, pakai default
-        $headerBg = $firstGallery ? asset('storage/' . $firstGallery->file_gambar) : asset('frontend/images/bg_1.jpg');
+        if ($firstGallery) {
+            $headerBg = \Illuminate\Support\Str::startsWith($firstGallery->file_gambar, ['http://', 'https://'])
+                ? $firstGallery->file_gambar
+                : asset('storage/' . $firstGallery->file_gambar);
+        } else {
+            $headerBg = asset('frontend/images/bg_1.jpg');
+        }
     @endphp
 
     <!-- HERO / BREADCRUMB HEADER -->
@@ -82,10 +87,18 @@
                             <h4 class="mb-3 font-weight-bold">Dokumentasi Destinasi</h4>
                             <div class="row">
                                 @foreach ($paket->galeri as $foto)
+                                    @php
+                                        $fotoUrl = \Illuminate\Support\Str::startsWith($foto->file_gambar, [
+                                            'http://',
+                                            'https://',
+                                        ])
+                                            ? $foto->file_gambar
+                                            : asset('storage/' . $foto->file_gambar);
+                                    @endphp
                                     <div class="col-md-4 col-6 mb-3">
-                                        <a href="{{ asset('storage/' . $foto->file_gambar) }}"
+                                        <a href="{{ $fotoUrl }}"
                                             class="image-popup img d-flex align-items-center justify-content-center rounded overflow-hidden"
-                                            style="background-image: url('{{ asset('storage/' . $foto->file_gambar) }}'); height: 160px; background-size: cover; background-position: center;">
+                                            style="background-image: url('{{ $fotoUrl }}'); height: 160px; background-size: cover; background-position: center;">
                                         </a>
                                     </div>
                                 @endforeach

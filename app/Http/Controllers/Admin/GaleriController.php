@@ -7,30 +7,22 @@ use App\Models\Galeri;
 use App\Models\PaketWisata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class GaleriController extends Controller
 {
-    /**
-     * Menampilkan galeri dokumentasi perjalanan.
-     */
     public function index()
     {
         $galeriList = Galeri::with('paketWisata')->latest()->paginate(12);
         return view('admin.galeri.index', compact('galeriList'));
     }
 
-    /**
-     * Form upload foto galeri.
-     */
     public function create()
     {
         $paketList = PaketWisata::where('is_active', true)->get();
         return view('admin.galeri.create', compact('paketList'));
     }
 
-    /**
-     * Menyimpan foto galeri baru ke storage server.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -40,8 +32,16 @@ class GaleriController extends Controller
         ]);
 
         if ($request->hasFile('file_gambar')) {
-            $path = $request->file('file_gambar')->store('galeri', 'public');
-            $validated['file_gambar'] = $path;
+            // Jika menggunakan CloudinaryLaravel Package
+            if (class_exists('CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary')) {
+                $uploadedFileUrl = Cloudinary::upload($request->file('file_gambar')->getRealPath(), [
+                    'folder' => 'galeri'
+                ])->getSecurePath();
+                $validated['file_gambar'] = $uploadedFileUrl;
+            } else {
+                // Fallback storage disk 'public'
+                $validated['file_gambar'] = $request->file('file_gambar')->store('galeri', 'public');
+            }
         }
 
         Galeri::create($validated);
@@ -50,18 +50,12 @@ class GaleriController extends Controller
             ->with('success', 'Foto dokumentasi berhasil diunggah!');
     }
 
-    /**
-     * Form edit foto galeri.
-     */
     public function edit(Galeri $galeri)
     {
         $paketList = PaketWisata::where('is_active', true)->get();
         return view('admin.galeri.edit', compact('galeri', 'paketList'));
     }
 
-    /**
-     * Memperbarui informasi foto / mengganti gambar.
-     */
     public function update(Request $request, Galeri $galeri)
     {
         $validated = $request->validate([
@@ -71,25 +65,35 @@ class GaleriController extends Controller
         ]);
 
         if ($request->hasFile('file_gambar')) {
-            if ($galeri->file_gambar && Storage::disk('public')->exists($galeri->file_gambar)) {
-                Storage::disk('public')->delete($galeri->file_gambar);
+            // Hapus gambar lama jika merupakan file lokal
+            if ($galeri->file_gambar && !\Illuminate\Support\Str::startsWith($galeri->file_gambar, ['http://', 'https://'])) {
+                if (Storage::disk('public')->exists($galeri->file_gambar)) {
+                    Storage::disk('public')->delete($galeri->file_gambar);
+                }
             }
-            $validated['file_gambar'] = $request->file('file_gambar')->store('galeri', 'public');
+
+            if (class_exists('CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary')) {
+                $uploadedFileUrl = Cloudinary::upload($request->file('file_gambar')->getRealPath(), [
+                    'folder' => 'galeri'
+                ])->getSecurePath();
+                $validated['file_gambar'] = $uploadedFileUrl;
+            } else {
+                $validated['file_gambar'] = $request->file('file_gambar')->store('galeri', 'public');
+            }
         }
 
-        $galeri->update($validated);
+        Galeri::update($validated);
 
         return redirect()->route('admin.galeri.index')
             ->with('success', 'Informasi galeri berhasil diperbarui!');
     }
 
-    /**
-     * Menghapus foto dari galeri dan storage.
-     */
     public function destroy(Galeri $galeri)
     {
-        if ($galeri->file_gambar && Storage::disk('public')->exists($galeri->file_gambar)) {
-            Storage::disk('public')->delete($galeri->file_gambar);
+        if ($galeri->file_gambar && !\Illuminate\Support\Str::startsWith($galeri->file_gambar, ['http://', 'https://'])) {
+            if (Storage::disk('public')->exists($galeri->file_gambar)) {
+                Storage::disk('public')->delete($galeri->file_gambar);
+            }
         }
 
         $galeri->delete();

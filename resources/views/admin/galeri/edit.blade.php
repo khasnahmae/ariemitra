@@ -49,8 +49,16 @@
                     <div class="form-group mb-3">
                         <label class="fw-bold d-block mb-2">Gambar Saat Ini</label>
                         @if ($galeri->file_gambar)
+                            @php
+                                $currentImg = \Illuminate\Support\Str::startsWith($galeri->file_gambar, [
+                                    'http://',
+                                    'https://',
+                                ])
+                                    ? $galeri->file_gambar
+                                    : asset('storage/' . $galeri->file_gambar);
+                            @endphp
                             <div class="mb-2">
-                                <img src="{{ asset('storage/' . $galeri->file_gambar) }}" alt="{{ $galeri->judul }}"
+                                <img src="{{ $currentImg }}" alt="{{ $galeri->judul }}"
                                     class="img-thumbnail rounded shadow-sm" style="max-height: 200px; object-fit: cover;">
                             </div>
                         @else

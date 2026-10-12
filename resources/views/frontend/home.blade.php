@@ -306,24 +306,27 @@
                     </div>
                 </div>
                 <div class="row d-flex">
-                    @foreach ($galeriTerbaru as $galeri)
-                        <div class="col-md-4 d-flex ftco-animate">
-                            <div class="blog-entry justify-content-end w-100">
-                                <!-- Ubah href mengarah ke URL gambar dan tambahkan class image-popup -->
-                                <a href="{{ asset('storage/' . $galeri->file_gambar) }}"
-                                    class="block-20 image-popup d-flex align-items-center justify-content-center"
-                                    style="background-image: url('{{ asset('storage/' . $galeri->file_gambar) }}');">
-                                    <span class="fa fa-search text-white fa-2x opacity-0 hover-opacity-100"
-                                        style="transition: 0.3s;"></span>
-                                </a>
-                                <div class="text">
-                                    <h3 class="heading">
-                                        <!-- Judul juga membuka pop-up gambar -->
-                                        <a href="{{ asset('storage/' . $galeri->file_gambar) }}" class="image-popup">
-                                            {{ $galeri->judul }}
-                                        </a>
-                                    </h3>
-                                </div>
+                    @foreach ($galeriList as $foto)
+                        @php
+                            $fotoUrl = \Illuminate\Support\Str::startsWith($foto->file_gambar, ['http://', 'https://'])
+                                ? $foto->file_gambar
+                                : asset('storage/' . $foto->file_gambar);
+                        @endphp
+                        <div
+                            class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden group hover:border-slate-700 transition">
+                            <div class="aspect-video bg-slate-800 overflow-hidden relative">
+                                <img src="{{ $fotoUrl }}" alt="{{ $foto->judul }}"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="text-sm font-bold text-white mb-1">{{ $foto->judul }}</h3>
+                                @if ($foto->paketWisata)
+                                    <span class="text-xs text-blue-400"><i class="fa-solid fa-box-archive mr-1"></i>
+                                        {{ $foto->paketWisata->nama_paket }}</span>
+                                @else
+                                    <span class="text-xs text-slate-500"><i class="fa-regular fa-image mr-1"></i>
+                                        Dokumentasi Umum</span>
+                                @endif
                             </div>
                         </div>
                     @endforeach
