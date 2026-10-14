@@ -65,6 +65,6 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
     });
 });
 // KHUSUS ROLE ADMIN: MANAJEMEN USER (Ubah Password Admin & Staff)
-Route::middleware(['role:admin'])->group(function () {
+Route::middleware(['role.admin'])->group(function () {
     Route::resource('user', UserController::class)->scoped(['user' => 'uuid']);
 });
