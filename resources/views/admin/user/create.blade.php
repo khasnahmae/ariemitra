@@ -4,7 +4,7 @@
     <div class="container py-3">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="card-title mb-0">Tambah User / Staff Baru</h4>
-            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary btn-round">
+            <a href="{{ route('admin.user.index') }}" class="btn btn-outline-secondary btn-round">
                 <i class="fas fa-arrow-left me-1"></i> Kembali
             </a>
         </div>
@@ -21,7 +21,7 @@
 
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-                <form action="{{ route('admin.users.store') }}" method="POST">
+                <form action="{{ route('admin.user.store') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -68,7 +68,7 @@
                         <button type="submit" class="btn btn-primary btn-round">
                             <i class="fas fa-save me-1"></i> Simpan User
                         </button>
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary btn-round">Batal</a>
+                        <a href="{{ route('admin.user.index') }}" class="btn btn-outline-secondary btn-round">Batal</a>
                     </div>
                 </form>
             </div>

@@ -7,7 +7,7 @@
                 <h4 class="card-title mb-0">Manajemen User & Staff</h4>
                 <p class="text-muted small mb-0">Kelola akun admin dan staf serta pembagian hak akses sistem.</p>
             </div>
-            <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-round">
+            <a href="{{ route('admin.user.create') }}" class="btn btn-primary btn-round">
                 <i class="fas fa-plus me-1"></i> Tambah User Baru
             </a>
         </div>
@@ -58,13 +58,13 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.users.edit', $item->uuid) }}"
+                                            <a href="{{ route('admin.user.edit', $item->uuid) }}"
                                                 class="btn btn-sm btn-outline-warning" title="Edit Data / Password">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             @if (auth()->id() !== $item->id)
-                                                <form action="{{ route('admin.users.destroy', $item->uuid) }}"
-                                                    method="POST" class="d-inline"
+                                                <form action="{{ route('admin.user.destroy', $item->uuid) }}" method="POST"
+                                                    class="d-inline"
                                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
                                                     @csrf
                                                     @method('DELETE')
