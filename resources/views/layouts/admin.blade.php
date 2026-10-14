@@ -120,8 +120,8 @@
                             </a>
                         </li>
                         @if (auth()->check() && auth()->user()->role === 'admin')
-                            <li class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.users.index') }}">
+                            <li class="nav-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.user.index') }}">
                                     <i class="fas fa-user-cog"></i>
                                     <p>Manajemen User</p>
                                 </a>
