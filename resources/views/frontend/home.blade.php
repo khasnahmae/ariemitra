@@ -172,7 +172,7 @@
         </div>
     </section>
 
-    <!-- Carousel Featured Destinations -->
+    {{-- <!-- Carousel Featured Destinations -->
     @if (isset($destinasiPilihan) && $destinasiPilihan->count() > 0)
         <section class="ftco-section img ftco-select-destination">
             <div class="container">
@@ -219,7 +219,7 @@
                 </div>
             </div>
         </section>
-    @endif
+    @endif --}}
 
     <!-- Popular Tour Packages Section -->
     <section class="ftco-section">

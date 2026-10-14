@@ -10,19 +10,20 @@ use App\Http\Controllers\Admin\ArmadaController;
 use App\Http\Controllers\Admin\ProposalController;
 use App\Http\Controllers\Admin\PaketWisataController as AdminPaketController;
 use App\Http\Controllers\Admin\GaleriController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 
-
+// ROUTE PUBLIC / FRONTEND
 Route::name('frontend.')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
-    Route::get('/paket-wisata', [PublicPaketController::class, 'index'])->name('paket.index'); // Menjadi 'frontend.paket.index'
-    Route::get('/paket-wisata/{paketWisata:slug}', [PublicPaketController::class, 'show'])->name('paket.show'); // Menjadi 'frontend.paket.show'
+    Route::get('/paket-wisata', [PublicPaketController::class, 'index'])->name('paket.index');
+    Route::get('/paket-wisata/{paketWisata:slug}', [PublicPaketController::class, 'show'])->name('paket.show');
     Route::get('/galeri', [HomeController::class, 'galeri'])->name('galeri');
     Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 });
 
-// ==================== 2. AUTHENTICATION ROUTES ====================
+// ROUTE AUTHENTICATION
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
@@ -32,6 +33,7 @@ Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+// ROUTE PANEL ADMIN (Bisa diakses Admin & Staff)
 Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
 
     // Dashboard Utama
@@ -48,6 +50,7 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
         ->scoped(['paket_wisata' => 'uuid']);
     Route::resource('galeri', GaleriController::class)->scoped(['galeri' => 'uuid']);
 
+    // Management Proposal
     Route::prefix('proposal')->as('proposal.')->group(function () {
         Route::get('/', [ProposalController::class, 'index'])->name('index');
         Route::get('/create', [ProposalController::class, 'create'])->name('create');
@@ -57,13 +60,12 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
         Route::put('/{proposal:uuid}', [ProposalController::class, 'update'])->name('update');
         Route::delete('/{proposal:uuid}', [ProposalController::class, 'destroy'])->name('destroy');
 
-        // Route Akses API/AJAX untuk kalkulasi otomatis di form
         Route::post('/kalkulasi-ajax', [ProposalController::class, 'hitungSimulasi'])->name('kalkulasi.ajax');
-
-        // Route Export PDF Proposal
         Route::get('/{proposal:uuid}/export-pdf', [ProposalController::class, 'exportPdf'])->name('export-pdf');
     });
-});
 
-// Auth Routes (Disediakan oleh Laravel Breeze / Fortify)
-// require __DIR__ . '/auth.php';
+    // KHUSUS ROLE ADMIN: MANAJEMEN USER (Ubah Password Admin & Staff)
+    Route::middleware(['role.admin'])->group(function () {
+        Route::resource('users', UserController::class)->scoped(['user' => 'uuid']);
+    });
+});

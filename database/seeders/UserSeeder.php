@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             [
                 'uuid'     => (string) Str::uuid(),
                 'nama'     => 'Administrator Utama',
-                'password' => Hash::make('admin12345'), // Silakan ganti password ini setelah instalasi
+                'password' => Hash::make('admin12345'),
                 'role'     => 'admin',
             ]
         );
@@ -34,28 +34,6 @@ class UserSeeder extends Seeder
                 'uuid'     => (string) Str::uuid(),
                 'nama'     => 'Budi Santoso (Marketing Manager)',
                 'password' => Hash::make('marketing123'),
-                'role'     => 'admin',
-            ]
-        );
-
-        // 3. Account Staff Operasional & Field Coordinator
-        User::firstOrCreate(
-            ['email' => 'operasional@alamtour.co.id'],
-            [
-                'uuid'     => (string) Str::uuid(),
-                'nama'     => 'Siti Rahmawati (Staff Operasional)',
-                'password' => Hash::make('staff12345'),
-                'role'     => 'staff',
-            ]
-        );
-
-        // 4. Account Staff Keuangan
-        User::firstOrCreate(
-            ['email' => 'finance@alamtour.co.id'],
-            [
-                'uuid'     => (string) Str::uuid(),
-                'nama'     => 'Dedi Pratama (Staff Finance)',
-                'password' => Hash::make('finance123'),
                 'role'     => 'staff',
             ]
         );

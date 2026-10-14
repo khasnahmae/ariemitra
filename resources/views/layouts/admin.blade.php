@@ -119,6 +119,14 @@
                                 <p>Galeri Foto</p>
                             </a>
                         </li>
+                        @if (auth()->check() && auth()->user()->role === 'admin')
+                            <li class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.users.index') }}">
+                                    <i class="fas fa-user-cog"></i>
+                                    <p>Manajemen User</p>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
             </div>
