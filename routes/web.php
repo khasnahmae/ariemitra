@@ -63,8 +63,8 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
         Route::post('/kalkulasi-ajax', [ProposalController::class, 'hitungSimulasi'])->name('kalkulasi.ajax');
         Route::get('/{proposal:uuid}/export-pdf', [ProposalController::class, 'exportPdf'])->name('export-pdf');
     });
-});
-// KHUSUS ROLE ADMIN: MANAJEMEN USER (Ubah Password Admin & Staff)
-Route::middleware(['role.admin'])->group(function () {
-    Route::resource('user', UserController::class)->scoped(['user' => 'uuid']);
+    // KHUSUS ROLE ADMIN: MANAJEMEN USER (Ubah Password Admin & Staff)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('user', UserController::class)->scoped(['user' => 'uuid']);
+    });
 });
