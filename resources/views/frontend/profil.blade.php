@@ -40,8 +40,8 @@
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-1 d-block img"
                                 style="background-image: url('{{ asset('frontend/images/services-1.jpg') }}');">
-                                <div class="icon d-flex align-items-center justify-content-center"><span
-                                        class="flaticon-paragliding"></span></div>
+                                {{-- <div class="icon d-flex align-items-center justify-content-center"><span
+                                        class="flaticon-paragliding"></span></div> --}}
                                 <div class="media-body">
                                     <h3 class="heading mb-3">Transparansi Biaya</h3>
                                     <p>Sistem perhitungan proposal kami menjamin rincian biaya yang akurat dan terbuka.</p>
@@ -51,8 +51,8 @@
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-2 d-block img"
                                 style="background-image: url('{{ asset('frontend/images/services-2.jpg') }}');">
-                                <div class="icon d-flex align-items-center justify-content-center"><span
-                                        class="flaticon-route"></span></div>
+                                {{-- <div class="icon d-flex align-items-center justify-content-center"><span
+                                        class="flaticon-route"></span></div> --}}
                                 <div class="media-body">
                                     <h3 class="heading mb-3">Armada Terawat</h3>
                                     <p>Didukung oleh armada bus pariwisata berfasilitas lengkap & pengemudi handal.</p>
@@ -62,8 +62,8 @@
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-3 d-block img"
                                 style="background-image: url('{{ asset('frontend/images/services-3.jpg') }}');">
-                                <div class="icon d-flex align-items-center justify-content-center"><span
-                                        class="flaticon-tour-guide"></span></div>
+                                {{-- <div class="icon d-flex align-items-center justify-content-center"><span
+                                        class="flaticon-tour-guide"></span></div> --}}
                                 <div class="media-body">
                                     <h3 class="heading mb-3">Tour Leader</h3>
                                     <p>Tim pramuwisata ramah yang siap mendampingi kebutuhan rombongan sepanjang tour.</p>
@@ -73,8 +73,8 @@
                         <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
                             <div class="services services-1 color-4 d-block img"
                                 style="background-image: url('{{ asset('frontend/images/services-4.jpg') }}');">
-                                <div class="icon d-flex align-items-center justify-content-center"><span
-                                        class="flaticon-map"></span></div>
+                                {{-- <div class="icon d-flex align-items-center justify-content-center"><span
+                                        class="flaticon-map"></span></div> --}}
                                 <div class="media-body">
                                     <h3 class="heading mb-3">Rute Fleksibel</h3>
                                     <p>Kustomisasi tujuan wisata dan agenda perjalanan sesuai dengan keinginan Anda.</p>

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Pacific - Free Bootstrap 4 Template by Colorlib</title>
+    <title>Arie Mitra Tour & Travel</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" type="image/png" href="{{ asset('frontend/images/logo.png') }}" />
@@ -91,7 +91,8 @@
                             <ul>
                                 <li><span class="icon fa fa-map-marker"></span><span class="text">Jl. Perintis
                                         Kemerdekaan No.20 Taman, Pemalang</span></li>
-                                <li><a href="#"><span class="icon fa fa-phone"></span><span class="text">
+                                <li><a href="https://wa.me/6287722082751?text=Halo%20Admin,%20saya%20panitia%20rombongan%20minta%20dibuatkan%20proposal%20perjalanan"
+                                        target="_blank"><span class="icon fa fa-phone"></span><span class="text">
                                             0877 2208 2751</span></a></li>
                                 <li><a href="#"><span class="icon fa fa-paper-plane"></span><span
                                             class="text">selfianamiftahuljanah@gmail.com</span></a></li>

@@ -18,10 +18,10 @@
                             class="btn btn-white btn-outline-white py-3 px-4">Konsultasi Rombongan</a>
                     </p>
                 </div>
-                <a href="https://vimeo.com/45830194"
+                {{-- <a href="https://vimeo.com/45830194"
                     class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4">
                     <span class="fa fa-play"></span>
-                </a>
+                </a> --}}
             </div>
         </div>
     </div>
@@ -160,7 +160,7 @@
                                 <div class="icon d-flex align-items-center justify-content-center"><span
                                         class="fa fa-calculator"></span></div>
                                 <div class="media-body">
-                                    <h3 class="heading mb-3">Hitung Draf Otomatis</h3>
+                                    <h3 class="heading mb-3">Biaya Transparan</h3>
                                     <p>Sistem kalkulasi biaya fixed & variable secara akurat untuk sekolah/instansi.</p>
                                 </div>
                             </div>
@@ -294,7 +294,7 @@
                         <p>Tim kami dapat menerbitkan draf proposal resmi lengkap dengan breakdown biaya fixed dan variable
                             sesuai budget per peserta.</p>
                         <p class="mb-0">
-                            <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20saya%20panitia%20rombongan%20minta%20dibuatkan%20proposal%20perjalanan"
+                            <a href="https://wa.me/6287722082751?text=Halo%20Admin,%20saya%20panitia%20rombongan%20minta%20dibuatkan%20proposal%20perjalanan"
                                 target="_blank" class="btn btn-primary px-4 py-3">
                                 <i class="fa fa-whatsapp mr-1"></i> Minta Dibuatkan Proposal
                             </a>

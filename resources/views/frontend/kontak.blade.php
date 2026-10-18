@@ -29,7 +29,7 @@
                             <span class="fa fa-map-marker"></span>
                         </div>
                         <h3 class="mb-2">Alamat Kantor</h3>
-                        <p>Jl. Pemuda No. 123, Kota Pemalang, Jawa Tengah - Indonesia</p>
+                        <p>Jl. Perintis Kemerdekaan No.20 Taman, Pemalang, Jawa Tengah - Indonesia</p>
                     </div>
                 </div>
                 <div class="col-md-3 d-flex">
@@ -38,7 +38,7 @@
                             <span class="fa fa-phone"></span>
                         </div>
                         <h3 class="mb-2">WhatsApp / Telepon</h3>
-                        <p><a href="https://wa.me/6281234567890" target="_blank">+62 812-3456-7890</a></p>
+                        <p><a href="https://wa.me/6287722082751" target="_blank">0877 2208 2751</a></p>
                     </div>
                 </div>
                 <div class="col-md-3 d-flex">
@@ -47,7 +47,7 @@
                             <span class="fa fa-paper-plane"></span>
                         </div>
                         <h3 class="mb-2">Email Resmi</h3>
-                        <p><a href="mailto:info@biroperjalanan.com">info@biroperjalanan.com</a></p>
+                        <p><a href="mailto:selfianamiftahuljanah@gmail.com">selfianamiftahuljanah@gmail.com</a></p>
                     </div>
                 </div>
                 <div class="col-md-3 d-flex">
@@ -74,7 +74,7 @@
                             <input type="text" class="form-control" placeholder="Nama Lengkap Anda">
                         </div>
                         <div class="form-group">
-                            <input type="email" class="form-control" placeholder="Alamat Email">
+                            <input type="no_telp" class="form-control" placeholder="Nomor Telepon">
                         </div>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Subjek / Rencana Perjalanan">
@@ -96,7 +96,7 @@
                         <h3 class="font-weight-bold mb-3">Butuh Respon Cepat?</h3>
                         <p class="text-muted mb-4">Hubungi tim customer service kami melalui WhatsApp untuk konsultasi rute
                             dan kustomisasi estimasi anggaran secara langsung.</p>
-                        <a href="https://wa.me/6281234567890" target="_blank"
+                        <a href="https://wa.me/6287722082751" target="_blank"
                             class="btn btn-success py-3 px-4 font-weight-bold">
                             <i class="fa fa-whatsapp mr-2"></i> Chat Via WhatsApp
                         </a>
