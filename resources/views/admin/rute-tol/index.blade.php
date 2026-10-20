@@ -47,8 +47,7 @@
                                     <tr>
                                         {{-- <th>No</th> --}}
                                         <th>Nama Rute Jalur Tol</th>
-                                        <th>Golongan</th>
-                                        <th>Tarif Total</th>
+                                        <th>Tarif Total (Pulang Pergi)</th>
                                         <th class="text-end" style="width: 120px;">Aksi</th>
                                     </tr>
                                 </thead>
@@ -57,7 +56,6 @@
                                         <tr>
                                             {{-- <td>{{ $index + 1 }}</td> --}}
                                             <td class="fw-bold">{{ $tol->nama_rute }}</td>
-                                            <td><span class="badge badge-warning">{{ $tol->golongan }}</span></td>
                                             <td class="text-success fw-bold">Rp
                                                 {{ number_format($tol->tarif_total, 0, ',', '.') }}</td>
                                             <td class="text-end">

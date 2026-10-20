@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Destinasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Validation\Rule;
 
 class DestinasiController extends Controller
 {
@@ -34,10 +33,21 @@ class DestinasiController extends Controller
     {
         $validated = $request->validate([
             'nama_destinasi' => 'required|string|max:150',
-            'lokasi'         => 'required|string|max:100',
+            'lokasi'         => [
+                'required',
+                'string',
+                'max:100',
+                // Pengecekan agar nama_destinasi + lokasi tidak duplikat
+                Rule::unique('destinasi')->where(function ($query) use ($request) {
+                    return $query->where('nama_destinasi', $request->nama_destinasi)
+                        ->where('lokasi', $request->lokasi);
+                }),
+            ],
             'htm_per_orang'  => 'required|numeric|min:0',
             'keterangan'     => 'nullable|string',
             'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'lokasi.unique' => 'Destinasi "' . $request->nama_destinasi . '" di lokasi "' . $request->lokasi . '" sudah ada di database.'
         ]);
 
         if ($request->hasFile('foto')) {
@@ -66,16 +76,32 @@ class DestinasiController extends Controller
     {
         $validated = $request->validate([
             'nama_destinasi' => 'required|string|max:150',
-            'lokasi'         => 'required|string|max:100',
+            'lokasi'         => [
+                'required',
+                'string',
+                'max:100',
+                // Pengecekan unik kombinasi & abaikan ID destinasi saat ini
+                Rule::unique('destinasi')->where(function ($query) use ($request) {
+                    return $query->where('nama_destinasi', $request->nama_destinasi)
+                        ->where('lokasi', $request->lokasi);
+                })->ignore($destinasi->id),
+            ],
             'htm_per_orang'  => 'required|numeric|min:0',
             'keterangan'     => 'nullable|string',
             'foto'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'lokasi.unique' => 'Destinasi "' . $request->nama_destinasi . '" di lokasi "' . $request->lokasi . '" sudah ada di database.'
         ]);
 
         if ($request->hasFile('foto')) {
-            // Upload foto baru ke Cloudinary
-            $uploadedFileUrl = $request->file('foto')->storeOnCloudinary('destinasi')->getSecurePath();
-            $validated['foto'] = $uploadedFileUrl;
+            try {
+                $uploaded = $request->file('foto')->storeOnCloudinary('destinasi');
+                $validated['foto'] = $uploaded->getSecurePath();
+            } catch (\Exception $e) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Gagal mengunggah foto ke Cloudinary: ' . $e->getMessage());
+            }
         }
 
         $destinasi->update($validated);

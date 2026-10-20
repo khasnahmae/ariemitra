@@ -15,7 +15,6 @@ class RuteTol extends Model
     protected $fillable = [
         'uuid',
         'nama_rute',
-        'golongan',
         'tarif_total',
     ];
 

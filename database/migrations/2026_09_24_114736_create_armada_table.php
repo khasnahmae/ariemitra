@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('kapasitas');
             $table->decimal('sewa_inc_solar', 12, 2)->default(0);
             $table->timestamps();
+            $table->unique(['jenis_armada', 'kapasitas']);
         });
     }
 

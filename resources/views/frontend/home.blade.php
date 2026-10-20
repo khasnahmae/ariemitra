@@ -268,8 +268,8 @@
                                 </p>
                                 <ul>
                                     <li><span class="fa fa-check-circle text-success mr-1"></span> All-In</li>
-                                    <li><span class="fa fa-bus text-info mr-1"></span> Transport</li>
-                                    <li><span class="fa fa-ticket text-info mr-1"></span> HTM</li>
+                                    {{-- <li><span class="fa fa-bus text-info mr-1"></span> Transport</li>
+                                    <li><span class="fa fa-ticket text-info mr-1"></span> HTM</li> --}}
                                 </ul>
                             </div>
                         </div>

@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('rute_tol', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('nama_rute', 150);
-            $table->string('golongan', 20)->default('Golongan I');
+            $table->string('nama_rute', 150)->unique();
             $table->decimal('tarif_total', 12, 2)->default(0);
             $table->timestamps();
         });

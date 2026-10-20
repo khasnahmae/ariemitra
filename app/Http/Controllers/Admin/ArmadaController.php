@@ -5,12 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Armada;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ArmadaController extends Controller
 {
-    /**
-     * Menampilkan daftar master data armada kendaraan.
-     */
     public function index(Request $request)
     {
         $query = Armada::query();
@@ -24,23 +22,32 @@ class ArmadaController extends Controller
         return view('admin.armada.index', compact('armadaList'));
     }
 
-    /**
-     * Form tambah armada baru.
-     */
     public function create()
     {
         return view('admin.armada.create');
     }
 
     /**
-     * Menyimpan data armada baru.
+     * Menyimpan data armada baru dengan validasi kombinasi unik
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'jenis_armada'   => 'required|string|max:100',
-            'kapasitas'      => 'required|integer|min:1',
+            'kapasitas'      => [
+                'required',
+                'integer',
+                'min:1',
+                // Pengecekan agar jenis_armada + kapasitas tidak duplikat
+                Rule::unique('armada')->where(function ($query) use ($request) {
+                    return $query->where('jenis_armada', $request->jenis_armada)
+                        ->where('kapasitas', $request->kapasitas);
+                }),
+            ],
             'sewa_inc_solar' => 'required|numeric|min:0',
+        ], [
+            // Custom message jika terdapat duplikasi
+            'kapasitas.unique' => 'Kombinasi Jenis Armada "' . $request->jenis_armada . '" dengan kapasitas ' . $request->kapasitas . ' seat sudah ada di database.'
         ]);
 
         Armada::create($validated);
@@ -49,23 +56,31 @@ class ArmadaController extends Controller
             ->with('success', 'Data armada kendaraan berhasil ditambahkan!');
     }
 
-    /**
-     * Form edit data armada.
-     */
     public function edit(Armada $armada)
     {
         return view('admin.armada.edit', compact('armada'));
     }
 
     /**
-     * Memperbarui data armada.
+     * Memperbarui data armada (mengabaikan ID dirinya sendiri saat validasi)
      */
     public function update(Request $request, Armada $armada)
     {
         $validated = $request->validate([
             'jenis_armada'   => 'required|string|max:100',
-            'kapasitas'      => 'required|integer|min:1',
+            'kapasitas'      => [
+                'required',
+                'integer',
+                'min:1',
+                // Pengecekan unik kombinasi & abaikan ID armada saat ini
+                Rule::unique('armada')->where(function ($query) use ($request) {
+                    return $query->where('jenis_armada', $request->jenis_armada)
+                        ->where('kapasitas', $request->kapasitas);
+                })->ignore($armada->id),
+            ],
             'sewa_inc_solar' => 'required|numeric|min:0',
+        ], [
+            'kapasitas.unique' => 'Kombinasi Jenis Armada "' . $request->jenis_armada . '" dengan kapasitas ' . $request->kapasitas . ' seat sudah ada di database.'
         ]);
 
         $armada->update($validated);
@@ -74,9 +89,6 @@ class ArmadaController extends Controller
             ->with('success', 'Data armada berhasil diperbarui!');
     }
 
-    /**
-     * Menghapus armada dari database.
-     */
     public function destroy(Armada $armada)
     {
         try {

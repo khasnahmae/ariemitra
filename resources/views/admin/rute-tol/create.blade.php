@@ -32,15 +32,8 @@
 
 
                     <div class="form-group">
-                        <label for="golongan" class="fw-bold">Golongan Kendaraan <span class="text-danger">*</span></label>
-                        <input type="text" name="golongan" class="form-control" id="golongan"
-                            value="{{ old('golongan', 'Golongan I / Bus') }}" placeholder="Contoh: Golongan I / Bus"
-                            required>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="tarif_total" class="fw-bold">Tarif Total (Rp) <span class="text-danger">*</span></label>
+                        <label for="tarif_total" class="fw-bold">Tarif Total Pulang Pergi (Rp) <span
+                                class="text-danger">*</span></label>
                         <input type="number" name="tarif_total" class="form-control" id="tarif_total" min="0"
                             value="{{ old('tarif_total') }}" placeholder="Contoh: 450000" required>
                     </div>

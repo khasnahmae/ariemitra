@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('htm_per_orang', 12, 2)->default(0);
             $table->text('keterangan')->nullable();
             $table->timestamps();
+            $table->unique(['nama_destinasi', 'lokasi']);
         });
     }
 

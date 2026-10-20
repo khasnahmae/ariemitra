@@ -38,8 +38,7 @@ class RuteTolController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_rute'   => 'required|string|max:150',
-            'golongan'    => 'required|string|max:20',
+            'nama_rute'   => 'required|unique|string|max:150',
             'tarif_total' => 'required|numeric|min:0',
         ]);
 
@@ -63,8 +62,7 @@ class RuteTolController extends Controller
     public function update(Request $request, RuteTol $ruteTol)
     {
         $validated = $request->validate([
-            'nama_rute'   => 'required|string|max:150',
-            'golongan'    => 'required|string|max:20',
+            'nama_rute'   => 'required|unique|string|max:150',
             'tarif_total' => 'required|numeric|min:0',
         ]);
 
