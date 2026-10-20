@@ -47,7 +47,9 @@
                             <span class="fa fa-paper-plane"></span>
                         </div>
                         <h3 class="mb-2">Email Resmi</h3>
-                        <p><a href="mailto:selfianamiftahuljanah@gmail.com">selfianamiftahuljanah@gmail.com</a></p>
+                        <p class="text-break" style="word-break: break-all;">
+                            <a href="mailto:selfianamiftahuljanah@gmail.com">selfianamiftahuljanah@gmail.com</a>
+                        </p>
                     </div>
                 </div>
                 <div class="col-md-3 d-flex">

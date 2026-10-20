@@ -94,7 +94,8 @@
                                 <li><a href="https://wa.me/6287722082751?text=Halo%20Admin,%20saya%20panitia%20rombongan%20minta%20dibuatkan%20proposal%20perjalanan"
                                         target="_blank"><span class="icon fa fa-phone"></span><span class="text">
                                             0877 2208 2751</span></a></li>
-                                <li><a href="#"><span class="icon fa fa-paper-plane"></span><span
+                                <li><a href="mailto:selfianamiftahuljanah@gmail.com"><span
+                                            class="icon fa fa-paper-plane"></span><span
                                             class="text">selfianamiftahuljanah@gmail.com</span></a></li>
                             </ul>
                         </div>

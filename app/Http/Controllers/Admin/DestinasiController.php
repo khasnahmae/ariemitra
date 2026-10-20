@@ -43,9 +43,11 @@ class DestinasiController extends Controller
         if ($request->hasFile('foto')) {
             try {
                 $uploaded = $request->file('foto')->storeOnCloudinary('destinasi');
-                dd($uploaded->getSecurePath());
+                $validated['foto'] = $uploaded->getSecurePath();
             } catch (\Exception $e) {
-                dd($e->getMessage()); // Ini akan menampilkan pesan error aslinya di layar!
+                return back()
+                    ->withInput()
+                    ->with('error', 'Gagal mengunggah foto ke Cloudinary: ' . $e->getMessage());
             }
         }
 
