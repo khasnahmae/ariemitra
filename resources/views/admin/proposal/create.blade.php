@@ -6,11 +6,9 @@
             cursor: pointer;
         }
 
-        /* DYNAMIC FIXED STICKY STYLING */
         .smart-sticky-active {
             position: fixed !important;
             top: 90px !important;
-            /* Offset jarak dari navbar atas */
             z-index: 1020 !important;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
             transition: width 0.1s ease, top 0.1s ease;
@@ -45,8 +43,6 @@
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pb-4 gap-4">
             <div>
                 <h4 class="card-title mb-0">Buat Proposal Perjalanan Terotomatisasi</h4>
-                <p class="text-muted mb-0">Atur komponen durasi, peserta, armada, dan destinasi untuk mendapatkan kalkulasi
-                    harga yang presisi.</p>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
                 <a href="{{ route('admin.proposal.index') }}" class="btn btn-outline-secondary btn-round">
@@ -148,91 +144,103 @@
                         </div>
                     </div>
 
-                    <!-- RUTE TOL -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold mb-1">Pilih Rute Jalur Tol PP</label>
-                        <div class="dropdown w-100">
-                            <button type="button"
-                                class="form-select text-start d-flex align-items-center justify-content-between"
-                                data-bs-toggle="dropdown" data-bs-auto-close="outside" id="ruteTolDropdown">
-                                <span id="ruteTolPlaceholder" class="text-muted">Pilih rute tol...</span>
-                                <span id="ruteTolCount" class="badge bg-success d-none">0</span>
-                            </button>
-                            <div class="dropdown-menu w-100 p-2 shadow" style="max-height: 380px; overflow-y: auto;">
-                                <div class="mb-2 position-relative">
-                                    <i
-                                        class="fa fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                                    <input type="text" class="form-control ps-5" id="searchRuteTol"
-                                        placeholder="Cari rute tol..." autocomplete="off">
-                                </div>
-                                <div id="ruteTolOptions">
-                                    @foreach ($ruteTolList as $tol)
-                                        <div class="dropdown-item rounded d-flex align-items-center justify-content-between py-2 px-2 cursor-pointer select-option"
-                                            data-name="{{ strtolower($tol->nama_rute) }}">
-                                            <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                                <input type="checkbox"
-                                                    class="form-check-input m-0 calc-trigger tol-checkbox"
-                                                    name="rute_tol_ids[]" value="{{ $tol->id }}"
-                                                    data-tarif="{{ $tol->tarif_total }}" id="tol_{{ $tol->id }}"
-                                                    {{ is_array(old('rute_tol_ids')) && in_array($tol->id, old('rute_tol_ids')) ? 'checked' : '' }}>
-                                                <label for="tol_{{ $tol->id }}"
-                                                    class="text-dark option-label-text mb-0 cursor-pointer">{{ $tol->nama_rute }}</label>
-                                            </div>
-                                            <small class="text-success fw-bold text-nowrap ms-2">Rp
-                                                {{ number_format($tol->tarif_total, 0, ',', '.') }}</small>
+                    <div class="card mb-3 border">
+                        <div class="card-body">
+                            <!-- RUTE TOL -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold mb-1">Pilih Rute Jalur Tol PP</label>
+                                <div class="dropdown w-100">
+                                    <button type="button"
+                                        class="form-select text-start d-flex align-items-center justify-content-between"
+                                        data-bs-toggle="dropdown" data-bs-auto-close="outside" id="ruteTolDropdown">
+                                        <span id="ruteTolPlaceholder" class="text-muted">Pilih rute tol...</span>
+                                        <span id="ruteTolCount" class="badge bg-success d-none">0</span>
+                                    </button>
+                                    <div class="dropdown-menu w-100 p-2 shadow"
+                                        style="max-height: 380px; overflow-y: auto;">
+                                        <div class="mb-2 position-relative">
+                                            <i
+                                                class="fa fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                            <input type="text" class="form-control ps-5" id="searchRuteTol"
+                                                placeholder="Cari rute tol..." autocomplete="off">
                                         </div>
-                                    @endforeach
+                                        <div id="ruteTolOptions">
+                                            @foreach ($ruteTolList as $tol)
+                                                <div class="dropdown-item rounded d-flex align-items-center justify-content-between py-2 px-2 cursor-pointer select-option"
+                                                    data-name="{{ strtolower($tol->nama_rute) }}">
+                                                    <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                        <input type="checkbox"
+                                                            class="form-check-input m-0 calc-trigger tol-checkbox"
+                                                            name="rute_tol_ids[]" value="{{ $tol->id }}"
+                                                            data-tarif="{{ $tol->tarif_total }}"
+                                                            id="tol_{{ $tol->id }}"
+                                                            {{ is_array(old('rute_tol_ids')) && in_array($tol->id, old('rute_tol_ids')) ? 'checked' : '' }}>
+                                                        <label for="tol_{{ $tol->id }}"
+                                                            class="text-dark option-label-text mb-0 cursor-pointer">{{ $tol->nama_rute }}</label>
+                                                    </div>
+                                                    <small class="text-success fw-bold text-nowrap ms-2">Rp
+                                                        {{ number_format($tol->tarif_total, 0, ',', '.') }}</small>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <div id="emptyRuteTol" class="text-center text-muted py-3 d-none"><small>Rute tol
+                                                tidak
+                                                ditemukan.</small></div>
+                                    </div>
                                 </div>
-                                <div id="emptyRuteTol" class="text-center text-muted py-3 d-none"><small>Rute tol tidak
-                                        ditemukan.</small></div>
+                                <div id="selectedRuteTol" class="selected-pills-container"></div>
                             </div>
-                        </div>
-                        <div id="selectedRuteTol" class="selected-pills-container"></div>
-                    </div>
 
-                    <!-- DESTINASI -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold mb-1">Pilih Destinasi Wisata <span
-                                class="text-danger">*</span></label>
-                        <div class="dropdown w-100">
-                            <button type="button"
-                                class="form-select text-start d-flex align-items-center justify-content-between"
-                                data-bs-toggle="dropdown" data-bs-auto-close="outside" id="destinasiDropdown">
-                                <span id="destinasiPlaceholder" class="text-muted">Pilih destinasi wisata...</span>
-                                <span id="destinasiCount" class="badge bg-secondary d-none">0</span>
-                            </button>
-                            <div class="dropdown-menu w-100 p-2 shadow" style="max-height: 350px; overflow-y: auto;">
-                                <div class="mb-2 position-relative">
-                                    <i
-                                        class="fa fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                                    <input type="text" class="form-control ps-5" id="searchDestinasi"
-                                        placeholder="Cari destinasi wisata..." autocomplete="off">
+                            <!-- DESTINASI -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold mb-1">Pilih Destinasi Wisata <span
+                                        class="text-danger">*</span></label>
+                                <div class="dropdown w-100">
+                                    <button type="button"
+                                        class="form-select text-start d-flex align-items-center justify-content-between"
+                                        data-bs-toggle="dropdown" data-bs-auto-close="outside" id="destinasiDropdown">
+                                        <span id="destinasiPlaceholder" class="text-muted">Pilih destinasi
+                                            wisata...</span>
+                                        <span id="destinasiCount" class="badge bg-secondary d-none">0</span>
+                                    </button>
+                                    <div class="dropdown-menu w-100 p-2 shadow"
+                                        style="max-height: 350px; overflow-y: auto;">
+                                        <div class="mb-2 position-relative">
+                                            <i
+                                                class="fa fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                            <input type="text" class="form-control ps-5" id="searchDestinasi"
+                                                placeholder="Cari destinasi wisata..." autocomplete="off">
+                                        </div>
+                                        <div id="destinasiOptions">
+                                            @foreach ($destinasiList as $dest)
+                                                <label
+                                                    class="dropdown-item rounded d-flex align-items-center justify-content-between py-2 px-2 cursor-pointer select-option"
+                                                    data-name="{{ strtolower($dest->nama_destinasi) }}">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <input type="checkbox" class="form-check-input m-0 calc-trigger"
+                                                            name="destinasi_ids[]" value="{{ $dest->id }}"
+                                                            id="dest_{{ $dest->id }}"
+                                                            data-htm="{{ $dest->htm_per_orang }}"
+                                                            {{ is_array(old('destinasi_ids')) && in_array($dest->id, old('destinasi_ids')) ? 'checked' : '' }}>
+                                                        <span
+                                                            class="text-dark option-label-text">{{ $dest->nama_destinasi }}
+                                                            ({{ $dest->lokasi }})
+                                                        </span>
+                                                    </div>
+                                                    <small class="text-muted text-nowrap ms-2">HTM: <span
+                                                            class="text-secondary fw-bold">Rp
+                                                            {{ number_format($dest->htm_per_orang, 0, ',', '.') }}</span>/pax</small>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                        <div id="emptyDestinasi" class="text-center text-muted py-3 d-none">
+                                            <div class="small">Destinasi tidak ditemukan.</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div id="destinasiOptions">
-                                    @foreach ($destinasiList as $dest)
-                                        <label
-                                            class="dropdown-item rounded d-flex align-items-center justify-content-between py-2 px-2 cursor-pointer select-option"
-                                            data-name="{{ strtolower($dest->nama_destinasi) }}">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <input type="checkbox" class="form-check-input m-0 calc-trigger"
-                                                    name="destinasi_ids[]" value="{{ $dest->id }}"
-                                                    id="dest_{{ $dest->id }}" data-htm="{{ $dest->htm_per_orang }}"
-                                                    {{ is_array(old('destinasi_ids')) && in_array($dest->id, old('destinasi_ids')) ? 'checked' : '' }}>
-                                                <span class="text-dark option-label-text">{{ $dest->nama_destinasi }}
-                                                    ({{ $dest->lokasi }})</span>
-                                            </div>
-                                            <small class="text-muted text-nowrap ms-2">HTM: <span
-                                                    class="text-secondary fw-bold">Rp
-                                                    {{ number_format($dest->htm_per_orang, 0, ',', '.') }}</span>/pax</small>
-                                        </label>
-                                    @endforeach
-                                </div>
-                                <div id="emptyDestinasi" class="text-center text-muted py-3 d-none">
-                                    <div class="small">Destinasi tidak ditemukan.</div>
-                                </div>
+                                <div id="selectedDestinasi" class="selected-pills-container"></div>
                             </div>
                         </div>
-                        <div id="selectedDestinasi" class="selected-pills-container"></div>
                     </div>
 
                     <!-- STANDAR FIXED COSTS FIELD -->
@@ -344,32 +352,37 @@
                         </div>
                     </div>
 
-                    <!-- DYNAMIC ADDITIONAL COSTS -->
-                    <div class="mb-3">
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label fw-bold mb-0">Biaya Tambahan Custom (Kelompok)</label>
-                                <button type="button" class="btn btn-xs btn-outline-secondary btn-round"
-                                    id="add-fixed-btn">
-                                    <i class="fas fa-plus me-1"></i>Tambah Baris
-                                </button>
-                            </div>
-                            <div id="wrapper-fixed-cost"></div>
-                        </div>
+                    <div class="card mb-3 border">
+                        <div class="card-body">
+                            <!-- DYNAMIC ADDITIONAL COSTS -->
+                            <div class="mb-3">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label fw-bold mb-0">Biaya Tambahan Custom (Kelompok)</label>
+                                        <button type="button" class="btn btn-xs btn-outline-secondary btn-round"
+                                            id="add-fixed-btn">
+                                            <i class="fas fa-plus me-1"></i>Tambah Baris
+                                        </button>
+                                    </div>
+                                    <div id="wrapper-fixed-cost"></div>
+                                </div>
 
-                        <hr>
+                                <hr>
 
-                        <div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label fw-bold mb-0">Biaya Tambahan Custom (Per Pax)</label>
-                                <button type="button" class="btn btn-xs btn-outline-secondary btn-round"
-                                    id="add-var-btn">
-                                    <i class="fas fa-plus me-1"></i>Tambah Baris
-                                </button>
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label fw-bold mb-0">Biaya Tambahan Custom (Per Pax)</label>
+                                        <button type="button" class="btn btn-xs btn-outline-secondary btn-round"
+                                            id="add-var-btn">
+                                            <i class="fas fa-plus me-1"></i>Tambah Baris
+                                        </button>
+                                    </div>
+                                    <div id="wrapper-var-cost"></div>
+                                </div>
                             </div>
-                            <div id="wrapper-var-cost"></div>
                         </div>
                     </div>
+
 
                     <!-- PREVIEW HASIL SINKRONISASI FASILITAS -->
                     <div class="mb-3">
