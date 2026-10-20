@@ -384,7 +384,7 @@
                     </div>
 
                     <!-- Profit Margin -->
-                    <div class="card mb-3 border-success">
+                    <div class="card mb-3 border">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-md-7">

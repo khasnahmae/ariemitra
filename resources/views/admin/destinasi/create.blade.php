@@ -1,10 +1,15 @@
 @extends('layouts.admin')
 
 @section('content')
-    <!-- CDN CSS Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
-        rel="stylesheet" />
+    <style>
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .select-option:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
 
     <div class="container py-3">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -35,16 +40,42 @@
                             value="{{ old('nama_destinasi') }}" placeholder="Contoh: Candi Borobudur" required>
                     </div>
 
+                    <!-- CUSTOM DROPDOWN WITH LIVE SEARCH BAR -->
                     <div class="form-group mb-3">
-                        <label for="lokasi" class="fw-bold">Lokasi / Kota / Kabupaten <span
-                                class="text-danger">*</span></label>
-                        <select name="lokasi" id="lokasi" class="form-select select2-kota" required
-                            style="width: 100%;">
-                            <option value="">-- Ketik / Pilih Kota atau Kabupaten --</option>
-                            @if (old('lokasi'))
-                                <option value="{{ old('lokasi') }}" selected>{{ old('lokasi') }}</option>
-                            @endif
-                        </select>
+                        <label class="fw-bold mb-1">Lokasi / Kota / Kabupaten <span class="text-danger">*</span></label>
+                        <input type="hidden" name="lokasi" id="lokasi_value" value="{{ old('lokasi') }}" required>
+
+                        <div class="dropdown w-100">
+                            <button type="button"
+                                class="form-select text-start d-flex align-items-center justify-content-between"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside" id="lokasiDropdown">
+                                <span id="lokasiPlaceholder"
+                                    class="{{ old('lokasi') ? 'text-dark fw-bold' : 'text-muted' }}">
+                                    {{ old('lokasi') ? old('lokasi') : 'Pilih kota / kabupaten...' }}
+                                </span>
+                            </button>
+
+                            <div class="dropdown-menu w-100 p-2 shadow" style="max-height: 350px; overflow-y: auto;">
+                                <!-- Live Search Input Bar -->
+                                <div class="mb-2 position-relative">
+                                    <i
+                                        class="fa fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <input type="text" class="form-control ps-5" id="searchLokasi"
+                                        placeholder="Cari lokasi/kota..." autocomplete="off">
+                                </div>
+
+                                <!-- Dynamic Location List -->
+                                <div id="lokasiOptions">
+                                    <div class="text-center text-muted py-2 d-none" id="loadingLokasi">
+                                        <small><i class="fas fa-spinner fa-spin me-1"></i> Memuat daftar kota...</small>
+                                    </div>
+                                </div>
+
+                                <div id="emptyLokasi" class="text-center text-muted py-3 d-none">
+                                    <small>Lokasi tidak ditemukan.</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group mb-3">
@@ -77,13 +108,10 @@
         </form>
     </div>
 
-    <!-- Script Select2 & Lengkap Daftar Kota / Kabupaten Indonesia -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Script Custom Dropdown dengan Search Bar -->
     <script>
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             const daftarKotaKab = [
-                // Jawa Tengah
                 "Pemalang", "Batang", "Pekalongan", "Kota Pekalongan", "Tegal", "Kota Tegal", "Brebes",
                 "Kendal",
                 "Semarang", "Kota Semarang", "Salatiga", "Demak", "Kudus", "Jepara", "Pati", "Rembang", "Blora",
@@ -92,25 +120,17 @@
                 "Kota Magelang",
                 "Wonosobo", "Temanggung", "Purworejo", "Kebumen", "Banjarnegara", "Purbalingga", "Banyumas",
                 "Cilacap",
-
-                // DI Yogyakarta
                 "Yogyakarta", "Sleman", "Bantul", "Gunungkidul", "Kulon Progo",
-
-                // DKI Jakarta & Banten
                 "Jakarta Pusat", "Jakarta Utara", "Jakarta Barat", "Jakarta Selatan", "Jakarta Timur",
                 "Kepulauan Seribu",
                 "Tangerang", "Kota Tangerang", "Tangerang Selatan", "Cilegon", "Serang", "Kota Serang", "Lebak",
                 "Pandeglang",
-
-                // Jawa Barat
                 "Bandung", "Kota Bandung", "Bandung Barat", "Sumedang", "Cimahi", "Garut", "Tasikmalaya",
                 "Kota Tasikmalaya",
                 "Ciamis", "Kuningan", "Cirebon", "Kota Cirebon", "Majalengka", "Indramayu", "Subang",
                 "Purwakarta",
                 "Karawang", "Bekasi", "Kota Bekasi", "Bogor", "Kota Bogor", "Depok", "Sukabumi",
                 "Kota Sukabumi", "Cianjur", "Pangandaran",
-
-                // Jawa Timur
                 "Surabaya", "Malang", "Kota Malang", "Batu", "Sidoarjo", "Pasuruan", "Kota Pasuruan",
                 "Probolinggo", "Kota Probolinggo",
                 "Jember", "Banyuwangi", "Lumajang", "Bondowoso", "Situbondo", "Mojokerto", "Kota Mojokerto",
@@ -119,49 +139,73 @@
                 "Kota Kediri",
                 "Blitar", "Kota Blitar", "Tulungagung", "Trenggalek", "Ponorogo", "Pacitan", "Bangkalan",
                 "Sampang", "Pamekasan", "Sumenep",
-
-                // Bali & Nusa Tenggara
                 "Denpasar", "Badung", "Gianyar", "Tabanan", "Buleleng", "Klungkung", "Karangasem", "Jembrana",
                 "Bangli",
                 "Mataram", "Bima", "Kota Bima", "Lombok Barat", "Lombok Tengah", "Lombok Timur", "Lombok Utara",
                 "Sumbawa", "Sumbawa Barat",
                 "Kupang", "Kota Kupang", "Manggarai", "Manggarai Barat (Labuan Bajo)", "Ende", "Sikka",
-
-                // Sumatra
                 "Banda Aceh", "Langsa", "Lhokseumawe", "Sabang", "Subulussalam",
                 "Medan", "Binjai", "Gunungsitoli", "Padangsidimpuan", "Pematangsiantar", "Sibolga",
                 "Tanjungbalai", "Tebing Tinggi", "Deli Serdang",
                 "Padang", "Bukittinggi", "Padang Panjang", "Pariaman", "Payakumbuh", "Sawahlunto", "Solok",
                 "Kota Solok", "Pasaman",
-                "Pekanbaru", "Dumai", "Kampar", "Jambi", "Sungaipenuh",
-                "Palembang", "Lubuklinggau", "Pagar Alam", "Prabumulih",
-                "Bengkulu", "Bandar Lampung", "Metro", "Lampung Selatan",
-                "Pangkalpinang", "Batam", "Tanjungpinang", "Bintan",
-
-                // Kalimantan
-                "Pontianak", "Singkawang", "Banjarbaru", "Banjarmasin", "Palangkaraya",
-                "Balikpapan", "Bontang", "Samarinda", "Kutai Kartanegara", "Nusantara (IKN)", "Tarakan",
-
-                // Sulawesi, Maluku & Papua
+                "Pekanbaru", "Dumai", "Kampar", "Jambi", "Sungaipenuh", "Palembang", "Lubuklinggau",
+                "Pagar Alam", "Prabumulih",
+                "Bengkulu", "Bandar Lampung", "Metro", "Lampung Selatan", "Pangkalpinang", "Batam",
+                "Tanjungpinang", "Bintan",
+                "Pontianak", "Singkawang", "Banjarbaru", "Banjarmasin", "Palangkaraya", "Balikpapan", "Bontang",
+                "Samarinda", "Kutai Kartanegara", "Nusantara (IKN)", "Tarakan",
                 "Gorontalo", "Makassar", "Palopo", "Parepare", "Palu", "Baubau", "Kendari", "Manado", "Bitung",
                 "Kotamobagu", "Tomohon",
                 "Ambon", "Tual", "Ternate", "Tidore Kepulauan", "Jayapura", "Kota Jayapura", "Sorong",
                 "Kota Sorong", "Manokwari", "Mimika"
             ];
 
-            const $selectLokasi = $('#lokasi');
+            const searchInput = document.getElementById('searchLokasi');
+            const optionsContainer = document.getElementById('lokasiOptions');
+            const hiddenInput = document.getElementById('lokasi_value');
+            const placeholder = document.getElementById('lokasiPlaceholder');
+            const emptyState = document.getElementById('emptyLokasi');
 
-            daftarKotaKab.forEach(function(kota) {
-                if ($selectLokasi.find("option[value='" + kota + "']").length === 0) {
-                    $selectLokasi.append(new Option(kota, kota, false, false));
-                }
+            // Populate Item Daftar Kota
+            daftarKotaKab.forEach(function(namaKota) {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item rounded py-2 px-3 cursor-pointer select-option';
+                item.dataset.name = namaKota.toLowerCase();
+                item.innerHTML = `<span class="text-dark option-label-text">${namaKota}</span>`;
+
+                item.addEventListener('click', function() {
+                    hiddenInput.value = namaKota;
+                    placeholder.textContent = namaKota;
+                    placeholder.className = 'text-dark fw-bold';
+
+                    // Close Bootstrap Dropdown
+                    const dropdownBtn = document.getElementById('lokasiDropdown');
+                    const bsDropdown = bootstrap.Dropdown.getInstance(dropdownBtn) || new bootstrap
+                        .Dropdown(dropdownBtn);
+                    bsDropdown.hide();
+                });
+
+                optionsContainer.appendChild(item);
             });
 
-            $selectLokasi.select2({
-                theme: 'bootstrap-5',
-                placeholder: 'Ketik untuk mencari atau menambah kota/kabupaten...',
-                allowClear: true,
-                tags: true
+            // Live Search Filter Listener
+            searchInput.addEventListener('input', function() {
+                const keyword = this.value.toLowerCase().trim();
+                const options = optionsContainer.querySelectorAll('.select-option');
+                let visibleCount = 0;
+
+                options.forEach(function(option) {
+                    const name = option.dataset.name;
+                    if (name.includes(keyword)) {
+                        option.classList.remove('d-none');
+                        visibleCount++;
+                    } else {
+                        option.classList.add('d-none');
+                    }
+                });
+
+                emptyState.classList.toggle('d-none', visibleCount > 0);
             });
         });
     </script>
