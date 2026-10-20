@@ -267,9 +267,9 @@
                                     @endif
                                 </p>
                                 <ul>
-                                    <li><span class="flaticon-shower"></span>Include Transport</li>
-                                    <li><span class="flaticon-king-size"></span>Hotel/Resto</li>
-                                    <li><span class="flaticon-sun-umbrella"></span>Tiket Masuk</li>
+                                    <li><span class="fa fa-check-circle text-success mr-1"></span> All-In</li>
+                                    <li><span class="fa fa-bus text-info mr-1"></span> Transport</li>
+                                    <li><span class="fa fa-ticket text-info mr-1"></span> HTM</li>
                                 </ul>
                             </div>
                         </div>
@@ -291,8 +291,7 @@
                     <div class="img" style="background-image: url('{{ asset('frontend/images/bg_2.jpg') }}');">
                         <div class="overlay"></div>
                         <h2>Khusus Panitia Tour & Sekolah</h2>
-                        <p>Tim kami dapat menerbitkan draf proposal resmi lengkap dengan breakdown biaya fixed dan variable
-                            sesuai budget per peserta.</p>
+                        <p>Tim kami dapat menerbitkan draf proposal resmi sesuai budget per peserta.</p>
                         <p class="mb-0">
                             <a href="https://wa.me/6287722082751?text=Halo%20Admin,%20saya%20panitia%20rombongan%20minta%20dibuatkan%20proposal%20perjalanan"
                                 target="_blank" class="btn btn-primary px-4 py-3">

@@ -66,7 +66,7 @@
     </section>
 
     <!-- CONTACT FORM & MAP SECTION -->
-    <section class="ftco-section contact-section ftco-no-pt">
+    {{-- <section class="ftco-section contact-section ftco-no-pt">
         <div class="container">
             <div class="row block-9">
                 <div class="col-md-6 order-md-last d-flex">
@@ -106,5 +106,5 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 @endsection
