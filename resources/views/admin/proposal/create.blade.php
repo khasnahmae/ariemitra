@@ -6,14 +6,16 @@
             cursor: pointer;
         }
 
-        /* STICKY CALCULATOR ENHANCEMENT */
+        .page-inner {
+            overflow: visible !important;
+        }
+
         .sticky-calculator-card {
             position: -webkit-sticky !important;
             position: sticky !important;
             top: 90px !important;
-            /* Sesuaikan dengan tinggi navbar admin */
-            z-index: 10 !important;
-            transition: all 0.2s ease-in-out;
+            z-index: 99 !important;
+            transition: top 0.1s ease-in-out;
         }
 
         .selected-pills-container {
@@ -45,8 +47,6 @@
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pb-4 gap-4">
             <div>
                 <h4 class="card-title mb-0">Buat Proposal Perjalanan Terotomatisasi</h4>
-                <p class="text-muted mb-0">Atur komponen durasi, peserta, armada, dan destinasi untuk mendapatkan kalkulasi
-                    harga yang presisi.</p>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
                 <a href="{{ route('admin.proposal.index') }}" class="btn btn-outline-secondary btn-round">
@@ -70,7 +70,7 @@
                     <!-- BLOCK DURASI & PENGINAPAN -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-clock me-2 text-primary"></i>Pengaturan
+                            <h6 class="fw-bold text-dark mb-3">
                                 Durasi Perjalanan</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
@@ -78,7 +78,7 @@
                                             class="text-danger">*</span></label>
                                     <select name="is_menginap" id="is_menginap" class="form-select calc-trigger" required>
                                         <option value="tidak" {{ old('is_menginap') == 'tidak' ? 'selected' : '' }}>Tidak
-                                            Menginap (1 Hari Tour)</option>
+                                            Menginap (1 Hari)</option>
                                         <option value="ya" {{ old('is_menginap') == 'ya' ? 'selected' : '' }}>Menginap
                                             (N-Hari N-Malam)</option>
                                     </select>
@@ -104,7 +104,7 @@
                     <!-- BLOCK PESERTA & ARMADA -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-bus me-2 text-primary"></i>Kebutuhan Peserta
+                            <h6 class="fw-bold text-dark mb-3">Kebutuhan Peserta
                                 & Unit Bus</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
@@ -152,8 +152,7 @@
 
                     <!-- RUTE TOL -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold mb-1">Pilih Rute Jalur Tol PP <span
-                                class="text-muted fw-normal">(Opsional)</span></label>
+                        <label class="form-label fw-bold mb-1">Pilih Rute Jalur Tol PP</label>
                         <div class="dropdown w-100">
                             <button type="button"
                                 class="form-select text-start d-flex align-items-center justify-content-between"
@@ -242,11 +241,11 @@
                     <!-- STANDAR FIXED COSTS FIELD -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-coins me-2 text-primary"></i>Komponen
-                                Biaya Operasional / Kelompok (Fixed)</h6>
-                            <div class="row g-2">
-                                <div class="col-md-4 d-none" id="field-sewa-tambahan-wrapper">
-                                    <label class="small text-danger mb-1 fw-bold">Tambahan Sewa Armada</label>
+                            <h6 class="fw-bold text-dark mb-3"></i>Komponen
+                                Biaya Operasional / Kelompok</h6>
+                            <div class="col g-2">
+                                <div class="col-md-12 d-none" id="field-sewa-tambahan-wrapper">
+                                    <label class="small text-danger mb-1 fw-bold">Biaya Tambahan Sewa Armada</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
                                         <input type="number" name="biaya_sewa_tambahan" id="biaya_sewa_tambahan"
@@ -254,8 +253,8 @@
                                             value="{{ old('biaya_sewa_tambahan', 0) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4 d-none" id="field-bbm-wrapper">
-                                    <label class="small text-danger mb-1 fw-bold">BBM / Solar (Bus Non-Inc)</label>
+                                <div class="col-md-12 d-none" id="field-bbm-wrapper">
+                                    <label class="small text-danger mb-1 fw-bold">Biaya BBM / Solar (Bus Non-Inc)</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
                                         <input type="number" name="biaya_bbm" id="biaya_bbm"
@@ -263,7 +262,7 @@
                                             value="{{ old('biaya_bbm', 0) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4 d-none" id="field-penginapan-wrapper">
+                                <div class="col-md-12 d-none" id="field-penginapan-wrapper">
                                     <label class="small text-danger mb-1 fw-bold">Biaya Penginapan / Hotel</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -272,7 +271,7 @@
                                             value="{{ old('biaya_penginapan', 0) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <label class="small text-muted mb-1 fw-bold">Tip Supir & Co-Driver</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -281,7 +280,7 @@
                                             value="{{ old('biaya_tip_driver', 400000) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <label class="small text-muted mb-1 fw-bold">Tour Leader / Guide</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -290,7 +289,7 @@
                                             value="{{ old('biaya_tour_leader', 400000) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <label class="small text-muted mb-1 fw-bold">Biaya Parkir & Retribusi</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -306,11 +305,11 @@
                     <!-- STANDAR VARIABLE COSTS FIELD -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-user-check me-2 text-primary"></i>Komponen
-                                Biaya Per Pax / Orang (Variable)</h6>
+                            <h6 class="fw-bold text-dark mb-3"></i>Komponen
+                                Biaya Per Pax / Orang</h6>
                             <div class="row g-2">
                                 <div class="col-md-4">
-                                    <label class="small text-muted mb-1 fw-bold">Biaya Snack / Pax</label>
+                                    <label class="small text-muted mb-1 fw-bold">Biaya Snack</label>
                                     <div class="input-group input-group-sm mb-1">
                                         <span class="input-group-text">Rp</span>
                                         <input type="number" name="harga_snack" id="harga_snack"
@@ -324,7 +323,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="small text-muted mb-1 fw-bold">Biaya Makan / Pax</label>
+                                    <label class="small text-muted mb-1 fw-bold">Biaya Makan</label>
                                     <div class="input-group input-group-sm mb-1">
                                         <span class="input-group-text">Rp</span>
                                         <input type="number" name="harga_makan" id="harga_makan"
@@ -338,7 +337,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="small text-muted mb-1 fw-bold">Asuransi Perjalanan / Pax</label>
+                                    <label class="small text-muted mb-1 fw-bold">Asuransi Perjalanan</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
                                         <input type="number" name="biaya_asuransi" id="biaya_asuransi"
@@ -407,7 +406,7 @@
                     </div>
                 </div>
 
-                <!-- STICKY SIMULATION CARD -->
+                <!-- STICKY SIMULATION CARD CONTAINER -->
                 <div class="col-lg-4" id="sticky-column-parent">
                     <div class="card border-secondary shadow sticky-calculator-card" id="sticky-calculator">
                         <div class="card-header bg-secondary text-white rounded-top">
@@ -473,6 +472,16 @@
             const armadaSelect = document.getElementById('armada_id');
             const submitBtn = document.getElementById('submit-btn');
 
+            // MELEPAS OVERFLOW-HIDDEN DARI ENCLOSING PARENT UNTUK MEMASTIKAN STICKY BERJALAN
+            let parentEl = document.getElementById('sticky-calculator').parentElement;
+            while (parentEl && parentEl !== document.body) {
+                const style = window.getComputedStyle(parentEl);
+                if (style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflowY === 'hidden') {
+                    parentEl.style.overflow = 'visible';
+                }
+                parentEl = parentEl.parentElement;
+            }
+
             function formatRupiah(number) {
                 return new Intl.NumberFormat('id-ID', {
                     style: 'currency',
@@ -481,7 +490,6 @@
                 }).format(number);
             }
 
-            // Real-time Trigger 1: Opsi Menginap vs Field Penginapan & Minimal Durasi
             function handleMenginapLogic() {
                 const isMenginap = isMenginapSelect.value === 'ya';
                 const fieldPenginapan = document.getElementById('field-penginapan-wrapper');
@@ -508,7 +516,6 @@
                 }
             }
 
-            // Real-time Trigger 2: Opsi Armada Include Solar vs Field BBM
             function handleArmadaSolarLogic() {
                 const selectedOption = armadaSelect.options[armadaSelect.selectedIndex];
                 const isIncludeSolar = selectedOption ? selectedOption.getAttribute('data-solar') : 'ya';
@@ -522,7 +529,6 @@
                 }
             }
 
-            // Real-time Trigger 3: Synchronize Fasilitas Textarea
             function syncFasilitas() {
                 let items = ['Dokumentasi', 'P3K'];
 
@@ -560,7 +566,6 @@
                 document.getElementById('fasilitas').value = items.join('\n');
             }
 
-            // Real-time Trigger 4: Capacity vs Peserta Validation
             function validateCapacity() {
                 const peserta = parseInt(document.getElementById('jumlah_peserta').value) || 0;
                 const unit = parseInt(document.getElementById('jumlah_unit_armada').value) || 1;
