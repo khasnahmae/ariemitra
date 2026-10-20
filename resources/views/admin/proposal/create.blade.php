@@ -6,12 +6,14 @@
             cursor: pointer;
         }
 
-        .smart-sticky-active {
-            position: fixed !important;
-            top: 85px !important;
-            z-index: 99 !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-            transition: top 0.1s ease-out;
+        /* STICKY CALCULATOR ENHANCEMENT */
+        .sticky-calculator-card {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            top: 90px !important;
+            /* Sesuaikan dengan tinggi navbar admin */
+            z-index: 10 !important;
+            transition: all 0.2s ease-in-out;
         }
 
         .selected-pills-container {
@@ -220,7 +222,8 @@
                                                     id="dest_{{ $dest->id }}" data-htm="{{ $dest->htm_per_orang }}"
                                                     {{ is_array(old('destinasi_ids')) && in_array($dest->id, old('destinasi_ids')) ? 'checked' : '' }}>
                                                 <span class="text-dark option-label-text">{{ $dest->nama_destinasi }}
-                                                    ({{ $dest->lokasi }})</span>
+                                                    ({{ $dest->lokasi }})
+                                                </span>
                                             </div>
                                             <small class="text-muted text-nowrap ms-2">HTM: <span
                                                     class="text-secondary fw-bold">Rp
@@ -406,7 +409,7 @@
 
                 <!-- STICKY SIMULATION CARD -->
                 <div class="col-lg-4" id="sticky-column-parent">
-                    <div class="card border-secondary shadow" id="sticky-calculator">
+                    <div class="card border-secondary shadow sticky-calculator-card" id="sticky-calculator">
                         <div class="card-header bg-secondary text-white rounded-top">
                             <div class="card-title text-white mb-0 d-flex align-items-center justify-content-between"
                                 style="font-size: 15px;">
