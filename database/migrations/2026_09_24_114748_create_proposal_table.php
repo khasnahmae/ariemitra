@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('proposal', function (Blueprint $table) {
@@ -16,11 +13,14 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->string('kode_proposal', 50)->unique();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('nama_klien', 150);
-            $table->date('tanggal_proposal');
-            $table->string('durasi', 50)->default('1 Hari');
+
+            $table->integer('jumlah_hari')->default(1);
+            $table->integer('jumlah_malam')->default(0);
+            $table->enum('is_menginap', ['ya', 'tidak'])->default('tidak');
+
             $table->integer('jumlah_peserta');
             $table->text('fasilitas')->nullable();
+
             $table->decimal('total_biaya_fixed', 12, 2)->default(0);
             $table->decimal('biaya_fixed_per_pax', 12, 2)->default(0);
             $table->decimal('biaya_var_per_pax', 12, 2)->default(0);
@@ -31,9 +31,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('proposal');

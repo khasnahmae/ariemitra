@@ -16,7 +16,6 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->foreignId('proposal_id')->constrained('proposal')->onDelete('cascade');
             $table->foreignId('rute_tol_id')->constrained('rute_tol')->onDelete('restrict');
-            $table->enum('tipe_perjalanan', ['pp', 'oneway'])->default('pp');
             $table->decimal('tarif_snapshot', 12, 2)->comment('Tarif tol saat proposal dibuat');
             $table->timestamps();
         });

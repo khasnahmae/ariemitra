@@ -16,7 +16,8 @@ class Armada extends Model
         'uuid',
         'jenis_armada',
         'kapasitas',
-        'sewa_inc_solar',
+        'is_include_solar',
+        'harga_sewa',
     ];
 
     public function proposalArmada()

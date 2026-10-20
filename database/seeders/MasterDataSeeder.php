@@ -51,29 +51,34 @@ class MasterDataSeeder extends Seeder
         // 2. Data Dummy Jenis Armada
         $armadaData = [
             [
-                'jenis_armada'   => 'Lucky Trans',
-                'kapasitas'      => 35,
-                'sewa_inc_solar' => 3000000, // 3jt
+                'jenis_armada'     => 'Lucky Trans',
+                'kapasitas'        => 35,
+                'is_include_solar' => 'ya',
+                'harga_sewa'       => 3000000, // 3jt
             ],
             [
-                'jenis_armada'   => 'Nariyama Trans',
-                'kapasitas'      => 39,
-                'sewa_inc_solar' => 3000000, // 3jt
+                'jenis_armada'     => 'Nariyama Trans',
+                'kapasitas'        => 39,
+                'is_include_solar' => 'ya',
+                'harga_sewa'       => 3000000, // 3jt
             ],
             [
-                'jenis_armada'   => 'Nariyama Trans',
-                'kapasitas'      => 50,
-                'sewa_inc_solar' => 4200000, // 4,2jt
+                'jenis_armada'     => 'Nariyama Trans',
+                'kapasitas'        => 50,
+                'is_include_solar' => 'ya',
+                'harga_sewa'       => 4200000, // 4,2jt
             ],
             [
-                'jenis_armada'   => 'Pangeran',
-                'kapasitas'      => 37,
-                'sewa_inc_solar' => 3000000, // 3jt
+                'jenis_armada'     => 'Pangeran',
+                'kapasitas'        => 37,
+                'is_include_solar' => 'ya',
+                'harga_sewa'       => 3000000, // 3jt
             ],
             [
-                'jenis_armada'   => 'Pangeran',
-                'kapasitas'      => 50,
-                'sewa_inc_solar' => 4200000, // 4,2jt
+                'jenis_armada'     => 'Pangeran',
+                'kapasitas'        => 50,
+                'is_include_solar' => 'ya',
+                'harga_sewa'       => 4200000, // 4,2jt
             ],
         ];
 
@@ -84,10 +89,11 @@ class MasterDataSeeder extends Seeder
                     'kapasitas'    => $item['kapasitas'],
                 ],
                 [
-                    'uuid'           => (string) Str::uuid(),
-                    'sewa_inc_solar' => $item['sewa_inc_solar'],
-                    'created_at'     => now(),
-                    'updated_at'     => now(),
+                    'uuid'             => (string) Str::uuid(),
+                    'is_include_solar' => $item['is_include_solar'],
+                    'harga_sewa'       => $item['harga_sewa'],
+                    'created_at'       => now(),
+                    'updated_at'       => now(),
                 ]
             );
         }

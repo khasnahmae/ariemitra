@@ -25,24 +25,39 @@
 
             <div class="container-fluid">
                 <div class="col">
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="jenis_armada" class="fw-bold">Jenis / Nama Armada <span
                                 class="text-danger">*</span></label>
                         <input type="text" name="jenis_armada" class="form-control" id="jenis_armada"
                             value="{{ old('jenis_armada', $armada->jenis_armada) }}"
                             placeholder="Contoh: Big Bus HDD / Medium Bus" required>
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group mb-3">
                         <label for="kapasitas" class="fw-bold">Kapasitas Kursi (Seat) <span
                                 class="text-danger">*</span></label>
                         <input type="number" name="kapasitas" class="form-control" id="kapasitas" min="1"
                             value="{{ old('kapasitas', $armada->kapasitas) }}" placeholder="Contoh: 50" required>
                     </div>
-                    <div class="form-group">
-                        <label for="sewa_inc_solar" class="fw-bold">Harga Sewa Inc. Solar (Rp/Hari) <span
+
+                    <div class="form-group mb-3">
+                        <label for="is_include_solar" class="fw-bold">Status BBM / Solar <span
                                 class="text-danger">*</span></label>
-                        <input type="number" name="sewa_inc_solar" class="form-control" id="sewa_inc_solar" min="0"
-                            value="{{ old('sewa_inc_solar', (int) $armada->sewa_inc_solar) }}" placeholder="Contoh: 3500000"
+                        <select name="is_include_solar" id="is_include_solar" class="form-select" required>
+                            <option value="ya"
+                                {{ old('is_include_solar', $armada->is_include_solar) == 'ya' ? 'selected' : '' }}>Include
+                                BBM / Solar</option>
+                            <option value="tidak"
+                                {{ old('is_include_solar', $armada->is_include_solar) == 'tidak' ? 'selected' : '' }}>
+                                Exclude BBM / Solar (Tanpa Solar)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="harga_sewa" class="fw-bold">Harga Sewa (Rp/Hari) <span
+                                class="text-danger">*</span></label>
+                        <input type="number" name="harga_sewa" class="form-control" id="harga_sewa" min="0"
+                            value="{{ old('harga_sewa', (int) $armada->harga_sewa) }}" placeholder="Contoh: 3500000"
                             required>
                     </div>
                 </div>

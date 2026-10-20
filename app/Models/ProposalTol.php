@@ -16,7 +16,6 @@ class ProposalTol extends Model
         'uuid',
         'proposal_id',
         'rute_tol_id',
-        'tipe_perjalanan',
         'tarif_snapshot',
     ];
 

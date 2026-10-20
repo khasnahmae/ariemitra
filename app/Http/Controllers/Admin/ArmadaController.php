@@ -27,26 +27,22 @@ class ArmadaController extends Controller
         return view('admin.armada.create');
     }
 
-    /**
-     * Menyimpan data armada baru dengan validasi kombinasi unik
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'jenis_armada'   => 'required|string|max:100',
-            'kapasitas'      => [
+            'jenis_armada'     => 'required|string|max:100',
+            'kapasitas'        => [
                 'required',
                 'integer',
                 'min:1',
-                // Pengecekan agar jenis_armada + kapasitas tidak duplikat
                 Rule::unique('armada')->where(function ($query) use ($request) {
                     return $query->where('jenis_armada', $request->jenis_armada)
                         ->where('kapasitas', $request->kapasitas);
                 }),
             ],
-            'sewa_inc_solar' => 'required|numeric|min:0',
+            'is_include_solar' => 'required|in:ya,tidak',
+            'harga_sewa'       => 'required|numeric|min:0',
         ], [
-            // Custom message jika terdapat duplikasi
             'kapasitas.unique' => 'Kombinasi Jenis Armada "' . $request->jenis_armada . '" dengan kapasitas ' . $request->kapasitas . ' seat sudah ada di database.'
         ]);
 
@@ -61,24 +57,21 @@ class ArmadaController extends Controller
         return view('admin.armada.edit', compact('armada'));
     }
 
-    /**
-     * Memperbarui data armada (mengabaikan ID dirinya sendiri saat validasi)
-     */
     public function update(Request $request, Armada $armada)
     {
         $validated = $request->validate([
-            'jenis_armada'   => 'required|string|max:100',
-            'kapasitas'      => [
+            'jenis_armada'     => 'required|string|max:100',
+            'kapasitas'        => [
                 'required',
                 'integer',
                 'min:1',
-                // Pengecekan unik kombinasi & abaikan ID armada saat ini
                 Rule::unique('armada')->where(function ($query) use ($request) {
                     return $query->where('jenis_armada', $request->jenis_armada)
                         ->where('kapasitas', $request->kapasitas);
                 })->ignore($armada->id),
             ],
-            'sewa_inc_solar' => 'required|numeric|min:0',
+            'is_include_solar' => 'required|in:ya,tidak',
+            'harga_sewa'       => 'required|numeric|min:0',
         ], [
             'kapasitas.unique' => 'Kombinasi Jenis Armada "' . $request->jenis_armada . '" dengan kapasitas ' . $request->kapasitas . ' seat sudah ada di database.'
         ]);
