@@ -6,16 +6,14 @@
             cursor: pointer;
         }
 
-        .page-inner {
-            overflow: visible !important;
-        }
-
-        .sticky-calculator-card {
-            position: -webkit-sticky !important;
-            position: sticky !important;
+        /* DYNAMIC FIXED STICKY STYLING */
+        .smart-sticky-active {
+            position: fixed !important;
             top: 90px !important;
-            z-index: 99 !important;
-            transition: top 0.1s ease-in-out;
+            /* Offset jarak dari navbar atas */
+            z-index: 1020 !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+            transition: width 0.1s ease, top 0.1s ease;
         }
 
         .selected-pills-container {
@@ -47,6 +45,8 @@
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pb-4 gap-4">
             <div>
                 <h4 class="card-title mb-0">Buat Proposal Perjalanan Terotomatisasi</h4>
+                <p class="text-muted mb-0">Atur komponen durasi, peserta, armada, dan destinasi untuk mendapatkan kalkulasi
+                    harga yang presisi.</p>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
                 <a href="{{ route('admin.proposal.index') }}" class="btn btn-outline-secondary btn-round">
@@ -70,8 +70,7 @@
                     <!-- BLOCK DURASI & PENGINAPAN -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3">
-                                Durasi Perjalanan</h6>
+                            <h6 class="fw-bold text-dark mb-3">Durasi Perjalanan</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label for="is_menginap" class="form-label fw-bold">Opsi Menginap <span
@@ -104,8 +103,7 @@
                     <!-- BLOCK PESERTA & ARMADA -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3">Kebutuhan Peserta
-                                & Unit Bus</h6>
+                            <h6 class="fw-bold text-dark mb-3">Kebutuhan Peserta & Unit Bus</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label for="jumlah_peserta" class="form-label fw-bold">Jumlah Peserta (Pax) <span
@@ -169,9 +167,9 @@
                                 </div>
                                 <div id="ruteTolOptions">
                                     @foreach ($ruteTolList as $tol)
-                                        <div class="dropdown-item rounded d-flex align-items-center justify-content-between py-2 px-2 select-option"
+                                        <div class="dropdown-item rounded d-flex align-items-center justify-content-between py-2 px-2 cursor-pointer select-option"
                                             data-name="{{ strtolower($tol->nama_rute) }}">
-                                            <div class="d-flex align-items-center gap-2 cursor-pointer flex-grow-1">
+                                            <div class="d-flex align-items-center gap-2 flex-grow-1">
                                                 <input type="checkbox"
                                                     class="form-check-input m-0 calc-trigger tol-checkbox"
                                                     name="rute_tol_ids[]" value="{{ $tol->id }}"
@@ -221,8 +219,7 @@
                                                     id="dest_{{ $dest->id }}" data-htm="{{ $dest->htm_per_orang }}"
                                                     {{ is_array(old('destinasi_ids')) && in_array($dest->id, old('destinasi_ids')) ? 'checked' : '' }}>
                                                 <span class="text-dark option-label-text">{{ $dest->nama_destinasi }}
-                                                    ({{ $dest->lokasi }})
-                                                </span>
+                                                    ({{ $dest->lokasi }})</span>
                                             </div>
                                             <small class="text-muted text-nowrap ms-2">HTM: <span
                                                     class="text-secondary fw-bold">Rp
@@ -241,10 +238,9 @@
                     <!-- STANDAR FIXED COSTS FIELD -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3"></i>Komponen
-                                Biaya Operasional / Kelompok</h6>
+                            <h6 class="fw-bold text-dark mb-3">Komponen Biaya Operasional / Kelompok</h6>
                             <div class="col g-2">
-                                <div class="col-md-12 d-none" id="field-sewa-tambahan-wrapper">
+                                <div class="col-md-12 mb-3 d-none" id="field-sewa-tambahan-wrapper">
                                     <label class="small text-danger mb-1 fw-bold">Biaya Tambahan Sewa Armada</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -253,7 +249,7 @@
                                             value="{{ old('biaya_sewa_tambahan', 0) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-12 d-none" id="field-bbm-wrapper">
+                                <div class="col-md-12 mb-3 d-none" id="field-bbm-wrapper">
                                     <label class="small text-danger mb-1 fw-bold">Biaya BBM / Solar (Bus Non-Inc)</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -262,7 +258,7 @@
                                             value="{{ old('biaya_bbm', 0) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-12 d-none" id="field-penginapan-wrapper">
+                                <div class="col-md-12 mb-3 d-none" id="field-penginapan-wrapper">
                                     <label class="small text-danger mb-1 fw-bold">Biaya Penginapan / Hotel</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -271,7 +267,7 @@
                                             value="{{ old('biaya_penginapan', 0) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-12 mb-3">
                                     <label class="small text-muted mb-1 fw-bold">Tip Supir & Co-Driver</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -280,7 +276,7 @@
                                             value="{{ old('biaya_tip_driver', 400000) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-12 mb-3">
                                     <label class="small text-muted mb-1 fw-bold">Tour Leader / Guide</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -289,7 +285,7 @@
                                             value="{{ old('biaya_tour_leader', 400000) }}">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-12 mb-3">
                                     <label class="small text-muted mb-1 fw-bold">Biaya Parkir & Retribusi</label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
@@ -305,8 +301,7 @@
                     <!-- STANDAR VARIABLE COSTS FIELD -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3"></i>Komponen
-                                Biaya Per Pax / Orang</h6>
+                            <h6 class="fw-bold text-dark mb-3">Komponen Biaya Per Pax / Orang</h6>
                             <div class="row g-2">
                                 <div class="col-md-4">
                                     <label class="small text-muted mb-1 fw-bold">Biaya Snack</label>
@@ -408,7 +403,7 @@
 
                 <!-- STICKY SIMULATION CARD CONTAINER -->
                 <div class="col-lg-4" id="sticky-column-parent">
-                    <div class="card border-secondary shadow sticky-calculator-card" id="sticky-calculator">
+                    <div class="card border-secondary shadow" id="sticky-calculator">
                         <div class="card-header bg-secondary text-white rounded-top">
                             <div class="card-title text-white mb-0 d-flex align-items-center justify-content-between"
                                 style="font-size: 15px;">
@@ -460,7 +455,7 @@
         </form>
     </div>
 
-    <!-- SCRIPT REAL-TIME TRIGGERS & LOGIC -->
+    <!-- SCRIPT REAL-TIME TRIGGERS & DYNAMIC STICKY LISTENER -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let fixedIndex = 0;
@@ -472,16 +467,52 @@
             const armadaSelect = document.getElementById('armada_id');
             const submitBtn = document.getElementById('submit-btn');
 
-            // MELEPAS OVERFLOW-HIDDEN DARI ENCLOSING PARENT UNTUK MEMASTIKAN STICKY BERJALAN
-            let parentEl = document.getElementById('sticky-calculator').parentElement;
-            while (parentEl && parentEl !== document.body) {
-                const style = window.getComputedStyle(parentEl);
-                if (style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflowY === 'hidden') {
-                    parentEl.style.overflow = 'visible';
+            // --- JAVASCRIPT REAL-TIME DYNAMIC STICKY LOGIC ---
+            const stickyCard = document.getElementById('sticky-calculator');
+            const stickyParent = document.getElementById('sticky-column-parent');
+
+            function handleStickyPosition() {
+                if (window.innerWidth < 992) {
+                    stickyCard.classList.remove('smart-sticky-active');
+                    stickyCard.style.width = '100%';
+                    return;
                 }
-                parentEl = parentEl.parentElement;
+
+                const parentRect = stickyParent.getBoundingClientRect();
+
+                // Ketika posisi atas parent sudah melewati offset top 90px
+                if (parentRect.top <= 90) {
+                    if (!stickyCard.classList.contains('smart-sticky-active')) {
+                        stickyCard.style.width = parentRect.width + 'px';
+                        stickyCard.classList.add('smart-sticky-active');
+                    } else {
+                        stickyCard.style.width = parentRect.width + 'px';
+                    }
+                } else {
+                    stickyCard.classList.remove('smart-sticky-active');
+                    stickyCard.style.width = '100%';
+                }
             }
 
+            // Dengarkan scroll pada window serta pembungkus internal elemen admin
+            window.addEventListener('scroll', handleStickyPosition, {
+                passive: true
+            });
+            window.addEventListener('resize', handleStickyPosition);
+
+            // Mencari kontainer internal template jika scroll terjadi di dalam elemen bertipe overflow
+            let scrollableParent = stickyParent.parentElement;
+            while (scrollableParent && scrollableParent !== document.body) {
+                const computedStyle = window.getComputedStyle(scrollableParent);
+                if (computedStyle.overflowY === 'auto' || computedStyle.overflowY === 'scroll') {
+                    scrollableParent.addEventListener('scroll', handleStickyPosition, {
+                        passive: true
+                    });
+                }
+                scrollableParent = scrollableParent.parentElement;
+            }
+
+            // --- KALKULASI & REALTIME TRIGGERS ---
             function formatRupiah(number) {
                 return new Intl.NumberFormat('id-ID', {
                     style: 'currency',
@@ -798,6 +829,7 @@
             });
 
             recalculate();
+            handleStickyPosition();
         });
     </script>
 @endsection
