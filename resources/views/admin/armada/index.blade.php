@@ -48,7 +48,7 @@
                                         {{-- <th>No</th> --}}
                                         <th>Jenis Armada</th>
                                         <th>Kapasitas</th>
-                                        <th>Sewa (Inc. Solar) / Hari</th>
+                                        <th>Harga Sewa / Hari</th>
                                         <th class="text-end" style="width: 120px;">Aksi</th>
                                     </tr>
                                 </thead>
@@ -59,7 +59,7 @@
                                             <td class="fw-bold">{{ $armada->jenis_armada }}</td>
                                             <td><span class="badge badge-info">{{ $armada->kapasitas }} Seat</span></td>
                                             <td class="text-success fw-bold">Rp
-                                                {{ number_format($armada->sewa_inc_solar, 0, ',', '.') }}</td>
+                                                {{ number_format($armada->harga_sewa, 0, ',', '.') }}</td>
                                             <td class="text-end">
                                                 <div class="form-button-action justify-content-end">
                                                     <a href="{{ route('admin.armada.edit', $armada->uuid) }}"

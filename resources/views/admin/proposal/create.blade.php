@@ -42,7 +42,7 @@
     <div class="page-inner">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pb-4 gap-4">
             <div>
-                <h4 class="card-title mb-0">Buat Proposal Perjalanan Terotomatisasi</h4>
+                <h4 class="card-title mb-0">Buat Proposal Paket Wisata</h4>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
                 <a href="{{ route('admin.proposal.index') }}" class="btn btn-outline-secondary btn-round">
@@ -383,20 +383,12 @@
                         </div>
                     </div>
 
-
-                    <!-- PREVIEW HASIL SINKRONISASI FASILITAS -->
-                    <div class="mb-3">
-                        <label for="fasilitas" class="form-label fw-bold">Rincian Fasilitas (Tersinkronisasi
-                            Otomatis)</label>
-                        <textarea name="fasilitas" id="fasilitas" class="form-control bg-light" rows="5" readonly></textarea>
-                    </div>
-
                     <!-- Profit Margin -->
-                    <div class="card mb-4 border-success">
+                    <div class="card mb-3 border-success">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-md-7">
-                                    <h6 class="fw-bold text-success mb-1"><i class="fas fa-coins me-3"></i>Target Profit
+                                    <h6 class="fw-bold text-success mb-1">Target Profit
                                         Margin Per Pax <span class="text-danger">*</span></h6>
                                     <p class="text-muted small mb-0">Nominal keuntungan bersih yang diambil per peserta.
                                     </p>
@@ -412,6 +404,13 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- PREVIEW HASIL SINKRONISASI FASILITAS -->
+                    <div class="mb-3">
+                        <label for="fasilitas" class="form-label fw-bold">Fasilitas</label>
+                        <textarea name="fasilitas" id="fasilitas" class="form-control bg-light" rows="5" readonly></textarea>
+                    </div>
+
                 </div>
 
                 <!-- STICKY SIMULATION CARD CONTAINER -->

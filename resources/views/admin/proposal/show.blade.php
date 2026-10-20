@@ -2,18 +2,16 @@
 
 @section('content')
     <style>
-        /* Class untuk JS Smart Sticky agar kartu menyatu sempurna tanpa overlapping */
         .smart-sticky-active {
             position: fixed !important;
-            top: 85px !important;
-            z-index: 99 !important;
+            top: 90px !important;
+            z-index: 1020 !important;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-            transition: top 0.1s ease-out;
+            transition: width 0.1s ease, top 0.1s ease;
         }
     </style>
 
     <div class="page-inner">
-        <!-- Header Page -->
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pb-4 gap-4">
             <div>
                 <h4 class="card-title mb-0">Rincian Proposal: {{ $proposal->kode_proposal }}</h4>
@@ -26,18 +24,11 @@
             </div>
         </div>
 
-        {{-- @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif --}}
-
         <div class="row align-items-start">
             <!-- Main Content Rincian (Kiri) -->
             <div class="col-lg-8">
                 <!-- Informasi Klien & Pelaksanaan -->
-                <div class="card mb-4">
+                <div class="card mb-3 border">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <div class="card-title text-secondary mb-0">
                             Informasi Proposal & Klien
@@ -56,17 +47,24 @@
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <span class="text-muted d-block small">Nama Klien / Instansi:</span>
-                                <h5 class="fw-bold text-dark mb-0">{{ $proposal->nama_klien }}</h5>
+                                <h5 class="fw-bold text-dark mb-0">{{ $proposal->nama_klien ?? '-' }}</h5>
                             </div>
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <span class="text-muted d-block small">Tanggal Proposal:</span>
                                 <h6 class="fw-bold text-dark mb-0">
-                                    {{ \Carbon\Carbon::parse($proposal->tanggal_proposal)->translatedFormat('d F Y') }}
+                                    {{ \Carbon\Carbon::parse($proposal->tanggal_proposal ?? now())->translatedFormat('d F Y') }}
                                 </h6>
                             </div>
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
+                                <span class="text-muted d-block small">Opsi Menginap / Durasi:</span>
+                                <h6 class="fw-bold text-dark mb-0">
+                                    {{ $proposal->is_menginap == 'ya' ? 'Menginap' : 'Tidak Menginap' }}
+                                    ({{ $proposal->jumlah_hari }} Hari {{ $proposal->jumlah_malam }} Malam)
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <span class="text-muted d-block small">Jumlah Peserta:</span>
                                 <h6 class="fw-bold text-dark mb-0">{{ $proposal->jumlah_peserta }} Pax</h6>
                             </div>
@@ -82,11 +80,11 @@
                     </div>
                 </div>
 
-                <!-- Rincian Transportasi & Tol -->
-                <div class="card mb-4">
+                <!-- Rincian Transportasi, Tol, & Fixed Costs -->
+                <div class="card mb-3 border">
                     <div class="card-header bg-light">
                         <div class="card-title text-secondary mb-0">
-                            Rincian Biaya / Kelompok
+                            Rincian Biaya / Kelompok (Fixed)
                         </div>
                     </div>
                     <div class="card-body">
@@ -115,7 +113,7 @@
                                         <tr>
                                             <td><strong>Rute Tol:</strong> {{ $pt->ruteTol->nama_rute ?? 'Jalur Tol' }}
                                             </td>
-                                            <td>Toll Tariff</td>
+                                            <td>Tarif Tol PP</td>
                                             <td class="text-end font-monospace">
                                                 Rp {{ number_format($pt->tarif_snapshot, 0, ',', '.') }}
                                             </td>
@@ -124,7 +122,7 @@
 
                                     @foreach ($proposal->proposalBiayaKomponen->where('kategori', 'fixed') as $pk)
                                         <tr>
-                                            <td><strong>{{ $pk->nama_komponen }}</strong> </td>
+                                            <td><strong>{{ $pk->nama_komponen }}</strong></td>
                                             <td>Biaya Kelompok</td>
                                             <td class="text-end font-monospace">
                                                 Rp {{ number_format($pk->nominal_satuan, 0, ',', '.') }}
@@ -138,10 +136,10 @@
                 </div>
 
                 <!-- Rincian Destinasi Wisata & Variable Cost -->
-                <div class="card mb-4">
+                <div class="card mb-3 border">
                     <div class="card-header bg-light">
                         <div class="card-title text-secondary mb-0">
-                            Rincian Biaya / Orang
+                            Rincian Biaya / Orang (Variable)
                         </div>
                     </div>
                     <div class="card-body">
@@ -169,7 +167,7 @@
                                     @foreach ($proposal->proposalBiayaKomponen->where('kategori', 'variable') as $pk)
                                         <tr>
                                             <td><strong>{{ $pk->nama_komponen }}</strong></td>
-                                            <td><span class="badge bg-light text-dark border">Biaya Tambahan</span></td>
+                                            <td><span class="badge bg-light text-dark border">Biaya Per Pax</span></td>
                                             <td class="text-end font-monospace">
                                                 Rp {{ number_format($pk->nominal_satuan, 0, ',', '.') }}
                                             </td>
@@ -181,9 +179,11 @@
                     </div>
                 </div>
 
-                <div class="card mb-4">
+                <!-- Fasilitas -->
+                <div class="card mb-3 border">
                     <div class="card-header bg-light">
-                        <div class="card-title text-secondary mb-0"><i class="fas fa-list-check me-2"></i>Fasilitas
+                        <div class="card-title text-secondary mb-0">
+                            Fasilitas
                         </div>
                     </div>
                     <div class="card-body">
@@ -196,34 +196,33 @@
                                 @endforeach
                             </ol>
                         @else
-                            <span class="text-muted font-italic">Tidak ada rincian fasilitas tambahan.</span>
+                            <span class="text-muted font-italic">Tidak ada rincian fasilitas.</span>
                         @endif
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar Ringkasan Kalkulasi & Aksi (Kanan) -->
+            <!-- Sidebar Ringkasan Kalkulasi (Kanan) -->
             <div class="col-lg-4" id="sticky-column-parent">
                 <div class="card border-secondary shadow" id="sticky-calculator">
                     <div class="card-header bg-secondary text-white rounded-top">
                         <div class="card-title text-white mb-0 d-flex align-items-center justify-content-between"
                             style="font-size: 15px;">
-                            <span><i class="fas fa-calculator me-2"></i>Ringkasan Penawaran</span>
+                            <span><i class="fas fa-calculator me-2"></i>Simulasi Penawaran</span>
                             <span class="badge bg-white text-secondary fw-bold" style="font-size: 9px;">SUMMARY</span>
                         </div>
                     </div>
                     <div class="card-body p-3">
-                        <!-- Total Peserta -->
                         <div class="mb-3 pb-2 border-bottom">
                             <span class="text-muted small">Total Peserta:</span>
                             <h6 class="fw-bold text-dark mb-0">{{ $proposal->jumlah_peserta }} Pax</h6>
                         </div>
 
-                        <!-- Total Biaya Operasional -->
                         @php
                             $totalBiayaOperasional =
                                 $proposal->total_biaya_fixed + $proposal->biaya_var_per_pax * $proposal->jumlah_peserta;
-                            $modalPerPax = $proposal->biaya_fixed_per_pax + $proposal->biaya_var_per_pax;
+                            $modalPerPax =
+                                $proposal->jumlah_peserta > 0 ? $totalBiayaOperasional / $proposal->jumlah_peserta : 0;
                         @endphp
                         <div class="mb-3 pb-2 border-bottom">
                             <div class="mb-1">
@@ -236,14 +235,12 @@
                             </small>
                         </div>
 
-                        <!-- Target Profit Margin / Pax -->
                         <div class="mb-3 pb-2 border-bottom">
-                            <span class="text-muted small">Target Margin / Pax:</span>
+                            <span class="text-muted d-block small">Target Profit Margin / Pax:</span>
                             <h6 class="fw-bold text-success mb-0">Rp
                                 {{ number_format($proposal->margin_per_pax, 0, ',', '.') }}</h6>
                         </div>
 
-                        <!-- Total Harga / Pax & Grand Total Omset -->
                         <div class="p-3 bg-light rounded border mb-3">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="text-muted small fw-bold text-uppercase" style="font-size: 11px;">Harga /
@@ -262,7 +259,6 @@
                             </div>
                         </div>
 
-                        <!-- Tombol Aksi -->
                         <div class="d-grid gap-2">
                             <a href="{{ route('admin.proposal.export-pdf', $proposal->uuid) }}"
                                 class="btn btn-secondary btn-round font-weight-bold shadow-sm">
@@ -286,34 +282,51 @@
         </div>
     </div>
 
-    <!-- Script Smart Sticky Handler -->
+    <!-- Script Real-Time Dynamic Sticky Listener -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const card = document.getElementById('sticky-calculator');
-            const parent = document.getElementById('sticky-column-parent');
+            const stickyCard = document.getElementById('sticky-calculator');
+            const stickyParent = document.getElementById('sticky-column-parent');
 
-            function updateStickyPosition() {
+            function handleStickyPosition() {
                 if (window.innerWidth < 992) {
-                    card.classList.remove('smart-sticky-active');
-                    card.style.width = '100%';
+                    stickyCard.classList.remove('smart-sticky-active');
+                    stickyCard.style.width = '100%';
                     return;
                 }
 
-                const parentRect = parent.getBoundingClientRect();
-                if (parentRect.top <= 85) {
-                    if (!card.classList.contains('smart-sticky-active')) {
-                        card.style.width = parentRect.width + 'px';
-                        card.classList.add('smart-sticky-active');
+                const parentRect = stickyParent.getBoundingClientRect();
+
+                if (parentRect.top <= 90) {
+                    if (!stickyCard.classList.contains('smart-sticky-active')) {
+                        stickyCard.style.width = parentRect.width + 'px';
+                        stickyCard.classList.add('smart-sticky-active');
+                    } else {
+                        stickyCard.style.width = parentRect.width + 'px';
                     }
                 } else {
-                    card.classList.remove('smart-sticky-active');
-                    card.style.width = '100%';
+                    stickyCard.classList.remove('smart-sticky-active');
+                    stickyCard.style.width = '100%';
                 }
             }
 
-            window.addEventListener('scroll', updateStickyPosition);
-            window.addEventListener('resize', updateStickyPosition);
-            updateStickyPosition();
+            window.addEventListener('scroll', handleStickyPosition, {
+                passive: true
+            });
+            window.addEventListener('resize', handleStickyPosition);
+
+            let scrollableParent = stickyParent.parentElement;
+            while (scrollableParent && scrollableParent !== document.body) {
+                const computedStyle = window.getComputedStyle(scrollableParent);
+                if (computedStyle.overflowY === 'auto' || computedStyle.overflowY === 'scroll') {
+                    scrollableParent.addEventListener('scroll', handleStickyPosition, {
+                        passive: true
+                    });
+                }
+                scrollableParent = scrollableParent.parentElement;
+            }
+
+            handleStickyPosition();
         });
     </script>
 @endsection

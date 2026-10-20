@@ -39,10 +39,12 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="lokasi" class="fw-bold">Lokasi / Kota <span class="text-danger">*</span></label>
-                        <select name="lokasi" id="lokasi" class="form-select select2-kota" required>
+                        <label for="lokasi" class="fw-bold">Lokasi / Kota / Kabupaten <span
+                                class="text-danger">*</span></label>
+                        <select name="lokasi" id="lokasi" class="form-select select2-kota" required
+                            style="width: 100%;">
                             @php $selectedLokasi = old('lokasi', $destinasi->lokasi); @endphp
-                            <option value="">-- Ketik / Pilih Kota --</option>
+                            <option value="">-- Ketik / Pilih Kota atau Kabupaten --</option>
                             @if ($selectedLokasi)
                                 <option value="{{ $selectedLokasi }}" selected>{{ $selectedLokasi }}</option>
                             @endif
@@ -100,41 +102,81 @@
         </form>
     </div>
 
-    <!-- Script Select2 & Daftar Kota Indonesia -->
+    <!-- Script Select2 & Lengkap Daftar Kota / Kabupaten Indonesia -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            const daftarKota = [
-                "Banda Aceh", "Langsa", "Lhokseumawe", "Sabang", "Subulussalam",
-                "Medan", "Binjai", "Gunungsitoli", "Padangsidimpuan", "Pematangsiantar", "Sibolga",
-                "Tanjungbalai", "Tebing Tinggi",
-                "Padang", "Bukittinggi", "Padang Panjang", "Pariaman", "Payakumbuh", "Sawahlunto", "Solok",
-                "Pekanbaru", "Dumai", "Jambi", "Sungaipenuh",
-                "Palembang", "Lubuklinggau", "Pagar Alam", "Prabumulih",
-                "Bengkulu", "Bandar Lampung", "Metro",
-                "Pangkalpinang", "Batam", "Tanjungpinang",
+            const daftarKotaKab = [
+                // Jawa Tengah
+                "Pemalang", "Batang", "Pekalongan", "Kota Pekalongan", "Tegal", "Kota Tegal", "Brebes",
+                "Kendal",
+                "Semarang", "Kota Semarang", "Salatiga", "Demak", "Kudus", "Jepara", "Pati", "Rembang", "Blora",
+                "Grobogan",
+                "Boyolali", "Klaten", "Sukoharjo", "Wonogiri", "Karanganyar", "Sragen", "Surakarta", "Magelang",
+                "Kota Magelang",
+                "Wonosobo", "Temanggung", "Purworejo", "Kebumen", "Banjarnegara", "Purbalingga", "Banyumas",
+                "Cilacap",
+
+                // DI Yogyakarta
+                "Yogyakarta", "Sleman", "Bantul", "Gunungkidul", "Kulon Progo",
+
+                // DKI Jakarta & Banten
                 "Jakarta Pusat", "Jakarta Utara", "Jakarta Barat", "Jakarta Selatan", "Jakarta Timur",
                 "Kepulauan Seribu",
-                "Bandung", "Banjar", "Bekasi", "Bogor", "Cimahi", "Cirebon", "Depok", "Sukabumi", "Tasikmalaya",
-                "Magelang", "Pekalongan", "Salatiga", "Semarang", "Surakarta", "Tegal",
-                "Yogyakarta", "Sleman", "Bantul", "Gunungkidul", "Kulon Progo",
-                "Batu", "Blitar", "Kediri", "Madiun", "Malang", "Mojokerto", "Pasuruan", "Probolinggo",
-                "Surabaya",
-                "Tangerang", "Tangerang Selatan", "Cilegon", "Serang",
+                "Tangerang", "Kota Tangerang", "Tangerang Selatan", "Cilegon", "Serang", "Kota Serang", "Lebak",
+                "Pandeglang",
+
+                // Jawa Barat
+                "Bandung", "Kota Bandung", "Bandung Barat", "Sumedang", "Cimahi", "Garut", "Tasikmalaya",
+                "Kota Tasikmalaya",
+                "Ciamis", "Kuningan", "Cirebon", "Kota Cirebon", "Majalengka", "Indramayu", "Subang",
+                "Purwakarta",
+                "Karawang", "Bekasi", "Kota Bekasi", "Bogor", "Kota Bogor", "Depok", "Sukabumi",
+                "Kota Sukabumi", "Cianjur", "Pangandaran",
+
+                // Jawa Timur
+                "Surabaya", "Malang", "Kota Malang", "Batu", "Sidoarjo", "Pasuruan", "Kota Pasuruan",
+                "Probolinggo", "Kota Probolinggo",
+                "Jember", "Banyuwangi", "Lumajang", "Bondowoso", "Situbondo", "Mojokerto", "Kota Mojokerto",
+                "Gresik", "Lamongan",
+                "Tuban", "Boonegoro", "Ngawi", "Magetan", "Madiun", "Kota Madiun", "Nganjuk", "Kediri",
+                "Kota Kediri",
+                "Blitar", "Kota Blitar", "Tulungagung", "Trenggalek", "Ponorogo", "Pacitan", "Bangkalan",
+                "Sampang", "Pamekasan", "Sumenep",
+
+                // Bali & Nusa Tenggara
                 "Denpasar", "Badung", "Gianyar", "Tabanan", "Buleleng", "Klungkung", "Karangasem", "Jembrana",
                 "Bangli",
-                "Mataram", "Bima", "Lombok Barat", "Lombok Tengah", "Lombok Timur", "Lombok Utara",
-                "Kupang", "Pontianak", "Singkawang", "Banjarbaru", "Banjarmasin", "Palangkaraya",
-                "Balikpapan", "Bontang", "Samarinda", "Nusantara (IKN)", "Tarakan",
+                "Mataram", "Bima", "Kota Bima", "Lombok Barat", "Lombok Tengah", "Lombok Timur", "Lombok Utara",
+                "Sumbawa", "Sumbawa Barat",
+                "Kupang", "Kota Kupang", "Manggarai", "Manggarai Barat (Labuan Bajo)", "Ende", "Sikka",
+
+                // Sumatra
+                "Banda Aceh", "Langsa", "Lhokseumawe", "Sabang", "Subulussalam",
+                "Medan", "Binjai", "Gunungsitoli", "Padangsidimpuan", "Pematangsiantar", "Sibolga",
+                "Tanjungbalai", "Tebing Tinggi", "Deli Serdang",
+                "Padang", "Bukittinggi", "Padang Panjang", "Pariaman", "Payakumbuh", "Sawahlunto", "Solok",
+                "Kota Solok", "Pasaman",
+                "Pekanbaru", "Dumai", "Kampar", "Jambi", "Sungaipenuh",
+                "Palembang", "Lubuklinggau", "Pagar Alam", "Prabumulih",
+                "Bengkulu", "Bandar Lampung", "Metro", "Lampung Selatan",
+                "Pangkalpinang", "Batam", "Tanjungpinang", "Bintan",
+
+                // Kalimantan
+                "Pontianak", "Singkawang", "Banjarbaru", "Banjarmasin", "Palangkaraya",
+                "Balikpapan", "Bontang", "Samarinda", "Kutai Kartanegara", "Nusantara (IKN)", "Tarakan",
+
+                // Sulawesi, Maluku & Papua
                 "Gorontalo", "Makassar", "Palopo", "Parepare", "Palu", "Baubau", "Kendari", "Manado", "Bitung",
                 "Kotamobagu", "Tomohon",
-                "Ambon", "Tual", "Ternate", "Tidore Kepulauan", "Jayapura", "Sorong", "Manokwari"
+                "Ambon", "Tual", "Ternate", "Tidore Kepulauan", "Jayapura", "Kota Jayapura", "Sorong",
+                "Kota Sorong", "Manokwari", "Mimika"
             ];
 
             const $selectLokasi = $('#lokasi');
 
-            daftarKota.forEach(function(kota) {
+            daftarKotaKab.forEach(function(kota) {
                 if ($selectLokasi.find("option[value='" + kota + "']").length === 0) {
                     $selectLokasi.append(new Option(kota, kota, false, false));
                 }
@@ -142,7 +184,7 @@
 
             $selectLokasi.select2({
                 theme: 'bootstrap-5',
-                placeholder: 'Ketik nama kota...',
+                placeholder: 'Ketik untuk mencari atau menambah kota/kabupaten...',
                 allowClear: true,
                 tags: true
             });

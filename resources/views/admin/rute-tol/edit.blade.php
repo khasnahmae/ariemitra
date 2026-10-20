@@ -26,14 +26,14 @@
             <div class="container-fluid">
                 <div class="col">
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="nama_rute" class="fw-bold">Nama Rute Tol <span class="text-danger">*</span></label>
                         <input type="text" name="nama_rute" class="form-control" id="nama_rute"
                             value="{{ old('nama_rute', $ruteTol->nama_rute) }}"
                             placeholder="Contoh: Jakarta - Semarang (Full Tol)" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="tarif_total" class="fw-bold">Tarif Total Pulang Pergi (Rp) <span
                                 class="text-danger">*</span></label>
                         <input type="number" name="tarif_total" class="form-control" id="tarif_total" min="0"
