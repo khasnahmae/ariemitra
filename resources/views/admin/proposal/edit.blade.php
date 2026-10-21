@@ -775,6 +775,11 @@
                 }
             }
 
+            function roundUpTo5000(number) {
+                if (number <= 0) return 0;
+                return Math.ceil(number / 5000) * 5000;
+            }
+
             function recalculate() {
                 handleMenginapLogic();
                 handleArmadaSolarLogic();
@@ -786,20 +791,25 @@
                 let sewaBase = parseFloat(selectedOption ? selectedOption.getAttribute('data-sewa') || 0 : 0);
                 let unit = parseInt(document.getElementById('jumlah_unit_armada').value) || 1;
 
+                // 1. Total Armada Base
                 let totalArmada = sewaBase * unit;
 
+                // 2. Total Tol
                 let totalTol = 0;
                 document.querySelectorAll('input[name="rute_tol_ids[]"]:checked').forEach(cb => {
                     totalTol += parseFloat(cb.getAttribute('data-tarif') || 0);
                 });
 
+                // 3. Total Fixed Standar & Custom
                 let totalFixedLainnya = 0;
                 document.querySelectorAll('.fixed-nominal').forEach(inp => {
                     totalFixedLainnya += parseFloat(inp.value || 0);
                 });
 
-                let totalFixedGroup = totalArmada + totalTol + totalFixedLainnya;
+                let totalBiayaFixed = totalArmada + totalTol + totalFixedLainnya;
+                let biayaFixedPerPax = totalBiayaFixed / peserta;
 
+                // 4. Total HTM & Variable Costs Per Pax
                 let totalHTM = 0;
                 document.querySelectorAll('input[name="destinasi_ids[]"]:checked').forEach(cb => {
                     totalHTM += parseFloat(cb.getAttribute('data-htm') || 0);
@@ -811,30 +821,36 @@
                 let jumlahMakan = parseInt(document.getElementById('jumlah_makan').value) || 0;
                 let asuransi = parseFloat(document.getElementById('biaya_asuransi').value) || 0;
 
-                let totalVarPerPaxStd = (hargaSnack * jumlahSnack) + (hargaMakan * jumlahMakan) + asuransi;
+                let totalSnackPerPax = hargaSnack * jumlahSnack;
+                let totalMakanPerPax = hargaMakan * jumlahMakan;
+                let stdVar = totalSnackPerPax + totalMakanPerPax + asuransi;
 
-                let totalVarCustomPerPax = 0;
+                let customVarPerPax = 0;
                 document.querySelectorAll('.var-nominal').forEach(inp => {
-                    totalVarCustomPerPax += parseFloat(inp.value || 0);
+                    customVarPerPax += parseFloat(inp.value || 0);
                 });
 
-                let totalVarPerPax = totalHTM + totalVarPerPaxStd + totalVarCustomPerPax;
+                let biayaVarPerPax = totalHTM + stdVar + customVarPerPax;
 
-                let totalBiayaOperasional = totalFixedGroup + (totalVarPerPax * peserta);
-                let modalPerPax = totalBiayaOperasional / peserta;
-
+                // 5. Modal, Margin, & Harga Akhir / Pax (Selaras dengan Controller)
+                let modalPerPax = biayaFixedPerPax + biayaVarPerPax;
                 let marginPerPax = parseFloat(document.getElementById('margin_per_pax').value || 0);
-                let rawFinalPerPax = modalPerPax + marginPerPax;
+                let rawHargaPerPax = modalPerPax + marginPerPax;
 
-                // let finalPerPax = rawFinalPerPax > 0 ? Math.ceil(rawFinalPerPax / 5000) * 5000 : 0;
-                let grandTotal = rawFinalPerPax * peserta;
+                // Pembulatan konsisten ke atas kelipatan 5.000
+                let finalPerPax = roundUpTo5000(rawHargaPerPax);
 
+                // Total Operasional Keseluruhan
+                let totalBiayaOperasional = totalBiayaFixed + (biayaVarPerPax * peserta);
+                let grandTotal = finalPerPax * peserta;
+
+                // Update Display DOM Live
                 document.getElementById('disp-total-peserta').innerText = peserta + ' Pax';
                 document.getElementById('disp-total-biaya').innerText = formatRupiah(totalBiayaOperasional);
                 document.getElementById('disp-biaya-per-pax').innerText = '(Modal/Pax: ' + formatRupiah(
                     modalPerPax) + ')';
                 document.getElementById('disp-margin-pax').innerText = formatRupiah(marginPerPax);
-                document.getElementById('disp-final-pax').innerText = formatRupiah(rawFinalPerPax);
+                document.getElementById('disp-final-pax').innerText = formatRupiah(finalPerPax);
                 document.getElementById('disp-grand-total').innerText = formatRupiah(grandTotal);
             }
 
