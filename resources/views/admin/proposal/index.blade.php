@@ -78,11 +78,11 @@
                                             </td>
                                             <td class="text-end">
                                                 <div class="form-button-action justify-content-end gap-1">
-                                                    <a href="{{ route('admin.proposal.show', $p->uuid) }}"
+                                                    {{-- <a href="{{ route('admin.proposal.show', $p->uuid) }}"
                                                         class="btn btn-link btn-primary btn-lg p-1" data-bs-toggle="tooltip"
                                                         title="Detail Proposal">
                                                         <i class="fa fa-eye"></i>
-                                                    </a>
+                                                    </a> --}}
 
                                                     @if ($p->status !== 'approved')
                                                         <a href="{{ route('admin.proposal.edit', $p->uuid) }}"

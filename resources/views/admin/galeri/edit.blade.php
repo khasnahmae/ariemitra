@@ -34,19 +34,6 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="paket_id" class="fw-bold">Hubungkan ke Paket Wisata (Opsional)</label>
-                        <select name="paket_id" class="form-select" id="paket_id">
-                            <option value="">-- Pilih Paket Wisata (Opsional) --</option>
-                            @foreach ($paketList as $paket)
-                                <option value="{{ $paket->id }}"
-                                    {{ old('paket_id', $galeri->paket_id) == $paket->id ? 'selected' : '' }}>
-                                    {{ $paket->nama_paket }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group mb-3">
                         <label class="fw-bold d-block mb-2">Gambar Saat Ini</label>
                         @if ($galeri->file_gambar)
                             @php

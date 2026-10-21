@@ -15,15 +15,10 @@ class Galeri extends Model
 
     protected $fillable = [
         'uuid',
-        'paket_id',
         'judul',
         'file_gambar',
     ];
 
-    public function paketWisata()
-    {
-        return $this->belongsTo(PaketWisata::class, 'paket_id');
-    }
     public function getGambarUrlAttribute()
     {
         if (!$this->file_gambar) {

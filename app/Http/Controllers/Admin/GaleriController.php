@@ -19,15 +19,13 @@ class GaleriController extends Controller
 
     public function create()
     {
-        $paketList = PaketWisata::where('is_active', true)->get();
-        return view('admin.galeri.create', compact('paketList'));
+        return view('admin.galeri.create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'judul'       => 'required|string|max:150',
-            'paket_id'    => 'nullable|exists:paket_wisata,id',
             'file_gambar' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -52,15 +50,13 @@ class GaleriController extends Controller
 
     public function edit(Galeri $galeri)
     {
-        $paketList = PaketWisata::where('is_active', true)->get();
-        return view('admin.galeri.edit', compact('galeri', 'paketList'));
+        return view('admin.galeri.edit', compact('galeri'));
     }
 
     public function update(Request $request, Galeri $galeri)
     {
         $validated = $request->validate([
             'judul'       => 'required|string|max:150',
-            'paket_id'    => 'nullable|exists:paket_wisata,id',
             'file_gambar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 

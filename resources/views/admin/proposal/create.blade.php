@@ -69,10 +69,10 @@
                             <h6 class="fw-bold text-dark mb-3">Kategori Paket Wisata</h6>
                             <div class="row g-3">
                                 <div class="col-md-12">
-                                    <label for="paket_wisata_id" class="form-label fw-bold">Pilih Paket Wisata <span
-                                            class="text-danger">*</span></label>
+                                    <label for="paket_wisata_id" class="form-label fw-bold">Pilih Kategori Paket Wisata
+                                        <span class="text-danger">*</span></label>
                                     <select name="paket_wisata_id" id="paket_wisata_id" class="form-select" required>
-                                        <option value="">-- Pilih Paket Wisata --</option>
+                                        <option value="">-- Pilih Kategori Paket Wisata --</option>
                                         @foreach ($paketList as $pkt)
                                             <option value="{{ $pkt->id }}"
                                                 {{ old('paket_wisata_id') == $pkt->id ? 'selected' : '' }}>

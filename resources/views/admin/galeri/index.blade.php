@@ -48,10 +48,6 @@
                         <div class="card-body p-3 d-flex flex-column justify-content-between">
                             <div>
                                 <h6 class="fw-bold mb-1 text-truncate">{{ $galeri->judul }}</h6>
-                                <small class="text-muted d-block mb-2">
-                                    <i class="fas fa-box me-1"></i>
-                                    {{ $galeri->paketWisata->nama_paket ?? 'Umum / Non-Paket' }}
-                                </small>
                             </div>
                             <div class="d-flex justify-content-end gap-1 pt-2 border-top">
                                 <a href="{{ route('admin.galeri.edit', $galeri->uuid) }}"

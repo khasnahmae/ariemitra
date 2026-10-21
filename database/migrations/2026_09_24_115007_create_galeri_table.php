@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('galeri', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->foreignId('paket_id')->nullable()->constrained('paket_wisata')->onDelete('set null');
             $table->string('judul', 150);
             $table->string('file_gambar', 255);
             $table->timestamps();

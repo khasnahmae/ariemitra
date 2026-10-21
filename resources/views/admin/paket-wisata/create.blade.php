@@ -23,14 +23,14 @@
             @csrf
             <div class="card border p-3">
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <label for="nomor_paket" class="fw-bold">Nomor Paket</label>
                         <input type="text" id="nomor_paket" class="form-control bg-light fw-bold text-primary"
                             value="Paket {{ $nextNomorPaket }}" readonly disabled>
                         <small class="text-muted">Nomor paket ter-generate otomatis secara berurutan.</small>
                     </div>
 
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <label for="nama_paket" class="fw-bold">Nama Paket Wisata <span class="text-danger">*</span></label>
                         <input type="text" name="nama_paket" class="form-control" id="nama_paket"
                             value="{{ old('nama_paket') }}" placeholder="Contoh: Cirebon, Semarang, Purbalingga" required>

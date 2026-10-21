@@ -63,7 +63,8 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.proposal.update', $proposal->uuid) }}" method="POST" id="form-proposal">
+        <form action="{{ route('admin.proposal.update', $proposal->uuid ?? $proposal->id) }}" method="POST"
+            id="form-proposal">
             @csrf
             @method('PUT')
 
@@ -71,13 +72,13 @@
                 <div class="col-lg-8">
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            <h6 class="fw-bold text-dark mb-3">Kategori Paket Wisata</h6>
+                            <h6 class="fw-bold text-dark mb-3">Kategori Paket Wisata & Status</h6>
                             <div class="row g-3">
-                                <div class="col-md-8">
-                                    <label for="paket_wisata_id" class="form-label fw-bold">Pilih Paket Wisata <span
-                                            class="text-danger">*</span></label>
+                                <div class="col-md-5">
+                                    <label for="paket_wisata_id" class="form-label fw-bold">Pilih Kategori Paket Wisata
+                                        <span class="text-danger">*</span></label>
                                     <select name="paket_wisata_id" id="paket_wisata_id" class="form-select" required>
-                                        <option value="">-- Pilih Paket Wisata --</option>
+                                        <option value="">-- Pilih Kategori Paket Wisata --</option>
                                         @foreach ($paketList as $pkt)
                                             <option value="{{ $pkt->id }}"
                                                 {{ old('paket_wisata_id', $proposal->paket_wisata_id) == $pkt->id ? 'selected' : '' }}>
@@ -86,14 +87,33 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label fw-bold">Nama Sub Paket</label>
                                     <input type="text" class="form-control bg-light fw-bold"
                                         value="{{ $proposal->nama_sub_paket }}" readonly>
                                 </div>
+                                <div class="col-md-4">
+                                    <label for="status" class="form-label fw-bold">Status Proposal <span
+                                            class="text-danger">*</span></label>
+                                    <select name="status" id="status" class="form-select fw-bold" required>
+                                        <option value="draft"
+                                            {{ old('status', $proposal->status) == 'draft' ? 'selected' : '' }}>Draft
+                                        </option>
+                                        <option value="sent"
+                                            {{ old('status', $proposal->status) == 'sent' ? 'selected' : '' }}>Sent
+                                        </option>
+                                        <option value="approved"
+                                            {{ old('status', $proposal->status) == 'approved' ? 'selected' : '' }}>Approved
+                                        </option>
+                                        <option value="rejected"
+                                            {{ old('status', $proposal->status) == 'rejected' ? 'selected' : '' }}>Rejected
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <!-- BLOCK DURASI & PENGINAPAN -->
                     <div class="card mb-3 border">
                         <div class="card-body">
@@ -181,7 +201,7 @@
                     <!-- RUTE TOL & DESTINASI -->
                     <div class="card mb-3 border">
                         <div class="card-body">
-                            @php $selectedTol =$proposal->proposalTol->pluck('rute_tol_id')->toArray(); @endphp
+                            @php $selectedTol = $proposal->proposalTol->pluck('rute_tol_id')->toArray(); @endphp
                             <div class="mb-3">
                                 <label class="form-label fw-bold mb-1">Pilih Rute Jalur Tol PP</label>
                                 <div class="dropdown w-100">
@@ -258,8 +278,7 @@
                                                             {{ in_array($dest->id, old('destinasi_ids', $selectedDestinasi)) ? 'checked' : '' }}>
                                                         <span
                                                             class="text-dark option-label-text">{{ $dest->nama_destinasi }}
-                                                            ({{ $dest->lokasi }})
-                                                        </span>
+                                                            ({{ $dest->lokasi }})</span>
                                                     </div>
                                                     <small class="text-muted text-nowrap ms-2">HTM: <span
                                                             class="text-secondary fw-bold">Rp
@@ -366,7 +385,7 @@
                                     <div class="input-group input-group-sm">
                                         <input type="number" name="jumlah_snack" id="jumlah_snack"
                                             class="form-control calc-trigger"
-                                            value="{{ old('jumlah_snack', $proposal->jumlah_snack ?? 1) }}"
+                                            value="{{ old('jumlah_snack', (int) ($compVar['Jumlah Snack'] ?? 1)) }}"
                                             min="0">
                                         <span class="input-group-text">x Snack</span>
                                     </div>
@@ -382,7 +401,7 @@
                                     <div class="input-group input-group-sm">
                                         <input type="number" name="jumlah_makan" id="jumlah_makan"
                                             class="form-control calc-trigger"
-                                            value="{{ old('jumlah_makan', $proposal->jumlah_makan ?? 2) }}"
+                                            value="{{ old('jumlah_makan', (int) ($compVar['Jumlah Makan'] ?? 2)) }}"
                                             min="0">
                                         <span class="input-group-text">x Makan</span>
                                     </div>
@@ -466,7 +485,13 @@
                                     </div>
                                     <div id="wrapper-var-cost">
                                         @php
-                                            $stdVarKeys = ['Harga Snack', 'Harga Makan', 'Asuransi Perjalanan'];
+                                            $stdVarKeys = [
+                                                'Harga Snack',
+                                                'Jumlah Snack',
+                                                'Harga Makan',
+                                                'Jumlah Makan',
+                                                'Asuransi Perjalanan',
+                                            ];
                                             $customVarList = $proposal->proposalBiayaKomponen
                                                 ->where('kategori', 'variable')
                                                 ->reject(fn($i) => in_array($i->nama_komponen, $stdVarKeys))
@@ -580,7 +605,7 @@
                                 class="btn btn-secondary btn-round w-100 font-weight-bold shadow-sm mb-2">
                                 <i class="fas fa-save me-1"></i> Perbarui Proposal
                             </button>
-                            <a href="{{ route('admin.proposal.show', $proposal->uuid) }}"
+                            <a href="{{ route('admin.proposal.index') }}"
                                 class="btn btn-outline-secondary btn-round w-100">
                                 Batal
                             </a>
@@ -603,7 +628,6 @@
             const armadaSelect = document.getElementById('armada_id');
             const submitBtn = document.getElementById('submit-btn');
 
-            // --- JAVASCRIPT REAL-TIME DYNAMIC STICKY LOGIC ---
             const stickyCard = document.getElementById('sticky-calculator');
             const stickyParent = document.getElementById('sticky-column-parent');
 
@@ -645,7 +669,6 @@
                 scrollableParent = scrollableParent.parentElement;
             }
 
-            // --- KALKULASI & REALTIME TRIGGERS ---
             function formatRupiah(number) {
                 return new Intl.NumberFormat('id-ID', {
                     style: 'currency',
@@ -802,7 +825,6 @@
                 let marginPerPax = parseFloat(document.getElementById('margin_per_pax').value || 0);
                 let rawFinalPerPax = modalPerPax + marginPerPax;
 
-                // PEMBULATAN KE ATAS KELIPATAN 5.000 DI JAVASCRIPT
                 let finalPerPax = rawFinalPerPax > 0 ? Math.ceil(rawFinalPerPax / 5000) * 5000 : 0;
                 let grandTotal = finalPerPax * peserta;
 

@@ -21,7 +21,6 @@ class ProposalController extends Controller
 {
     /**
      * Helper Function: Pembulatan Ke Atas Kelipatan 5.000
-     * Contoh: 362.688 => 365.000
      */
     private function roundUpTo5000($number)
     {
@@ -51,10 +50,8 @@ class ProposalController extends Controller
         $kategori = PaketWisata::findOrFail($PaketId);
         $nomorPaket = $kategori->nomor_paket;
 
-        // Hitung berapa proposal yang sudah dibuat untuk kategori ini
         $count = Proposal::where('paket_wisata_id', $PaketId)->count();
 
-        // Konversi angka urut ke huruf (0 -> A, 1 -> B, 25 -> Z, 26 -> AA)
         $suffix = '';
         $n = $count;
         while ($n >= 0) {
@@ -78,7 +75,7 @@ class ProposalController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'paket_wisata_id' => 'required|exists:paket_wisata,id',
+            'paket_wisata_id'     => 'required|exists:paket_wisata,id',
             'is_menginap'         => 'required|in:ya,tidak',
             'jumlah_hari'         => 'required|integer|min:1',
             'jumlah_malam'        => 'required|integer|min:0',
@@ -115,7 +112,6 @@ class ProposalController extends Controller
             'margin_per_pax'          => 'required|numeric|min:0',
         ]);
 
-        // Validation Rules Check: Validasi Kapasitas Bus vs Peserta
         $armada = Armada::findOrFail($validated['armada_id']);
         $totalKapasitas = $armada->kapasitas * $validated['jumlah_unit_armada'];
         if ($totalKapasitas < $validated['jumlah_peserta']) {
@@ -126,7 +122,7 @@ class ProposalController extends Controller
         try {
             $peserta = $validated['jumlah_peserta'];
 
-            // 1. Sewa Base Armada (Persis Formula JS di create.blade)
+            // 1. Sewa Base Armada
             $totalArmada = $armada->harga_sewa * $validated['jumlah_unit_armada'];
 
             // 2. Tol Total
@@ -135,10 +131,10 @@ class ProposalController extends Controller
                 $totalTol = RuteTol::whereIn('id', $validated['rute_tol_ids'])->sum('tarif_total');
             }
 
-            // 3. Standar Biaya Fixed / Kelompok
+            // 3. Standar Biaya Fixed
             $sewaTambahanArmada = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_sewa_tambahan'] ?? 0) : 0;
-            $biayaBbm = ($armada->is_include_solar === 'tidak') ? ($validated['biaya_bbm'] ?? 0) : 0;
-            $biayaPenginapan = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_penginapan'] ?? 0) : 0;
+            $biayaBbm           = ($armada->is_include_solar === 'tidak') ? ($validated['biaya_bbm'] ?? 0) : 0;
+            $biayaPenginapan    = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_penginapan'] ?? 0) : 0;
 
             $stdFixedLainnya = $sewaTambahanArmada + $biayaBbm + $biayaPenginapan +
                 ($validated['biaya_tip_driver'] ?? 0) +
@@ -155,12 +151,12 @@ class ProposalController extends Controller
             $totalBiayaFixed  = $totalArmada + $totalTol + $stdFixedLainnya + $customFixed;
             $biayaFixedPerPax = $totalBiayaFixed / $peserta;
 
-            // 4. Variable Costs (HTM + Snack + Makan + Asuransi + Custom Var)
+            // 4. Variable Costs
             $htmPerPax = Destinasi::whereIn('id', $validated['destinasi_ids'])->sum('htm_per_orang');
 
             $totalSnackPerPax = ($validated['harga_snack'] ?? 0) * ($validated['jumlah_snack'] ?? 0);
             $totalMakanPerPax = ($validated['harga_makan'] ?? 0) * ($validated['jumlah_makan'] ?? 0);
-            $stdVar = $totalSnackPerPax + $totalMakanPerPax + ($validated['biaya_asuransi'] ?? 0);
+            $stdVar           = $totalSnackPerPax + $totalMakanPerPax + ($validated['biaya_asuransi'] ?? 0);
 
             $customVar = 0;
             if (!empty($validated['komponen_var'])) {
@@ -171,44 +167,27 @@ class ProposalController extends Controller
 
             $biayaVarPerPax = $htmPerPax + $stdVar + $customVar;
 
-            // Modal Murni Per Pax
-            $modalPerPax = ($totalBiayaFixed / $peserta) + $biayaVarPerPax;
-
-            // Perhitungan Sebelum Pembulatan
-            $marginPerPax = $validated['margin_per_pax'];
-            $rawHargaPerPax = $modalPerPax + $marginPerPax;
-
-            // AKSI PEMBULATAN KE ATAS KELIPATAN 5.000
+            // Modal & Margin
+            $modalPerPax      = $biayaFixedPerPax + $biayaVarPerPax;
+            $marginPerPax     = $validated['margin_per_pax'];
+            $rawHargaPerPax   = $modalPerPax + $marginPerPax;
             $hargaAkhirPerPax = $this->roundUpTo5000($rawHargaPerPax);
 
-            // 5. Susun String Fasilitas Otomatis
+            // Fasilitas String
             $fasilitasArr = ['Dokumentasi', 'P3K'];
-            if ($armada) {
-                array_unshift($fasilitasArr, 'Bus Pariwisata');
-            }
-            if (!empty($validated['destinasi_ids'])) {
-                $fasilitasArr[] = 'Tiket Masuk';
-            }
-            if (!empty($validated['biaya_tour_leader']) && $validated['biaya_tour_leader'] > 0) {
-                $fasilitasArr[] = 'Tour leader/guide';
-            }
-            if (!empty($validated['jumlah_makan']) && $validated['jumlah_makan'] > 0 && ($validated['harga_makan'] ?? 0) > 0) {
-                $fasilitasArr[] = 'Makan ' . $validated['jumlah_makan'] . 'x';
-            }
-            if (!empty($validated['jumlah_snack']) && $validated['jumlah_snack'] > 0 && ($validated['harga_snack'] ?? 0) > 0) {
-                $fasilitasArr[] = 'Snack ' . $validated['jumlah_snack'] . 'x';
-            }
-            if (!empty($validated['biaya_asuransi']) && $validated['biaya_asuransi'] > 0) {
-                $fasilitasArr[] = 'Asuransi Perjalanan';
-            }
+            if ($armada) array_unshift($fasilitasArr, 'Bus Pariwisata');
+            if (!empty($validated['destinasi_ids'])) $fasilitasArr[] = 'Tiket Masuk';
+            if (!empty($validated['biaya_tour_leader']) && $validated['biaya_tour_leader'] > 0) $fasilitasArr[] = 'Tour leader/guide';
+            if (!empty($validated['jumlah_makan']) && $validated['jumlah_makan'] > 0 && ($validated['harga_makan'] ?? 0) > 0) $fasilitasArr[] = 'Makan ' . $validated['jumlah_makan'] . 'x';
+            if (!empty($validated['jumlah_snack']) && $validated['jumlah_snack'] > 0 && ($validated['harga_snack'] ?? 0) > 0) $fasilitasArr[] = 'Snack ' . $validated['jumlah_snack'] . 'x';
+            if (!empty($validated['biaya_asuransi']) && $validated['biaya_asuransi'] > 0) $fasilitasArr[] = 'Asuransi Perjalanan';
             $fasilitasStr = implode("\n", array_unique($fasilitasArr));
 
-            // Generate Nama Sub Paket Otomatis
             $namaSubPaket = $this->generateSubPaketCode($validated['paket_wisata_id']);
 
             $proposal = Proposal::create([
-                'paket_wisata_id' => $validated['paket_wisata_id'],
-                'nama_sub_paket'           => $namaSubPaket,
+                'paket_wisata_id'     => $validated['paket_wisata_id'],
+                'nama_sub_paket'      => $namaSubPaket,
                 'user_id'             => Auth::id() ?? 1,
                 'jumlah_hari'         => $validated['jumlah_hari'],
                 'jumlah_malam'        => $validated['jumlah_malam'],
@@ -223,7 +202,7 @@ class ProposalController extends Controller
                 'status'              => 'draft',
             ]);
 
-            // Save Relasi Destinasi
+            // Save Relasi Destinasi & Tol & Armada
             foreach (Destinasi::whereIn('id', $validated['destinasi_ids'])->get() as $dest) {
                 ProposalDestinasi::create([
                     'proposal_id'  => $proposal->id,
@@ -232,7 +211,6 @@ class ProposalController extends Controller
                 ]);
             }
 
-            // Save Relasi Tol
             if (!empty($validated['rute_tol_ids'])) {
                 foreach (RuteTol::whereIn('id', $validated['rute_tol_ids'])->get() as $tol) {
                     ProposalTol::create([
@@ -243,7 +221,6 @@ class ProposalController extends Controller
                 }
             }
 
-            // Save Relasi Armada
             ProposalArmada::create([
                 'proposal_id'   => $proposal->id,
                 'armada_id'     => $armada->id,
@@ -251,21 +228,21 @@ class ProposalController extends Controller
                 'sewa_snapshot' => $armada->harga_sewa,
             ]);
 
-            // Save Component Breakdown
+            // Save Component Breakdown dengan NAMA LENGKAP & KONSISTEN
             $stdFixedList = [
-                'Tambahan Sewa Armada' => $sewaTambahanArmada,
-                'BBM / Solar'          => $biayaBbm,
-                'Biaya Penginapan'     => $biayaPenginapan,
-                'Tip Supir & Co-Driver' => $validated['biaya_tip_driver'] ?? 0,
-                'Tour Leader / Guide'  => $validated['biaya_tour_leader'] ?? 0,
-                'Biaya Parkir'         => $validated['biaya_parkir'] ?? 0,
+                'Tambahan Sewa Armada'     => $sewaTambahanArmada,
+                'BBM / Solar'              => $biayaBbm,
+                'Biaya Penginapan / Hotel' => $biayaPenginapan,
+                'Tip Supir & Co-Driver'    => $validated['biaya_tip_driver'] ?? 0,
+                'Tour Leader / Guide'      => $validated['biaya_tour_leader'] ?? 0,
+                'Biaya Parkir & Retribusi' => $validated['biaya_parkir'] ?? 0,
             ];
             foreach ($stdFixedList as $nama => $nom) {
                 if ($nom > 0) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $nama,
-                        'kategori'      => 'fixed',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $nama,
+                        'kategori'       => 'fixed',
                         'nominal_satuan' => $nom,
                     ]);
                 }
@@ -274,25 +251,27 @@ class ProposalController extends Controller
             if (!empty($validated['komponen_fixed'])) {
                 foreach ($validated['komponen_fixed'] as $item) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $item['nama'],
-                        'kategori'      => 'fixed',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $item['nama'],
+                        'kategori'       => 'fixed',
                         'nominal_satuan' => $item['nominal'],
                     ]);
                 }
             }
 
             $stdVarList = [
-                'Snack (' . ($validated['jumlah_snack'] ?? 0) . 'x)' => $totalSnackPerPax,
-                'Konsumsi / Makan (' . ($validated['jumlah_makan'] ?? 0) . 'x)' => $totalMakanPerPax,
-                'Asuransi Perjalanan'  => $validated['biaya_asuransi'] ?? 0,
+                'Harga Snack'         => $validated['harga_snack'] ?? 0,
+                'Jumlah Snack'        => $validated['jumlah_snack'] ?? 0,
+                'Harga Makan'         => $validated['harga_makan'] ?? 0,
+                'Jumlah Makan'        => $validated['jumlah_makan'] ?? 0,
+                'Asuransi Perjalanan' => $validated['biaya_asuransi'] ?? 0,
             ];
             foreach ($stdVarList as $nama => $nom) {
                 if ($nom > 0) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $nama,
-                        'kategori'      => 'variable',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $nama,
+                        'kategori'       => 'variable',
                         'nominal_satuan' => $nom,
                     ]);
                 }
@@ -301,9 +280,9 @@ class ProposalController extends Controller
             if (!empty($validated['komponen_var'])) {
                 foreach ($validated['komponen_var'] as $item) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $item['nama'],
-                        'kategori'      => 'variable',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $item['nama'],
+                        'kategori'       => 'variable',
                         'nominal_satuan' => $item['nominal'],
                     ]);
                 }
@@ -329,7 +308,7 @@ class ProposalController extends Controller
             'proposalBiayaKomponen'
         ]);
 
-        $paketList    = PaketWisata::orderBy('nomor_paket')->get();
+        $paketList     = PaketWisata::orderBy('nomor_paket')->get();
         $destinasiList = Destinasi::orderBy('nama_destinasi')->get();
         $ruteTolList   = RuteTol::orderBy('nama_rute')->get();
         $armadaList    = Armada::orderBy('jenis_armada')->get();
@@ -406,8 +385,8 @@ class ProposalController extends Controller
             }
 
             $sewaTambahanArmada = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_sewa_tambahan'] ?? 0) : 0;
-            $biayaBbm = ($armada->is_include_solar === 'tidak') ? ($validated['biaya_bbm'] ?? 0) : 0;
-            $biayaPenginapan = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_penginapan'] ?? 0) : 0;
+            $biayaBbm           = ($armada->is_include_solar === 'tidak') ? ($validated['biaya_bbm'] ?? 0) : 0;
+            $biayaPenginapan    = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_penginapan'] ?? 0) : 0;
 
             $stdFixedLainnya = $sewaTambahanArmada + $biayaBbm + $biayaPenginapan +
                 ($validated['biaya_tip_driver'] ?? 0) +
@@ -428,7 +407,7 @@ class ProposalController extends Controller
 
             $totalSnackPerPax = ($validated['harga_snack'] ?? 0) * ($validated['jumlah_snack'] ?? 0);
             $totalMakanPerPax = ($validated['harga_makan'] ?? 0) * ($validated['jumlah_makan'] ?? 0);
-            $stdVar = $totalSnackPerPax + $totalMakanPerPax + ($validated['biaya_asuransi'] ?? 0);
+            $stdVar           = $totalSnackPerPax + $totalMakanPerPax + ($validated['biaya_asuransi'] ?? 0);
 
             $customVar = 0;
             if (!empty($validated['komponen_var'])) {
@@ -439,11 +418,9 @@ class ProposalController extends Controller
 
             $biayaVarPerPax = $htmPerPax + $stdVar + $customVar;
 
-            $modalPerPax = ($totalBiayaFixed / $peserta) + $biayaVarPerPax;
-            $marginPerPax   = $validated['margin_per_pax'];
-            $rawHargaPerPax = $modalPerPax + $marginPerPax;
-
-            // AKSI PEMBULATAN KE ATAS KELIPATAN 5.000
+            $modalPerPax      = $biayaFixedPerPax + $biayaVarPerPax;
+            $marginPerPax     = $validated['margin_per_pax'];
+            $rawHargaPerPax   = $modalPerPax + $marginPerPax;
             $hargaAkhirPerPax = $this->roundUpTo5000($rawHargaPerPax);
 
             $namaSubPaket = $proposal->nama_sub_paket;
@@ -452,24 +429,12 @@ class ProposalController extends Controller
             }
 
             $fasilitasArr = ['Dokumentasi', 'P3K'];
-            if ($armada) {
-                array_unshift($fasilitasArr, 'Bus Pariwisata');
-            }
-            if (!empty($validated['destinasi_ids'])) {
-                $fasilitasArr[] = 'Tiket Masuk';
-            }
-            if (!empty($validated['biaya_tour_leader']) && $validated['biaya_tour_leader'] > 0) {
-                $fasilitasArr[] = 'Tour leader/guide';
-            }
-            if (!empty($validated['jumlah_makan']) && $validated['jumlah_makan'] > 0 && ($validated['harga_makan'] ?? 0) > 0) {
-                $fasilitasArr[] = 'Makan ' . $validated['jumlah_makan'] . 'x';
-            }
-            if (!empty($validated['jumlah_snack']) && $validated['jumlah_snack'] > 0 && ($validated['harga_snack'] ?? 0) > 0) {
-                $fasilitasArr[] = 'Snack ' . $validated['jumlah_snack'] . 'x';
-            }
-            if (!empty($validated['biaya_asuransi']) && $validated['biaya_asuransi'] > 0) {
-                $fasilitasArr[] = 'Asuransi Perjalanan';
-            }
+            if ($armada) array_unshift($fasilitasArr, 'Bus Pariwisata');
+            if (!empty($validated['destinasi_ids'])) $fasilitasArr[] = 'Tiket Masuk';
+            if (!empty($validated['biaya_tour_leader']) && $validated['biaya_tour_leader'] > 0) $fasilitasArr[] = 'Tour leader/guide';
+            if (!empty($validated['jumlah_makan']) && $validated['jumlah_makan'] > 0 && ($validated['harga_makan'] ?? 0) > 0) $fasilitasArr[] = 'Makan ' . $validated['jumlah_makan'] . 'x';
+            if (!empty($validated['jumlah_snack']) && $validated['jumlah_snack'] > 0 && ($validated['harga_snack'] ?? 0) > 0) $fasilitasArr[] = 'Snack ' . $validated['jumlah_snack'] . 'x';
+            if (!empty($validated['biaya_asuransi']) && $validated['biaya_asuransi'] > 0) $fasilitasArr[] = 'Asuransi Perjalanan';
             $fasilitasStr = implode("\n", array_unique($fasilitasArr));
 
             $proposal->update([
@@ -519,19 +484,19 @@ class ProposalController extends Controller
             ]);
 
             $stdFixedList = [
-                'Tambahan Sewa Armada' => $sewaTambahanArmada,
-                'BBM / Solar'          => $biayaBbm,
-                'Biaya Penginapan'     => $biayaPenginapan,
-                'Tip Supir & Co-Driver' => $validated['biaya_tip_driver'] ?? 0,
-                'Tour Leader / Guide'  => $validated['biaya_tour_leader'] ?? 0,
-                'Biaya Parkir'         => $validated['biaya_parkir'] ?? 0,
+                'Tambahan Sewa Armada'     => $sewaTambahanArmada,
+                'BBM / Solar'              => $biayaBbm,
+                'Biaya Penginapan / Hotel' => $biayaPenginapan,
+                'Tip Supir & Co-Driver'    => $validated['biaya_tip_driver'] ?? 0,
+                'Tour Leader / Guide'      => $validated['biaya_tour_leader'] ?? 0,
+                'Biaya Parkir & Retribusi' => $validated['biaya_parkir'] ?? 0,
             ];
             foreach ($stdFixedList as $nama => $nom) {
                 if ($nom > 0) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $nama,
-                        'kategori'      => 'fixed',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $nama,
+                        'kategori'       => 'fixed',
                         'nominal_satuan' => $nom,
                     ]);
                 }
@@ -540,25 +505,27 @@ class ProposalController extends Controller
             if (!empty($validated['komponen_fixed'])) {
                 foreach ($validated['komponen_fixed'] as $item) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $item['nama'],
-                        'kategori'      => 'fixed',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $item['nama'],
+                        'kategori'       => 'fixed',
                         'nominal_satuan' => $item['nominal'],
                     ]);
                 }
             }
 
             $stdVarList = [
-                'Snack (' . ($validated['jumlah_snack'] ?? 0) . 'x)' => $totalSnackPerPax,
-                'Konsumsi / Makan (' . ($validated['jumlah_makan'] ?? 0) . 'x)' => $totalMakanPerPax,
-                'Asuransi Perjalanan'  => $validated['biaya_asuransi'] ?? 0,
+                'Harga Snack'         => $validated['harga_snack'] ?? 0,
+                'Jumlah Snack'        => $validated['jumlah_snack'] ?? 0,
+                'Harga Makan'         => $validated['harga_makan'] ?? 0,
+                'Jumlah Makan'        => $validated['jumlah_makan'] ?? 0,
+                'Asuransi Perjalanan' => $validated['biaya_asuransi'] ?? 0,
             ];
             foreach ($stdVarList as $nama => $nom) {
                 if ($nom > 0) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $nama,
-                        'kategori'      => 'variable',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $nama,
+                        'kategori'       => 'variable',
                         'nominal_satuan' => $nom,
                     ]);
                 }
@@ -567,9 +534,9 @@ class ProposalController extends Controller
             if (!empty($validated['komponen_var'])) {
                 foreach ($validated['komponen_var'] as $item) {
                     ProposalBiayaKomponen::create([
-                        'proposal_id'   => $proposal->id,
-                        'nama_komponen' => $item['nama'],
-                        'kategori'      => 'variable',
+                        'proposal_id'    => $proposal->id,
+                        'nama_komponen'  => $item['nama'],
+                        'kategori'       => 'variable',
                         'nominal_satuan' => $item['nominal'],
                     ]);
                 }
