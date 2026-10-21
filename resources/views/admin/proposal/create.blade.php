@@ -357,7 +357,7 @@
                                     </div>
                                     <div class="input-group input-group-sm">
                                         <input type="number" name="jumlah_makan" id="jumlah_makan"
-                                            class="form-control calc-trigger" value="{{ old('jumlah_makan', 2) }}"
+                                            class="form-control calc-trigger" value="{{ old('jumlah_makan', 1) }}"
                                             min="0">
                                         <span class="input-group-text">x Makan</span>
                                     </div>
@@ -653,11 +653,6 @@
                 }
             }
 
-            function roundUpTo5000(number) {
-                if (number <= 0) return 0;
-                return Math.ceil(number / 5000) * 5000;
-            }
-
             function recalculate() {
                 handleMenginapLogic();
                 handleArmadaSolarLogic();
@@ -669,25 +664,26 @@
                 let sewaBase = parseFloat(selectedOption ? selectedOption.getAttribute('data-sewa') || 0 : 0);
                 let unit = parseInt(document.getElementById('jumlah_unit_armada').value) || 1;
 
-                // 1. Total Armada Base
+                // 1. Hitung Fixed Costs (Sewa Bus + Tol + Semua Input .fixed-nominal)
                 let totalArmada = sewaBase * unit;
 
-                // 2. Total Tol
                 let totalTol = 0;
                 document.querySelectorAll('input[name="rute_tol_ids[]"]:checked').forEach(cb => {
                     totalTol += parseFloat(cb.getAttribute('data-tarif') || 0);
                 });
 
-                // 3. Total Fixed Standar & Custom
                 let totalFixedLainnya = 0;
                 document.querySelectorAll('.fixed-nominal').forEach(inp => {
-                    totalFixedLainnya += parseFloat(inp.value || 0);
+                    // Hanya menghitung input yang tidak tersembunyi (d-none)
+                    if (inp.offsetParent !== null) {
+                        totalFixedLainnya += parseFloat(inp.value || 0);
+                    }
                 });
 
                 let totalBiayaFixed = totalArmada + totalTol + totalFixedLainnya;
                 let biayaFixedPerPax = totalBiayaFixed / peserta;
 
-                // 4. Total HTM & Variable Costs Per Pax
+                // 2. Hitung Variable Costs (HTM + Snack + Makan + Input .var-nominal)
                 let totalHTM = 0;
                 document.querySelectorAll('input[name="destinasi_ids[]"]:checked').forEach(cb => {
                     totalHTM += parseFloat(cb.getAttribute('data-htm') || 0);
@@ -697,38 +693,37 @@
                 let jumlahSnack = parseInt(document.getElementById('jumlah_snack').value) || 0;
                 let hargaMakan = parseFloat(document.getElementById('harga_makan').value) || 0;
                 let jumlahMakan = parseInt(document.getElementById('jumlah_makan').value) || 0;
-                let asuransi = parseFloat(document.getElementById('biaya_asuransi').value) || 0;
 
                 let totalSnackPerPax = hargaSnack * jumlahSnack;
                 let totalMakanPerPax = hargaMakan * jumlahMakan;
-                let stdVar = totalSnackPerPax + totalMakanPerPax + asuransi;
 
                 let customVarPerPax = 0;
                 document.querySelectorAll('.var-nominal').forEach(inp => {
                     customVarPerPax += parseFloat(inp.value || 0);
                 });
 
-                let biayaVarPerPax = totalHTM + stdVar + customVarPerPax;
+                let biayaVarPerPax = totalHTM + totalSnackPerPax + totalMakanPerPax + customVarPerPax;
 
-                // 5. Modal, Margin, & Harga Akhir / Pax (Selaras dengan Controller)
+                // 3. Modal & Margin Per Pax
                 let modalPerPax = biayaFixedPerPax + biayaVarPerPax;
                 let marginPerPax = parseFloat(document.getElementById('margin_per_pax').value || 0);
-                let rawHargaPerPax = modalPerPax + marginPerPax;
 
-                // Pembulatan konsisten ke atas kelipatan 5.000
-                let finalPerPax = roundUpTo5000(rawHargaPerPax);
+                // 4. HARGA AKHIR TANPA PEMBULATAN (NILAI ASLI)
+                let finalPerPaxMurni = modalPerPax + marginPerPax;
 
-                // Total Operasional Keseluruhan
+                // Total Biaya Operasional & Grand Total Omset
                 let totalBiayaOperasional = totalBiayaFixed + (biayaVarPerPax * peserta);
-                let grandTotal = finalPerPax * peserta;
+                let grandTotal = finalPerPaxMurni * peserta;
 
-                // Update Display DOM Live
+                // Update Display DOM Simulasi Real-Time
                 document.getElementById('disp-total-peserta').innerText = peserta + ' Pax';
                 document.getElementById('disp-total-biaya').innerText = formatRupiah(totalBiayaOperasional);
                 document.getElementById('disp-biaya-per-pax').innerText = '(Modal/Pax: ' + formatRupiah(
                     modalPerPax) + ')';
                 document.getElementById('disp-margin-pax').innerText = formatRupiah(marginPerPax);
-                document.getElementById('disp-final-pax').innerText = formatRupiah(finalPerPax);
+
+                // Tampilkan Harga Per Pax ASLI tanpa pembulatan di card simulasi
+                document.getElementById('disp-final-pax').innerText = formatRupiah(finalPerPaxMurni);
                 document.getElementById('disp-grand-total').innerText = formatRupiah(grandTotal);
             }
 
