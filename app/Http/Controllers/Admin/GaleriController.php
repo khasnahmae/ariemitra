@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Galeri;
-use App\Models\PaketWisata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -13,7 +12,8 @@ class GaleriController extends Controller
 {
     public function index()
     {
-        $galeriList = Galeri::with('paketWisata')->latest()->paginate(12);
+        $query = Galeri::query();
+        $galeriList = $query->latest()->paginate(12);
         return view('admin.galeri.index', compact('galeriList'));
     }
 
