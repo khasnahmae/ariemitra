@@ -57,13 +57,13 @@ class MasterDataSeeder extends Seeder
                 'harga_sewa'       => 3000000, // 3jt
             ],
             [
-                'jenis_armada'     => 'Nariyama Trans',
+                'jenis_armada'     => 'Naryama Trans',
                 'kapasitas'        => 39,
                 'is_include_solar' => 'ya',
                 'harga_sewa'       => 3000000, // 3jt
             ],
             [
-                'jenis_armada'     => 'Nariyama Trans',
+                'jenis_armada'     => 'Naryama Trans',
                 'kapasitas'        => 50,
                 'is_include_solar' => 'ya',
                 'harga_sewa'       => 4200000, // 4,2jt
