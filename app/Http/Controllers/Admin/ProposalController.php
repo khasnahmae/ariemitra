@@ -7,6 +7,7 @@ use App\Models\Proposal;
 use App\Models\Destinasi;
 use App\Models\RuteTol;
 use App\Models\Armada;
+use App\Models\PaketWisata;
 use App\Models\ProposalDestinasi;
 use App\Models\ProposalTol;
 use App\Models\ProposalArmada;
@@ -14,17 +15,26 @@ use App\Models\ProposalBiayaKomponen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProposalController extends Controller
 {
+    /**
+     * Helper Function: Pembulatan Ke Atas Kelipatan 5.000
+     * Contoh: 362.688 => 365.000
+     */
+    private function roundUpTo5000($number)
+    {
+        if ($number <= 0) return 0;
+        return ceil($number / 5000) * 5000;
+    }
+
     public function index(Request $request)
     {
-        $query = Proposal::with('user');
+        $query = Proposal::with(['user', 'PaketWisata']);
 
         if ($request->filled('search')) {
-            $query->where('kode_proposal', 'like', "%{$request->search}%");
+            $query->where('nama_sub_paket', 'like', "%{$request->search}%");
         }
 
         if ($request->filled('status')) {
@@ -36,28 +46,49 @@ class ProposalController extends Controller
         return view('admin.proposal.index', compact('proposalList'));
     }
 
+    private function generateSubPaketCode($PaketId)
+    {
+        $kategori = PaketWisata::findOrFail($PaketId);
+        $nomorPaket = $kategori->nomor_paket;
+
+        // Hitung berapa proposal yang sudah dibuat untuk kategori ini
+        $count = Proposal::where('paket_wisata_id', $PaketId)->count();
+
+        // Konversi angka urut ke huruf (0 -> A, 1 -> B, 25 -> Z, 26 -> AA)
+        $suffix = '';
+        $n = $count;
+        while ($n >= 0) {
+            $suffix = chr(65 + ($n % 26)) . $suffix;
+            $n = floor($n / 26) - 1;
+        }
+
+        return $nomorPaket . $suffix;
+    }
+
     public function create()
     {
+        $paketList = PaketWisata::orderBy('nomor_paket')->get();
         $destinasiList = Destinasi::orderBy('nama_destinasi')->get();
         $ruteTolList   = RuteTol::orderBy('nama_rute')->get();
         $armadaList    = Armada::orderBy('jenis_armada')->get();
 
-        return view('admin.proposal.create', compact('destinasiList', 'ruteTolList', 'armadaList'));
+        return view('admin.proposal.create', compact('paketList', 'destinasiList', 'ruteTolList', 'armadaList'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'paket_wisata_id' => 'required|exists:paket_wisata,id',
             'is_menginap'         => 'required|in:ya,tidak',
             'jumlah_hari'         => 'required|integer|min:1',
             'jumlah_malam'        => 'required|integer|min:0',
             'jumlah_peserta'      => 'required|integer|min:1',
-            'armada_id'          => 'required|exists:armada,id',
+            'armada_id'           => 'required|exists:armada,id',
             'jumlah_unit_armada'  => 'required|integer|min:1',
-            'destinasi_ids'      => 'required|array|min:1',
-            'destinasi_ids.*'    => 'exists:destinasi,id',
-            'rute_tol_ids'       => 'nullable|array',
-            'rute_tol_ids.*'     => 'exists:rute_tol,id',
+            'destinasi_ids'       => 'required|array|min:1',
+            'destinasi_ids.*'     => 'exists:destinasi,id',
+            'rute_tol_ids'        => 'nullable|array',
+            'rute_tol_ids.*'      => 'exists:rute_tol,id',
 
             // Fixed Standard Costs
             'biaya_sewa_tambahan' => 'nullable|numeric|min:0',
@@ -75,13 +106,13 @@ class ProposalController extends Controller
             'biaya_asuransi'      => 'nullable|numeric|min:0',
 
             // Custom Dynamic Costs
-            'komponen_fixed'      => 'nullable|array',
-            'komponen_fixed.*.nama' => 'required|string',
+            'komponen_fixed'          => 'nullable|array',
+            'komponen_fixed.*.nama'   => 'required|string',
             'komponen_fixed.*.nominal' => 'required|numeric|min:0',
-            'komponen_var'        => 'nullable|array',
-            'komponen_var.*.nama'   => 'required|string',
-            'komponen_var.*.nominal' => 'required|numeric|min:0',
-            'margin_per_pax'      => 'required|numeric|min:0',
+            'komponen_var'            => 'nullable|array',
+            'komponen_var.*.nama'     => 'required|string',
+            'komponen_var.*.nominal'   => 'required|numeric|min:0',
+            'margin_per_pax'          => 'required|numeric|min:0',
         ]);
 
         // Validation Rules Check: Validasi Kapasitas Bus vs Peserta
@@ -95,22 +126,24 @@ class ProposalController extends Controller
         try {
             $peserta = $validated['jumlah_peserta'];
 
-            // 1. Hitung Sewa Base Armada + Sewa Tambahan Menginap
-            $sewaBaseArmada = $armada->harga_sewa * $validated['jumlah_unit_armada'];
-            $sewaTambahanArmada = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_sewa_tambahan'] ?? 0) : 0;
-            $totalBiayaArmada = $sewaBaseArmada + $sewaTambahanArmada;
+            // 1. Sewa Base Armada (Persis Formula JS di create.blade)
+            $totalArmada = $armada->harga_sewa * $validated['jumlah_unit_armada'];
 
-            // 2. Hitung Tol
-            $totalBiayaTol = 0;
+            // 2. Tol Total
+            $totalTol = 0;
             if (!empty($validated['rute_tol_ids'])) {
-                $totalBiayaTol = RuteTol::whereIn('id', $validated['rute_tol_ids'])->sum('tarif_total');
+                $totalTol = RuteTol::whereIn('id', $validated['rute_tol_ids'])->sum('tarif_total');
             }
 
-            // 3. Total Fixed Costs
+            // 3. Standar Biaya Fixed / Kelompok
+            $sewaTambahanArmada = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_sewa_tambahan'] ?? 0) : 0;
             $biayaBbm = ($armada->is_include_solar === 'tidak') ? ($validated['biaya_bbm'] ?? 0) : 0;
             $biayaPenginapan = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_penginapan'] ?? 0) : 0;
 
-            $stdFixed = $biayaBbm + $biayaPenginapan + ($validated['biaya_tip_driver'] ?? 0) + ($validated['biaya_tour_leader'] ?? 0) + ($validated['biaya_parkir'] ?? 0);
+            $stdFixedLainnya = $sewaTambahanArmada + $biayaBbm + $biayaPenginapan +
+                ($validated['biaya_tip_driver'] ?? 0) +
+                ($validated['biaya_tour_leader'] ?? 0) +
+                ($validated['biaya_parkir'] ?? 0);
 
             $customFixed = 0;
             if (!empty($validated['komponen_fixed'])) {
@@ -119,7 +152,7 @@ class ProposalController extends Controller
                 }
             }
 
-            $totalBiayaFixed  = $totalBiayaArmada + $totalBiayaTol + $stdFixed + $customFixed;
+            $totalBiayaFixed  = $totalArmada + $totalTol + $stdFixedLainnya + $customFixed;
             $biayaFixedPerPax = $totalBiayaFixed / $peserta;
 
             // 4. Variable Costs (HTM + Snack + Makan + Asuransi + Custom Var)
@@ -137,8 +170,16 @@ class ProposalController extends Controller
             }
 
             $biayaVarPerPax = $htmPerPax + $stdVar + $customVar;
-            $marginPerPax   = $validated['margin_per_pax'];
-            $hargaAkhirPerPax = $biayaFixedPerPax + $biayaVarPerPax + $marginPerPax;
+
+            // Modal Murni Per Pax
+            $modalPerPax = ($totalBiayaFixed / $peserta) + $biayaVarPerPax;
+
+            // Perhitungan Sebelum Pembulatan
+            $marginPerPax = $validated['margin_per_pax'];
+            $rawHargaPerPax = $modalPerPax + $marginPerPax;
+
+            // AKSI PEMBULATAN KE ATAS KELIPATAN 5.000
+            $hargaAkhirPerPax = $this->roundUpTo5000($rawHargaPerPax);
 
             // 5. Susun String Fasilitas Otomatis
             $fasilitasArr = ['Dokumentasi', 'P3K'];
@@ -162,15 +203,17 @@ class ProposalController extends Controller
             }
             $fasilitasStr = implode("\n", array_unique($fasilitasArr));
 
-            $kodeProposal = 'PROP-' . date('Ym') . '-' . strtoupper(Str::random(4));
+            // Generate Nama Sub Paket Otomatis
+            $namaSubPaket = $this->generateSubPaketCode($validated['paket_wisata_id']);
 
             $proposal = Proposal::create([
-                'kode_proposal'       => $kodeProposal,
+                'paket_wisata_id' => $validated['paket_wisata_id'],
+                'nama_sub_paket'           => $namaSubPaket,
                 'user_id'             => Auth::id() ?? 1,
                 'jumlah_hari'         => $validated['jumlah_hari'],
                 'jumlah_malam'        => $validated['jumlah_malam'],
                 'is_menginap'         => $validated['is_menginap'],
-                'jumlah_peserta'     => $peserta,
+                'jumlah_peserta'      => $peserta,
                 'fasilitas'           => $fasilitasStr,
                 'total_biaya_fixed'   => $totalBiayaFixed,
                 'biaya_fixed_per_pax' => $biayaFixedPerPax,
@@ -268,36 +311,25 @@ class ProposalController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.proposal.show', $proposal->uuid)
-                ->with('success', 'Proposal perjalanan berhasil dibuat dengan kode ' . $kodeProposal);
+            return redirect()->route('admin.proposal.index')
+                ->with('success', 'Proposal paket wisata berhasil dibuat dengan Sub Paket ' . $namaSubPaket);
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'Gagal membuat proposal: ' . $e->getMessage());
         }
     }
 
-    public function show(Proposal $proposal)
-    {
-        $proposal->load([
-            'user',
-            'proposalDestinasi.destinasi',
-            'proposalTol.ruteTol',
-            'proposalArmada.armada',
-            'proposalBiayaKomponen'
-        ]);
-
-        return view('admin.proposal.show', compact('proposal'));
-    }
-
     public function edit(Proposal $proposal)
     {
         $proposal->load([
+            'PaketWisata',
             'proposalDestinasi',
             'proposalTol',
             'proposalArmada',
             'proposalBiayaKomponen'
         ]);
 
+        $paketList    = PaketWisata::orderBy('nomor_paket')->get();
         $destinasiList = Destinasi::orderBy('nama_destinasi')->get();
         $ruteTolList   = RuteTol::orderBy('nama_rute')->get();
         $armadaList    = Armada::orderBy('jenis_armada')->get();
@@ -308,6 +340,7 @@ class ProposalController extends Controller
 
         return view('admin.proposal.edit', compact(
             'proposal',
+            'paketList',
             'destinasiList',
             'ruteTolList',
             'armadaList',
@@ -320,16 +353,17 @@ class ProposalController extends Controller
     public function update(Request $request, Proposal $proposal)
     {
         $validated = $request->validate([
+            'paket_wisata_id'     => 'required|exists:paket_wisata,id',
             'is_menginap'         => 'required|in:ya,tidak',
             'jumlah_hari'         => 'required|integer|min:1',
             'jumlah_malam'        => 'required|integer|min:0',
             'jumlah_peserta'      => 'required|integer|min:1',
-            'armada_id'          => 'required|exists:armada,id',
+            'armada_id'           => 'required|exists:armada,id',
             'jumlah_unit_armada'  => 'required|integer|min:1',
-            'destinasi_ids'      => 'required|array|min:1',
-            'destinasi_ids.*'    => 'exists:destinasi,id',
-            'rute_tol_ids'       => 'nullable|array',
-            'rute_tol_ids.*'     => 'exists:rute_tol,id',
+            'destinasi_ids'       => 'required|array|min:1',
+            'destinasi_ids.*'     => 'exists:destinasi,id',
+            'rute_tol_ids'        => 'nullable|array',
+            'rute_tol_ids.*'      => 'exists:rute_tol,id',
 
             'biaya_sewa_tambahan' => 'nullable|numeric|min:0',
             'biaya_bbm'           => 'nullable|numeric|min:0',
@@ -344,14 +378,14 @@ class ProposalController extends Controller
             'jumlah_makan'        => 'nullable|integer|min:0',
             'biaya_asuransi'      => 'nullable|numeric|min:0',
 
-            'komponen_fixed'      => 'nullable|array',
-            'komponen_fixed.*.nama' => 'required|string',
+            'komponen_fixed'          => 'nullable|array',
+            'komponen_fixed.*.nama'   => 'required|string',
             'komponen_fixed.*.nominal' => 'required|numeric|min:0',
-            'komponen_var'        => 'nullable|array',
-            'komponen_var.*.nama'   => 'required|string',
-            'komponen_var.*.nominal' => 'required|numeric|min:0',
-            'margin_per_pax'      => 'required|numeric|min:0',
-            'status'              => 'required|in:draft,sent,approved,rejected',
+            'komponen_var'            => 'nullable|array',
+            'komponen_var.*.nama'     => 'required|string',
+            'komponen_var.*.nominal'   => 'required|numeric|min:0',
+            'margin_per_pax'          => 'required|numeric|min:0',
+            'status'                  => 'required|in:draft,sent,approved,rejected',
         ]);
 
         $armada = Armada::findOrFail($validated['armada_id']);
@@ -364,19 +398,21 @@ class ProposalController extends Controller
         try {
             $peserta = $validated['jumlah_peserta'];
 
-            $sewaBaseArmada = $armada->harga_sewa * $validated['jumlah_unit_armada'];
-            $sewaTambahanArmada = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_sewa_tambahan'] ?? 0) : 0;
-            $totalBiayaArmada = $sewaBaseArmada + $sewaTambahanArmada;
+            $totalArmada = $armada->harga_sewa * $validated['jumlah_unit_armada'];
 
-            $totalBiayaTol = 0;
+            $totalTol = 0;
             if (!empty($validated['rute_tol_ids'])) {
-                $totalBiayaTol = RuteTol::whereIn('id', $validated['rute_tol_ids'])->sum('tarif_total');
+                $totalTol = RuteTol::whereIn('id', $validated['rute_tol_ids'])->sum('tarif_total');
             }
 
+            $sewaTambahanArmada = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_sewa_tambahan'] ?? 0) : 0;
             $biayaBbm = ($armada->is_include_solar === 'tidak') ? ($validated['biaya_bbm'] ?? 0) : 0;
             $biayaPenginapan = ($validated['is_menginap'] === 'ya') ? ($validated['biaya_penginapan'] ?? 0) : 0;
 
-            $stdFixed = $biayaBbm + $biayaPenginapan + ($validated['biaya_tip_driver'] ?? 0) + ($validated['biaya_tour_leader'] ?? 0) + ($validated['biaya_parkir'] ?? 0);
+            $stdFixedLainnya = $sewaTambahanArmada + $biayaBbm + $biayaPenginapan +
+                ($validated['biaya_tip_driver'] ?? 0) +
+                ($validated['biaya_tour_leader'] ?? 0) +
+                ($validated['biaya_parkir'] ?? 0);
 
             $customFixed = 0;
             if (!empty($validated['komponen_fixed'])) {
@@ -385,7 +421,7 @@ class ProposalController extends Controller
                 }
             }
 
-            $totalBiayaFixed  = $totalBiayaArmada + $totalBiayaTol + $stdFixed + $customFixed;
+            $totalBiayaFixed  = $totalArmada + $totalTol + $stdFixedLainnya + $customFixed;
             $biayaFixedPerPax = $totalBiayaFixed / $peserta;
 
             $htmPerPax = Destinasi::whereIn('id', $validated['destinasi_ids'])->sum('htm_per_orang');
@@ -402,8 +438,18 @@ class ProposalController extends Controller
             }
 
             $biayaVarPerPax = $htmPerPax + $stdVar + $customVar;
+
+            $modalPerPax = ($totalBiayaFixed / $peserta) + $biayaVarPerPax;
             $marginPerPax   = $validated['margin_per_pax'];
-            $hargaAkhirPerPax = $biayaFixedPerPax + $biayaVarPerPax + $marginPerPax;
+            $rawHargaPerPax = $modalPerPax + $marginPerPax;
+
+            // AKSI PEMBULATAN KE ATAS KELIPATAN 5.000
+            $hargaAkhirPerPax = $this->roundUpTo5000($rawHargaPerPax);
+
+            $namaSubPaket = $proposal->nama_sub_paket;
+            if ($proposal->paket_wisata_id != $validated['paket_wisata_id']) {
+                $namaSubPaket = $this->generateSubPaketCode($validated['paket_wisata_id']);
+            }
 
             $fasilitasArr = ['Dokumentasi', 'P3K'];
             if ($armada) {
@@ -427,10 +473,12 @@ class ProposalController extends Controller
             $fasilitasStr = implode("\n", array_unique($fasilitasArr));
 
             $proposal->update([
+                'paket_wisata_id'     => $validated['paket_wisata_id'],
+                'nama_sub_paket'      => $namaSubPaket,
                 'jumlah_hari'         => $validated['jumlah_hari'],
                 'jumlah_malam'        => $validated['jumlah_malam'],
                 'is_menginap'         => $validated['is_menginap'],
-                'jumlah_peserta'     => $peserta,
+                'jumlah_peserta'      => $peserta,
                 'fasilitas'           => $fasilitasStr,
                 'total_biaya_fixed'   => $totalBiayaFixed,
                 'biaya_fixed_per_pax' => $biayaFixedPerPax,
@@ -529,8 +577,8 @@ class ProposalController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.proposal.show', $proposal->uuid)
-                ->with('success', 'Proposal perjalanan berhasil diperbarui!');
+            return redirect()->route('admin.proposal.index')
+                ->with('success', 'Proposal paket wisata berhasil diperbarui!');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'Gagal memperbarui proposal: ' . $e->getMessage());
@@ -554,6 +602,7 @@ class ProposalController extends Controller
     {
         $proposal->load([
             'user',
+            'PaketWisata',
             'proposalDestinasi.destinasi',
             'proposalTol.ruteTol',
             'proposalArmada.armada',

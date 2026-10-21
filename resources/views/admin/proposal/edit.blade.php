@@ -69,6 +69,31 @@
 
             <div class="row align-items-start">
                 <div class="col-lg-8">
+                    <div class="card mb-3 border">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-dark mb-3">Kategori Paket Wisata</h6>
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="paket_wisata_id" class="form-label fw-bold">Pilih Paket Wisata <span
+                                            class="text-danger">*</span></label>
+                                    <select name="paket_wisata_id" id="paket_wisata_id" class="form-select" required>
+                                        <option value="">-- Pilih Paket Wisata --</option>
+                                        @foreach ($paketList as $pkt)
+                                            <option value="{{ $pkt->id }}"
+                                                {{ old('paket_wisata_id', $proposal->paket_wisata_id) == $pkt->id ? 'selected' : '' }}>
+                                                Paket {{ $pkt->nomor_paket }} - {{ $pkt->nama_paket }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Nama Sub Paket</label>
+                                    <input type="text" class="form-control bg-light fw-bold"
+                                        value="{{ $proposal->nama_sub_paket }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- BLOCK DURASI & PENGINAPAN -->
                     <div class="card mb-3 border">
                         <div class="card-body">
@@ -233,7 +258,8 @@
                                                             {{ in_array($dest->id, old('destinasi_ids', $selectedDestinasi)) ? 'checked' : '' }}>
                                                         <span
                                                             class="text-dark option-label-text">{{ $dest->nama_destinasi }}
-                                                            ({{ $dest->lokasi }})</span>
+                                                            ({{ $dest->lokasi }})
+                                                        </span>
                                                     </div>
                                                     <small class="text-muted text-nowrap ms-2">HTM: <span
                                                             class="text-secondary fw-bold">Rp
@@ -774,7 +800,10 @@
                 let modalPerPax = totalBiayaOperasional / peserta;
 
                 let marginPerPax = parseFloat(document.getElementById('margin_per_pax').value || 0);
-                let finalPerPax = modalPerPax + marginPerPax;
+                let rawFinalPerPax = modalPerPax + marginPerPax;
+
+                // PEMBULATAN KE ATAS KELIPATAN 5.000 DI JAVASCRIPT
+                let finalPerPax = rawFinalPerPax > 0 ? Math.ceil(rawFinalPerPax / 5000) * 5000 : 0;
                 let grandTotal = finalPerPax * peserta;
 
                 document.getElementById('disp-total-peserta').innerText = peserta + ' Pax';

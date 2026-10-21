@@ -79,7 +79,7 @@
                         <li class="nav-item {{ request()->is('admin/proposal*') ? 'active' : '' }}">
                             <a href="{{ route('admin.proposal.index') }}">
                                 <i class="far fa-file-alt"></i>
-                                <p>Proposal Tour</p>
+                                <p>Proposal</p>
                             </a>
                         </li>
                         <li

@@ -63,6 +63,29 @@
 
             <div class="row align-items-start">
                 <div class="col-lg-8">
+                    <!-- BLOCK KATEGORI PAKET WISATA -->
+                    <div class="card mb-3 border">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-dark mb-3">Kategori Paket Wisata</h6>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="paket_wisata_id" class="form-label fw-bold">Pilih Paket Wisata <span
+                                            class="text-danger">*</span></label>
+                                    <select name="paket_wisata_id" id="paket_wisata_id" class="form-select" required>
+                                        <option value="">-- Pilih Paket Wisata --</option>
+                                        @foreach ($paketList as $pkt)
+                                            <option value="{{ $pkt->id }}"
+                                                {{ old('paket_wisata_id') == $pkt->id ? 'selected' : '' }}>
+                                                Paket {{ $pkt->nomor_paket }} - {{ $pkt->nama_paket }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted mt-1 d-block">Nama Sub Paket (contoh: 1A, 1B, 2A) akan
+                                        ter-generate otomatis saat proposal disimpan.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- BLOCK DURASI & PENGINAPAN -->
                     <div class="card mb-3 border">
                         <div class="card-body">
@@ -679,7 +702,10 @@
                 let modalPerPax = totalBiayaOperasional / peserta;
 
                 let marginPerPax = parseFloat(document.getElementById('margin_per_pax').value || 0);
-                let finalPerPax = modalPerPax + marginPerPax;
+                let rawFinalPerPax = modalPerPax + marginPerPax;
+
+                // PEMBULATAN KE ATAS KELIPATAN 5.000 DI JAVASCRIPT
+                let finalPerPax = rawFinalPerPax > 0 ? Math.ceil(rawFinalPerPax / 5000) * 5000 : 0;
                 let grandTotal = finalPerPax * peserta;
 
                 document.getElementById('disp-total-peserta').innerText = peserta + ' Pax';

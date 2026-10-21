@@ -15,7 +15,7 @@
         </ul>
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
-                <h3 class="fw-bold mb-1">Kelola Proposal Perjalanan</h3>
+                <h3 class="fw-bold mb-1">Kelola Proposal Paket Wisata</h3>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
                 <a href="{{ route('admin.proposal.create') }}" class="btn btn-secondary btn-round">
@@ -47,8 +47,7 @@
                             <table id="basic-datatables" class="display table table-striped table-hover align-middle w-100">
                                 <thead>
                                     <tr>
-                                        <th>Kode Proposal</th>
-                                        <th>Nama Klien</th>
+                                        <th>Nama Paket</th>
                                         <th>Peserta</th>
                                         <th>Harga / Pax</th>
                                         <th>Status</th>
@@ -60,9 +59,8 @@
                                         <tr>
                                             <td>
                                                 <span
-                                                    class="badge badge-secondary fw-bold font-monospace">{{ $p->kode_proposal }}</span>
+                                                    class="badge badge-secondary fw-bold font-monospace">{{ $p->nama_sub_paket }}</span>
                                             </td>
-                                            <td class="fw-bold">{{ $p->nama_klien }}</td>
                                             <td>{{ $p->jumlah_peserta }} Pax</td>
                                             <td class="text-success fw-bold">
                                                 Rp {{ number_format($p->harga_akhir_per_pax, 0, ',', '.') }}

@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('proposal', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('kode_proposal', 50)->unique();
+            $table->foreignId('paket_wisata_id')->constrained('paket_wisata')->onDelete('cascade');
+            $table->string('nama_sub_paket', 50)->unique();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
             $table->integer('jumlah_hari')->default(1);

@@ -3,48 +3,35 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\PaketWisata;
-use App\Models\Destinasi;
+use App\Models\Proposal;
 use App\Models\Galeri;
 
 class HomeController extends Controller
 {
-
     public function index()
     {
-        $paketPopuler = PaketWisata::with('destinasi')
-            ->where('is_active', true)
+        // Ambil proposal yang aktif (bisa difilter berdasarkan status 'approved' atau 'sent' jika perlu)
+        $paketPopuler = Proposal::with(['PaketWisata', 'proposalDestinasi.destinasi'])
             ->latest()
             ->take(6)
             ->get();
 
-        $destinasiPilihan = Destinasi::latest()->take(8)->get();
-
         $galeriTerbaru = Galeri::latest()->take(6)->get();
 
-        return view('frontend.home', compact('paketPopuler', 'destinasiPilihan', 'galeriTerbaru'));
+        return view('frontend.home', compact('paketPopuler', 'galeriTerbaru'));
     }
 
-    /**
-     * Menampilkan Halaman Profil Biro Perjalanan.
-     */
     public function profil()
     {
         return view('frontend.profil');
     }
 
-    /**
-     * Menampilkan Halaman Galeri & Dokumentasi Perjalanan.
-     */
     public function galeri()
     {
-        $galeriList = Galeri::with('paketWisata')->latest()->paginate(12);
+        $galeriList = Galeri::latest()->paginate(12);
         return view('frontend.galeri', compact('galeriList'));
     }
 
-    /**
-     * Menampilkan Halaman Kontak & Informasi Pemesanan.
-     */
     public function kontak()
     {
         return view('frontend.kontak');

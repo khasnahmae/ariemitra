@@ -25,9 +25,4 @@ class Destinasi extends Model
     {
         return $this->hasMany(ProposalDestinasi::class, 'destinasi_id');
     }
-
-    public function paketWisata()
-    {
-        return $this->belongsToMany(PaketWisata::class, 'paket_destinasi', 'destinasi_id', 'paket_id');
-    }
 }

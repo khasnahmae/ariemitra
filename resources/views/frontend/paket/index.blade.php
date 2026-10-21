@@ -33,7 +33,7 @@
                                         <div class="form-field">
                                             <div class="icon"><span class="fa fa-search"></span></div>
                                             <input type="text" name="search" id="search" class="form-control"
-                                                value="{{ request('search') }}" placeholder="Cari nama paket...">
+                                                value="{{ request('search') }}" placeholder="Cari nama/sub paket...">
                                         </div>
                                     </div>
                                 </div>
@@ -77,39 +77,40 @@
                 <div class="row">
                     @foreach ($paketList as $paket)
                         @php
-                            // Ambil gambar pertama dari relasi galeri, atau pakai fallback
-                            $firstGallery = $paket->galeri->first();
-                            $bgImage = $firstGallery
-                                ? asset('storage/' . $firstGallery->file_gambar)
-                                : asset('frontend/images/destination-1.jpg');
+                            $bgImage = asset('frontend/images/destination-1.jpg');
                         @endphp
                         <div class="col-md-4 ftco-animate">
                             <div class="project-wrap">
-                                <a href="{{ route('frontend.paket.show', $paket->slug) }}" class="img"
+                                <a href="{{ route('frontend.paket.show', $paket->uuid) }}" class="img"
                                     style="background-image: url('{{ $bgImage }}');">
                                     <span class="price">Rp
-                                        {{ number_format($paket->harga_mulai_from, 0, ',', '.') }}/pax</span>
+                                        {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }}/pax</span>
                                 </a>
                                 <div class="text p-4">
-                                    <span class="days"><i class="fa fa-clock-o mr-1"></i> {{ $paket->durasi }}</span>
-                                    <h3><a
-                                            href="{{ route('frontend.paket.show', $paket->slug) }}">{{ $paket->nama_paket }}</a>
+                                    <span class="days"><i class="fa fa-clock-o mr-1"></i> {{ $paket->jumlah_hari }} Hari
+                                        {{ $paket->jumlah_malam }} Malam</span>
+                                    <h3>
+                                        <a href="{{ route('frontend.paket.show', $paket->uuid) }}">
+                                            {{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }} - Sub
+                                            {{ $paket->nama_sub_paket }}
+                                        </a>
                                     </h3>
 
                                     <p class="location mb-2">
                                         <span class="fa fa-map-marker"></span>
-                                        @foreach ($paket->destinasi->take(2) as $dest)
-                                            {{ $dest->nama_destinasi }}{{ !$loop->last ? ', ' : '' }}
+                                        @foreach ($paket->proposalDestinasi->take(2) as $pDest)
+                                            {{ $pDest->destinasi->nama_destinasi ?? '' }}{{ !$loop->last ? ', ' : '' }}
                                         @endforeach
-                                        @if ($paket->destinasi->count() > 2)
-                                            <small class="text-muted">+{{ $paket->destinasi->count() - 2 }} lainnya</small>
+                                        @if ($paket->proposalDestinasi->count() > 2)
+                                            <small class="text-muted">+{{ $paket->proposalDestinasi->count() - 2 }}
+                                                lainnya</small>
                                         @endif
                                     </p>
 
                                     <ul class="mb-0 pt-2 border-top">
+                                        <li><span class="fa fa-users text-info mr-1"></span> Min.
+                                            {{ $paket->jumlah_peserta }} Pax</li>
                                         <li><span class="fa fa-check-circle text-success mr-1"></span> All-In</li>
-                                        {{-- <li><span class="fa fa-bus text-info mr-1"></span> Transport</li>
-                                        <li><span class="fa fa-ticket text-info mr-1"></span> HTM</li> --}}
                                     </ul>
                                 </div>
                             </div>
@@ -140,5 +141,4 @@
             @endif
         </div>
     </section>
-
 @endsection

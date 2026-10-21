@@ -3,22 +3,26 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\PaketWisata;
+use App\Models\Proposal;
 use Illuminate\Http\Request;
 
 class PaketWisataController extends Controller
 {
-
     public function index(Request $request)
     {
-        $query = PaketWisata::with('destinasi')->where('is_active', true);
+        $query = Proposal::with(['PaketWisata', 'proposalDestinasi.destinasi']);
 
         if ($request->filled('search')) {
-            $query->where('nama_paket', 'like', "%{$request->search}%");
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_sub_paket', 'like', "%{$request->search}%")
+                    ->orWhereHas('PaketWisata', function ($p) use ($request) {
+                        $p->where('nama_paket', 'like', "%{$request->search}%");
+                    });
+            });
         }
 
         if ($request->filled('max_price')) {
-            $query->where('harga_mulai_from', '<=', $request->max_price);
+            $query->where('harga_akhir_per_pax', '<=', $request->max_price);
         }
 
         $paketList = $query->latest()->paginate(9);
@@ -26,18 +30,20 @@ class PaketWisataController extends Controller
         return view('frontend.paket.index', compact('paketList'));
     }
 
-    /**
-     * Menampilkan Detail Paket Wisata beserta link order via WhatsApp.
-     */
-    public function show($slug)
+    public function show($uuid)
     {
-        $paket = PaketWisata::with(['destinasi', 'galeri'])
-            ->where('slug', $slug)
-            ->where('is_active', true)
+        $paket = Proposal::with([
+            'PaketWisata',
+            'proposalDestinasi.destinasi',
+            'proposalArmada.armada',
+            'proposalBiayaKomponen'
+        ])
+            ->where('uuid', $uuid)
             ->firstOrFail();
 
-        $waMessage = urlencode("Halo admin Biro Perjalanan, saya tertarik dengan paket wisata: *" . $paket->nama_paket . "*. Bisakah kirimkan penawaran/proposal resminya?");
-        $waNumber = "6281234567890"; // Ganti dengan nomor WhatsApp kantor biro
+        $namaLengkapPaket = "Paket " . ($paket->PaketWisata->nama_paket ?? '') . " (" . $paket->nama_sub_paket . ")";
+        $waMessage = urlencode("Halo admin Biro Perjalanan, saya tertarik dengan paket wisata: *" . $namaLengkapPaket . "*. Bisakah kirimkan informasi lebih lanjut?");
+        $waNumber = "6287722082751";
         $waLink = "https://wa.me/{$waNumber}?text={$waMessage}";
 
         return view('frontend.paket.show', compact('paket', 'waLink'));

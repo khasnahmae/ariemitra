@@ -2,16 +2,7 @@
 
 @section('content')
     @php
-        // Ambil foto pertama dari galeri paket wisata (jika ada)
-        $firstGallery = $paket->galeri->first();
-
-        if ($firstGallery) {
-            $headerBg = \Illuminate\Support\Str::startsWith($firstGallery->file_gambar, ['http://', 'https://'])
-                ? $firstGallery->file_gambar
-                : asset('storage/' . $firstGallery->file_gambar);
-        } else {
-            $headerBg = asset('frontend/images/bg_1.jpg');
-        }
+        $headerBg = asset('frontend/images/bg_1.jpg');
     @endphp
 
     <!-- HERO / BREADCRUMB HEADER -->
@@ -27,7 +18,7 @@
                                     class="fa fa-chevron-right"></i></a></span>
                         <span>Detail <i class="fa fa-chevron-right"></i></span>
                     </p>
-                    <h1 class="mb-0 bread">{{ $paket->nama_paket }}</h1>
+                    <h1 class="mb-0 bread">{{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }}</h1>
                 </div>
             </div>
         </div>
@@ -45,18 +36,21 @@
                             <i class="fa fa-arrow-left mr-1"></i> Kembali ke Katalog
                         </a>
                         <span class="badge badge-primary px-3 py-2 font-weight-normal float-right">
-                            <i class="fa fa-clock-o mr-1"></i> Durasi: {{ $paket->durasi }}
+                            <i class="fa fa-clock-o mr-1"></i> Durasi: {{ $paket->jumlah_hari }} Hari
+                            {{ $paket->jumlah_malam }} Malam
                         </span>
                     </div>
 
-                    <h2 class="mb-3 font-weight-bold text-dark">{{ $paket->nama_paket }}</h2>
-                    <p class="text-muted mb-4">Kode Paket: #PKT-{{ str_pad($paket->id, 4, '0', STR_PAD_LEFT) }}</p>
+                    <h2 class="mb-3 font-weight-bold text-dark">
+                        {{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }} (Sub-Paket {{ $paket->nama_sub_paket }})
+                    </h2>
+                    <p class="text-muted mb-4">Kode Sub Paket: #{{ $paket->nama_sub_paket }}</p>
 
                     <!-- DESTINASI YANG DIKUNJUNGI -->
                     <div class="mb-5">
                         <h4 class="mb-3 font-weight-bold">Destinasi Yang Dikunjungi</h4>
                         <div class="row">
-                            @foreach ($paket->destinasi as $dest)
+                            @foreach ($paket->proposalDestinasi as $pDest)
                                 <div class="col-md-6 mb-3">
                                     <div class="p-3 bg-light rounded d-flex align-items-center">
                                         <div class="icon mr-3 text-primary">
@@ -64,8 +58,9 @@
                                         </div>
                                         <div>
                                             <h5 class="mb-0 font-weight-bold text-dark" style="font-size: 1rem;">
-                                                {{ $dest->nama_destinasi }}</h5>
-                                            <small class="text-muted">{{ $dest->lokasi }}</small>
+                                                {{ $pDest->destinasi->nama_destinasi ?? '-' }}
+                                            </h5>
+                                            <small class="text-muted">{{ $pDest->destinasi->lokasi ?? '-' }}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -77,34 +72,10 @@
                     <div class="mb-5">
                         <h4 class="mb-3 font-weight-bold">Fasilitas & Layanan Paket</h4>
                         <div class="p-4 bg-light rounded text-dark" style="white-space: pre-line; line-height: 1.8;">
-                            {{ $paket->fasilitas }}
+                            {{ $paket->fasilitas ?? 'Fasilitas menyesuaikan standar layanan tour.' }}
                         </div>
                     </div>
 
-                    <!-- DOKUMENTASI / GALERI FOTO -->
-                    @if ($paket->galeri->count() > 0)
-                        <div class="mb-5">
-                            <h4 class="mb-3 font-weight-bold">Dokumentasi Destinasi</h4>
-                            <div class="row">
-                                @foreach ($paket->galeri as $foto)
-                                    @php
-                                        $fotoUrl = \Illuminate\Support\Str::startsWith($foto->file_gambar, [
-                                            'http://',
-                                            'https://',
-                                        ])
-                                            ? $foto->file_gambar
-                                            : asset('storage/' . $foto->file_gambar);
-                                    @endphp
-                                    <div class="col-md-4 col-6 mb-3">
-                                        <a href="{{ $fotoUrl }}"
-                                            class="image-popup img d-flex align-items-center justify-content-center rounded overflow-hidden"
-                                            style="background-image: url('{{ $fotoUrl }}'); height: 160px; background-size: cover; background-position: center;">
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
                 </div>
 
                 <!-- KOLOM KANAN: SIDEBAR ORDER -->
@@ -113,13 +84,15 @@
                         <span class="text-uppercase text-muted font-weight-bold small d-block mb-1">Estimasi
                             Penawaran</span>
                         <h2 class="text-success font-weight-bold mb-3">
-                            Rp {{ number_format($paket->harga_mulai_from, 0, ',', '.') }}
+                            Rp {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }}
                             <small class="text-muted font-weight-normal" style="font-size: 0.9rem;">/ pax</small>
                         </h2>
 
                         <hr class="my-3">
 
                         <ul class="list-unstyled text-secondary small mb-4">
+                            <li class="mb-2"><i class="fa fa-users text-info mr-2"></i> Kapasitas Peserta:
+                                {{ $paket->jumlah_peserta }} Pax</li>
                             <li class="mb-2"><i class="fa fa-check text-success mr-2"></i> Tiket HTM Wisata Termasuk</li>
                             <li class="mb-2"><i class="fa fa-check text-success mr-2"></i> Transportasi & Tol Termasuk
                             </li>
@@ -140,5 +113,4 @@
             </div>
         </div>
     </section>
-
 @endsection

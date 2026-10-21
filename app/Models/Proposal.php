@@ -14,7 +14,8 @@ class Proposal extends Model
 
     protected $fillable = [
         'uuid',
-        'kode_proposal',
+        'paket_wisata_id',
+        'nama_sub_paket',
         'user_id',
         'jumlah_hari',
         'jumlah_malam',
@@ -28,6 +29,11 @@ class Proposal extends Model
         'harga_akhir_per_pax',
         'status',
     ];
+
+    public function PaketWisata()
+    {
+        return $this->belongsTo(PaketWisata::class, 'paket_wisata_id');
+    }
 
     public function user()
     {

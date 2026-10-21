@@ -10,12 +10,13 @@
             </li>
             <li class="separator"><i class="fas fa-chevron-right text-muted" style="font-size: 12px;"></i></li>
             <li class="nav-item">
-                <span style="font-size: 14px;">Paket Wisata</span>
+                <span style="font-size: 14px;">Kategori Paket Wisata</span>
             </li>
         </ul>
+
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
-                <h3 class="fw-bold mb-1">Paket Wisata Publik</h3>
+                <h3 class="fw-bold mb-1">Kategori Paket Wisata</h3>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
                 <a href="{{ route('admin.paket-wisata.create') }}" class="btn btn-secondary btn-round">
@@ -24,44 +25,31 @@
             </div>
         </div>
 
-        {{-- @if (session('success'))
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        @endif --}}
+        @endif
 
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-round">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="basic-datatables" class="display table table-striped table-hover align-middle w-100">
+                            <table class="display table table-striped table-hover align-middle w-100">
                                 <thead>
                                     <tr>
-                                        {{-- <th>No</th> --}}
+                                        <th style="width: 150px;">Nomor Paket</th>
                                         <th>Nama Paket</th>
-                                        <th>Durasi</th>
-                                        <th>Harga Mulai From</th>
-                                        <th>Status Publikasi</th>
                                         <th class="text-end" style="width: 120px;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($paketList as $index => $paket)
+                                    @forelse ($paketList as $paket)
                                         <tr>
-                                            {{-- <td>{{ $index + 1 }}</td> --}}
+                                            <td class="fw-bold text-primary">Paket {{ $paket->nomor_paket }}</td>
                                             <td class="fw-bold">{{ $paket->nama_paket }}</td>
-                                            <td>{{ $paket->durasi }}</td>
-                                            <td class="text-success fw-bold">Rp
-                                                {{ number_format($paket->harga_mulai_from, 0, ',', '.') }}</td>
-                                            <td>
-                                                @if ($paket->is_active)
-                                                    <span class="badge badge-success">Aktif / Tayang</span>
-                                                @else
-                                                    <span class="badge badge-secondary">Draft</span>
-                                                @endif
-                                            </td>
                                             <td class="text-end">
                                                 <div class="form-button-action justify-content-end">
                                                     <a href="{{ route('admin.paket-wisata.edit', $paket->uuid) }}"
@@ -74,6 +62,7 @@
                                                         @method('DELETE')
                                                         <button type="submit"
                                                             class="btn btn-link btn-danger btn-lg p-1 delete-button"
+                                                            onclick="return confirm('Apakah Anda yakin ingin menghapus paket ini?')"
                                                             title="Hapus Paket">
                                                             <i class="fa fa-times"></i>
                                                         </button>
@@ -81,9 +70,17 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted py-3">Belum ada kategori paket
+                                                wisata.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="mt-3">
+                            {{ $paketList->links() }}
                         </div>
                     </div>
                 </div>

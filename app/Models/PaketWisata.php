@@ -14,24 +14,12 @@ class PaketWisata extends Model
 
     protected $fillable = [
         'uuid',
+        'nomor_paket',
         'nama_paket',
-        'nama_sub_paket',
-        'slug',
-        'durasi',
-        'harga_mulai_from',
-        'fasilitas',
-        'is_active',
     ];
 
-    public function destinasi()
+    public function proposal()
     {
-        return $this->belongsToMany(Destinasi::class, 'paket_destinasi', 'paket_id', 'destinasi_id')
-            ->withPivot('uuid')
-            ->withTimestamps();
-    }
-
-    public function galeri()
-    {
-        return $this->hasMany(Galeri::class, 'paket_id');
+        return $this->hasMany(Proposal::class, 'paket_wisata_id');
     }
 }

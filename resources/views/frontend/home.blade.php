@@ -18,10 +18,6 @@
                             class="btn btn-white btn-outline-white py-3 px-4">Konsultasi Rombongan</a>
                     </p>
                 </div>
-                {{-- <a href="https://vimeo.com/45830194"
-                    class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4">
-                    <span class="fa fa-play"></span>
-                </a> --}}
             </div>
         </div>
     </div>
@@ -54,7 +50,7 @@
                                                         <div class="form-field">
                                                             <div class="icon"><span class="fa fa-search"></span></div>
                                                             <input type="text" name="search" class="form-control"
-                                                                placeholder="Misal: Jogja, Bali, Bromo..."
+                                                                placeholder="Misal: Cirebon, Semarang, 1A..."
                                                                 value="{{ request('search') }}">
                                                         </div>
                                                     </div>
@@ -125,8 +121,8 @@
                                         class="fa fa-bus"></span></div>
                                 <div class="media-body">
                                     <h3 class="heading mb-3">Armada Executive</h3>
-                                    <p>Format Seat 2-2, Full AC, Multimedia Karaoke, Audio
-                                        Premium, serta Reclining Seat yang nyaman.</p>
+                                    <p>Format Seat 2-2, Full AC, Multimedia Karaoke, Audio Premium, serta Reclining Seat
+                                        yang nyaman.</p>
                                 </div>
                             </div>
                         </div>
@@ -137,8 +133,7 @@
                                         class="fa fa-ticket"></span></div>
                                 <div class="media-body">
                                     <h3 class="heading mb-3">Tiket & Konsumsi Berkualitas</h3>
-                                    <p>Tiket masuk semua lokasi wisata terintegrasi
-                                        tanpa antre, makan prasmanan/box
+                                    <p>Tiket masuk semua lokasi wisata terintegrasi tanpa antre, makan prasmanan/box
                                         higienis, snack perjalanan, dan air mineral.</p>
                                 </div>
                             </div>
@@ -165,61 +160,11 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    {{-- <!-- Carousel Featured Destinations -->
-    @if (isset($destinasiPilihan) && $destinasiPilihan->count() > 0)
-        <section class="ftco-section img ftco-select-destination">
-            <div class="container">
-                <div class="row justify-content-center pb-4">
-                    <div class="col-md-12 heading-section text-center ftco-animate">
-                        <span class="subheading">Destinasi Pilihan</span>
-                        <h2 class="mb-4">Objek Wisata Favorit</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="container container-2">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="carousel-destination owl-carousel ftco-animate">
-                            @foreach ($destinasiPilihan as $dest)
-                                <div class="item">
-                                    <div class="project-destination">
-                                        @php
-                                            if ($dest->foto) {
-                                                $bgImage = \Illuminate\Support\Str::startsWith($dest->foto, [
-                                                    'http://',
-                                                    'https://',
-                                                ])
-                                                    ? $dest->foto
-                                                    : asset('storage/' . $dest->foto);
-                                            } else {
-                                                $bgImage = asset('frontend/images/place-1.jpg');
-                                            }
-                                        @endphp
-
-                                        <a href="#" class="img"
-                                            style="background-image: url('{{ $bgImage }}');">
-                                            <div class="text">
-                                                <h3>{{ $dest->nama_destinasi }}</h3>
-                                                <span>HTM: Rp
-                                                    {{ number_format($dest->htm_per_orang, 0, ',', '.') }}/pax</span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    @endif --}}
 
     <!-- Popular Tour Packages Section -->
     <section class="ftco-section">
@@ -233,43 +178,38 @@
             <div class="row">
                 @forelse($paketPopuler as $paket)
                     @php
-                        $firstGal = $paket->galeri->first();
-                        if ($firstGal && $firstGal->file_gambar) {
-                            $paketImg = \Illuminate\Support\Str::startsWith($firstGal->file_gambar, [
-                                'http://',
-                                'https://',
-                            ])
-                                ? $firstGal->file_gambar
-                                : asset('storage/' . $firstGal->file_gambar);
-                        } else {
-                            $paketImg = asset('frontend/images/destination-1.jpg');
-                        }
+                        $paketImg = asset('frontend/images/destination-1.jpg');
                     @endphp
                     <div class="col-md-4 ftco-animate">
                         <div class="project-wrap">
-                            <a href="{{ route('frontend.paket.show', $paket->slug) }}" class="img"
+                            <a href="{{ route('frontend.paket.show', $paket->uuid) }}" class="img"
                                 style="background-image: url('{{ $paketImg }}');">
                                 <span class="price">Rp
-                                    {{ number_format($paket->harga_mulai_from, 0, ',', '.') }}/pax</span>
+                                    {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }}/pax</span>
                             </a>
                             <div class="text p-4">
-                                <span class="days"><i class="fa fa-clock-o mr-1"></i>{{ $paket->durasi }}</span>
-                                <h3><a
-                                        href="{{ route('frontend.paket.show', $paket->slug) }}">{{ $paket->nama_paket }}</a>
+                                <span class="days"><i class="fa fa-clock-o mr-1"></i>{{ $paket->jumlah_hari }} Hari
+                                    {{ $paket->jumlah_malam }} Malam</span>
+                                <h3>
+                                    <a href="{{ route('frontend.paket.show', $paket->uuid) }}">
+                                        {{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }} - Sub
+                                        {{ $paket->nama_sub_paket }}
+                                    </a>
                                 </h3>
                                 <p class="location">
                                     <span class="fa fa-map-marker"></span>
-                                    @foreach ($paket->destinasi->take(2) as $dest)
-                                        {{ $dest->nama_destinasi }}{{ !$loop->last ? ', ' : '' }}
+                                    @foreach ($paket->proposalDestinasi->take(2) as $pDest)
+                                        {{ $pDest->destinasi->nama_destinasi ?? '' }}{{ !$loop->last ? ', ' : '' }}
                                     @endforeach
-                                    @if ($paket->destinasi->count() > 2)
-                                        <small class="text-muted">+{{ $paket->destinasi->count() - 2 }} lainnya</small>
+                                    @if ($paket->proposalDestinasi->count() > 2)
+                                        <small class="text-muted">+{{ $paket->proposalDestinasi->count() - 2 }}
+                                            lainnya</small>
                                     @endif
                                 </p>
                                 <ul>
+                                    <li><span class="fa fa-users text-info mr-1"></span> Min. {{ $paket->jumlah_peserta }}
+                                        Pax</li>
                                     <li><span class="fa fa-check-circle text-success mr-1"></span> All-In</li>
-                                    {{-- <li><span class="fa fa-bus text-info mr-1"></span> Transport</li>
-                                    <li><span class="fa fa-ticket text-info mr-1"></span> HTM</li> --}}
                                 </ul>
                             </div>
                         </div>
@@ -303,46 +243,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Gallery Documentation Preview -->
-    @if (isset($galeriTerbaru) && $galeriTerbaru->count() > 0)
-        <section class="ftco-section">
-            <div class="container">
-                <div class="row justify-content-center pb-4">
-                    <div class="col-md-12 heading-section text-center ftco-animate">
-                        <span class="subheading">Dokumentasi</span>
-                        <h2 class="mb-4">Galeri Perjalanan Rombongan</h2>
-                    </div>
-                </div>
-                <div class="row d-flex">
-                    @foreach ($galeriTerbaru as $foto)
-                        @php
-                            $fotoUrl = \Illuminate\Support\Str::startsWith($foto->file_gambar, ['http://', 'https://'])
-                                ? $foto->file_gambar
-                                : asset('storage/' . $foto->file_gambar);
-                        @endphp
-                        <div class="col-md-4 d-flex ftco-animate mb-4">
-                            <div class="blog-entry justify-content-end w-100">
-                                <a href="{{ $fotoUrl }}"
-                                    class="block-20 image-popup d-flex align-items-center justify-content-center"
-                                    style="background-image: url('{{ $fotoUrl }}');">
-                                    <span class="fa fa-search text-white fa-2x opacity-0 hover-opacity-100"
-                                        style="transition: 0.3s;"></span>
-                                </a>
-                                <div class="text p-3 bg-white border border-top-0">
-                                    <h3 class="heading mb-0" style="font-size: 1.1rem;">
-                                        <a href="{{ $fotoUrl }}" class="image-popup text-dark">
-                                            {{ $foto->judul }}
-                                        </a>
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
 
     <!-- Footer Call To Action -->
     <section class="ftco-section bg-light py-5">
