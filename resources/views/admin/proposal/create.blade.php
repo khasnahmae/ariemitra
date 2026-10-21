@@ -664,16 +664,13 @@
                 let sewaBase = parseFloat(selectedOption ? selectedOption.getAttribute('data-sewa') || 0 : 0);
                 let unit = parseInt(document.getElementById('jumlah_unit_armada').value) || 1;
 
-                // 1. Total Sewa Bus
                 let totalArmada = sewaBase * unit;
 
-                // 2. Total Tol
                 let totalTol = 0;
                 document.querySelectorAll('input[name="rute_tol_ids[]"]:checked').forEach(cb => {
                     totalTol += parseFloat(cb.getAttribute('data-tarif') || 0);
                 });
 
-                // 3. Biaya Fixed Operasional Lainnya
                 let totalFixedLainnya = 0;
                 document.querySelectorAll('.fixed-nominal').forEach(inp => {
                     totalFixedLainnya += parseFloat(inp.value || 0);
@@ -681,10 +678,6 @@
 
                 let totalFixedGroup = totalArmada + totalTol + totalFixedLainnya;
 
-                // Perhitungan Fixed Per Pax (Float presisi sama seperti PHP)
-                let biayaFixedPerPax = totalFixedGroup / peserta;
-
-                // 4. Biaya Variable Per Pax
                 let totalHTM = 0;
                 document.querySelectorAll('input[name="destinasi_ids[]"]:checked').forEach(cb => {
                     totalHTM += parseFloat(cb.getAttribute('data-htm') || 0);
@@ -703,27 +696,24 @@
                     totalVarCustomPerPax += parseFloat(inp.value || 0);
                 });
 
-                let biayaVarPerPax = totalHTM + totalVarPerPaxStd + totalVarCustomPerPax;
+                let totalVarPerPax = totalHTM + totalVarPerPaxStd + totalVarCustomPerPax;
 
-                // Total Modal / Pax & Target Profit Margin
-                let modalPerPax = biayaFixedPerPax + biayaVarPerPax;
+                let totalBiayaOperasional = totalFixedGroup + (totalVarPerPax * peserta);
+                let modalPerPax = totalBiayaOperasional / peserta;
+
                 let marginPerPax = parseFloat(document.getElementById('margin_per_pax').value || 0);
-                let rawHargaPerPax = modalPerPax + marginPerPax;
+                let rawFinalPerPax = modalPerPax + marginPerPax;
 
-                // Pembulatan Ke Atas Kelipatan 5.000
-                let finalPerPax = rawHargaPerPax > 0 ? Math.ceil(rawHargaPerPax / 5000) * 5000 : 0;
+                // // PEMBULATAN KE ATAS KELIPATAN 5.000 DI JAVASCRIPT
+                // let finalPerPax = rawFinalPerPax > 0 ? Math.ceil(rawFinalPerPax / 5000) * 5000 : 0;
+                let grandTotal = rawFinalPerPax * peserta;
 
-                // Total Biaya Operasional Keseluruhan
-                let totalBiayaOperasional = totalFixedGroup + (biayaVarPerPax * peserta);
-                let grandTotal = finalPerPax * peserta;
-
-                // Update Tampilan DOM
                 document.getElementById('disp-total-peserta').innerText = peserta + ' Pax';
                 document.getElementById('disp-total-biaya').innerText = formatRupiah(totalBiayaOperasional);
                 document.getElementById('disp-biaya-per-pax').innerText = '(Modal/Pax: ' + formatRupiah(
                     modalPerPax) + ')';
                 document.getElementById('disp-margin-pax').innerText = formatRupiah(marginPerPax);
-                document.getElementById('disp-final-pax').innerText = formatRupiah(finalPerPax);
+                document.getElementById('disp-final-pax').innerText = formatRupiah(rawFinalPerPax);
                 document.getElementById('disp-grand-total').innerText = formatRupiah(grandTotal);
             }
 
