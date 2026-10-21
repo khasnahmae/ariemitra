@@ -149,7 +149,7 @@
                 </div>
             </div>
 
-            <!-- Paket Wisata Aktif -->
+            <!-- Kategori Paket Wisata -->
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="card card-round stat-card shadow-sm h-100 mb-0">
                     <div class="card-body p-3">
@@ -158,7 +158,7 @@
                                 <i class="fas fa-boxes-packing"></i>
                             </div>
                             <div>
-                                <span class="text-muted fw-semibold small d-block mb-1">Paket Wisata</span>
+                                <span class="text-muted fw-semibold small d-block mb-1">Kategori Paket</span>
                                 <h4 class="fw-bold text-dark mb-0">{{ $totalPaketWisata }}</h4>
                             </div>
                         </div>
@@ -169,69 +169,67 @@
 
         <!-- Quick Access Navigation -->
         <div class="mb-4">
-            <div class="">
-                <div class="">
-                    <div class="card-header bg-transparent py-3">
-                        <h6 class="card-title fw-bold mb-0 text-dark">
-                            Akses Cepat Manajemen Data
-                        </h6>
-                    </div>
-                    <div class="card-body p-3">
-                        <div class="row g-2">
-                            <div class="col-6 col-md-4 col-lg-2">
-                                <a href="{{ route('admin.proposal.create') }}"
-                                    class="card quick-action-card h-100 p-3 text-center rounded-3">
-                                    <div class="icon-wrapper bg-primary-subtle text-primary mx-auto mb-2">
-                                        <i class="fas fa-calculator"></i>
-                                    </div>
-                                    <span class="fw-semibold small text-dark">Buat Proposal</span>
-                                </a>
-                            </div>
-                            <div class="col-6 col-md-4 col-lg-2">
-                                <a href="{{ route('admin.destinasi.index') }}"
-                                    class="card quick-action-card h-100 p-3 text-center rounded-3">
-                                    <div class="icon-wrapper bg-danger-subtle text-danger mx-auto mb-2">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </div>
-                                    <span class="fw-semibold small text-dark">Destinasi</span>
-                                </a>
-                            </div>
-                            <div class="col-6 col-md-4 col-lg-2">
-                                <a href="{{ route('admin.armada.index') }}"
-                                    class="card quick-action-card h-100 p-3 text-center rounded-3">
-                                    <div class="icon-wrapper bg-info-subtle text-info mx-auto mb-2">
-                                        <i class="fas fa-bus"></i>
-                                    </div>
-                                    <span class="fw-semibold small text-dark">Armada Bus</span>
-                                </a>
-                            </div>
-                            <div class="col-6 col-md-4 col-lg-2">
-                                <a href="{{ route('admin.rute-tol.index') }}"
-                                    class="card quick-action-card h-100 p-3 text-center rounded-3">
-                                    <div class="icon-wrapper bg-warning-subtle text-warning mx-auto mb-2">
-                                        <i class="fas fa-road"></i>
-                                    </div>
-                                    <span class="fw-semibold small text-dark">Rute Tol</span>
-                                </a>
-                            </div>
-                            <div class="col-6 col-md-4 col-lg-2">
-                                <a href="{{ route('admin.paket-wisata.index') }}"
-                                    class="card quick-action-card h-100 p-3 text-center rounded-3">
-                                    <div class="icon-wrapper bg-secondary-subtle text-secondary mx-auto mb-2">
-                                        <i class="fas fa-box"></i>
-                                    </div>
-                                    <span class="fw-semibold small text-dark">Paket Wisata</span>
-                                </a>
-                            </div>
-                            <div class="col-6 col-md-4 col-lg-2">
-                                <a href="{{ route('admin.galeri.index') }}"
-                                    class="card quick-action-card h-100 p-3 text-center rounded-3">
-                                    <div class="icon-wrapper bg-success-subtle text-success mx-auto mb-2">
-                                        <i class="fas fa-camera"></i>
-                                    </div>
-                                    <span class="fw-semibold small text-dark">Galeri Foto</span>
-                                </a>
-                            </div>
+            <div class="card card-round shadow-sm">
+                <div class="card-header bg-transparent py-3">
+                    <h6 class="card-title fw-bold mb-0 text-dark">
+                        Akses Cepat Manajemen Data
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="row g-2">
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="{{ route('admin.proposal.create') }}"
+                                class="card quick-action-card h-100 p-3 text-center rounded-3">
+                                <div class="icon-wrapper bg-primary-subtle text-primary mx-auto mb-2">
+                                    <i class="fas fa-calculator"></i>
+                                </div>
+                                <span class="fw-semibold small text-dark">Buat Proposal</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="{{ route('admin.destinasi.index') }}"
+                                class="card quick-action-card h-100 p-3 text-center rounded-3">
+                                <div class="icon-wrapper bg-danger-subtle text-danger mx-auto mb-2">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <span class="fw-semibold small text-dark">Destinasi</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="{{ route('admin.armada.index') }}"
+                                class="card quick-action-card h-100 p-3 text-center rounded-3">
+                                <div class="icon-wrapper bg-info-subtle text-info mx-auto mb-2">
+                                    <i class="fas fa-bus"></i>
+                                </div>
+                                <span class="fw-semibold small text-dark">Armada Bus</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="{{ route('admin.rute-tol.index') }}"
+                                class="card quick-action-card h-100 p-3 text-center rounded-3">
+                                <div class="icon-wrapper bg-warning-subtle text-warning mx-auto mb-2">
+                                    <i class="fas fa-road"></i>
+                                </div>
+                                <span class="fw-semibold small text-dark">Rute Tol</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="{{ route('admin.paket-wisata.index') }}"
+                                class="card quick-action-card h-100 p-3 text-center rounded-3">
+                                <div class="icon-wrapper bg-secondary-subtle text-secondary mx-auto mb-2">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <span class="fw-semibold small text-dark">Paket Wisata</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <a href="{{ route('admin.galeri.index') }}"
+                                class="card quick-action-card h-100 p-3 text-center rounded-3">
+                                <div class="icon-wrapper bg-success-subtle text-success mx-auto mb-2">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <span class="fw-semibold small text-dark">Galeri Foto</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -256,8 +254,8 @@
                             <table class="table table-custom align-middle mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Kode</th>
-                                        <th>Klien / Tanggal</th>
+                                        <th>Sub Paket</th>
+                                        <th>Paket Utama</th>
                                         <th class="text-center">Peserta</th>
                                         <th>Harga / Pax</th>
                                         <th>Total Nilai</th>
@@ -270,14 +268,17 @@
                                         <tr>
                                             <td>
                                                 <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1">
-                                                    {{ $proposal->kode_proposal }}
+                                                    Sub {{ $proposal->nama_sub_paket }}
                                                 </span>
                                             </td>
                                             <td>
-                                                <div class="fw-bold text-dark">{{ $proposal->nama_klien }}</div>
+                                                <div class="fw-bold text-dark">
+                                                    Paket {{ $proposal->PaketWisata->nomor_paket ?? '-' }} -
+                                                    {{ $proposal->PaketWisata->nama_paket ?? '-' }}
+                                                </div>
                                                 <small class="text-muted">
                                                     <i class="far fa-calendar-alt me-1"></i>
-                                                    {{ \Carbon\Carbon::parse($proposal->tanggal_proposal)->format('d M Y') }}
+                                                    {{ $proposal->created_at ? $proposal->created_at->format('d M Y') : '-' }}
                                                 </small>
                                             </td>
                                             <td class="text-center">
@@ -309,10 +310,10 @@
                                             </td>
                                             <td class="text-end">
                                                 <div class="d-flex justify-content-end gap-1">
-                                                    <a href="{{ route('admin.proposal.show', $proposal->uuid) }}"
-                                                        class="btn btn-icon btn-sm btn-link text-primary"
-                                                        data-bs-toggle="tooltip" title="Detail Proposal">
-                                                        <i class="fa fa-eye fs-6"></i>
+                                                    <a href="{{ route('admin.proposal.edit', $proposal->uuid) }}"
+                                                        class="btn btn-icon btn-sm btn-link text-warning"
+                                                        data-bs-toggle="tooltip" title="Edit Proposal">
+                                                        <i class="fa fa-edit fs-6"></i>
                                                     </a>
                                                     <a href="{{ route('admin.proposal.export-pdf', $proposal->uuid) }}"
                                                         class="btn btn-icon btn-sm btn-link text-info"

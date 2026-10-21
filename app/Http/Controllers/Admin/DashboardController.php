@@ -23,10 +23,10 @@ class DashboardController extends Controller
         $proposalPending = Proposal::where('status', 'sent')->count();
 
         $totalDestinasi = Destinasi::count();
-        $totalPaketWisata = PaketWisata::where('is_active', true)->count();
+        $totalPaketWisata = PaketWisata::count();
         $totalArmada = Armada::count();
 
-        $recentProposals = Proposal::with('user')
+        $recentProposals = Proposal::with(['user', 'PaketWisata'])
             ->latest()
             ->take(5)
             ->get();
