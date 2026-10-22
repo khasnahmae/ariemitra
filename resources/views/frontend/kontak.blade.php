@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- CONTACT INFO CARDS -->
-    <section class="ftco-section ftco-no-pb pt-5 contact-section mb-4">
+    <section class="ftco-section ftco-no-pb pt-5 add-space contact-section mb-4">
         <div class="container">
             <div class="row d-flex contact-info">
                 <div class="col-md-3 d-flex">

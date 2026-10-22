@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- SERVICES & WELCOME SECTION -->
-    <section class="ftco-section pt-5 services-section">
+    <section class="ftco-section pt-5 services-section add-space">
         <div class="container">
             <div class="row d-flex">
                 <div class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center">

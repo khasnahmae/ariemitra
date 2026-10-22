@@ -158,7 +158,7 @@
     @endphp
 
     <!-- DETAIL CONTENT SECTION -->
-    <section class="ftco-section bg-white pt-5">
+    <section class="ftco-section bg-white pt-5 add-space">
         <div class="container">
 
             <!-- HEADER TITLE & BADGE -->
