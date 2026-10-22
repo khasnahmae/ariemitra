@@ -9182,14 +9182,17 @@ textarea.form-control {
   font-size: 20px;
   font-weight: 600; }
 
-.add-space{
-  padding: 7em 0;
+.add-space {
+  padding-top: 140px !important; /* Dorong isi section ke bawah navbar */
   position: relative;
-  width: 100%; }
-  @media (max-width: 767.98px) {
-    .add-space {
-      padding: 0 0; } }
+  width: 100%;
+}
 
+@media (max-width: 767.98px) {
+  .add-space {
+    padding-top: 20px !important;
+  }
+}
 .ftco-section {
   padding: 7em 0;
   position: relative;

@@ -3,7 +3,7 @@
 @section('content')
 
     <!-- FILTER & SEARCH SECTION -->
-    <section class="ftco-section add-space ftco-no-pb pt-5">
+    <section class="ftco-section add-space ftco-no-pb">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
