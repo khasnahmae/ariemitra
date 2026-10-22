@@ -77,18 +77,32 @@
                 <div class="row">
                     @foreach ($paketList as $paket)
                         @php
-                            $bgImage = asset('frontend/images/destination-1.jpg');
+                            // Logika Mengambil Gambar dari Destinasi Pertama
+                            $firstDestinasi = $paket->proposalDestinasi->first()?->destinasi;
+                            if ($firstDestinasi && $firstDestinasi->foto) {
+                                $paketImg = \Illuminate\Support\Str::startsWith($firstDestinasi->foto, [
+                                    'http://',
+                                    'https://',
+                                ])
+                                    ? $firstDestinasi->foto
+                                    : asset('storage/' . $firstDestinasi->foto);
+                            } else {
+                                $paketImg = asset('frontend/images/destination-1.jpg');
+                            }
                         @endphp
                         <div class="col-md-4 ftco-animate">
                             <div class="project-wrap">
                                 <a href="{{ route('frontend.paket.show', $paket->uuid) }}" class="img"
-                                    style="background-image: url('{{ $bgImage }}');">
+                                    style="background-image: url('{{ $paketImg }}');">
                                     <span class="price">Rp
                                         {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }}/pax</span>
                                 </a>
                                 <div class="text p-4">
                                     <span class="days"><i class="fa fa-clock-o mr-1"></i> {{ $paket->jumlah_hari }} Hari
-                                        {{ $paket->jumlah_malam }} Malam</span>
+                                        @if ($paket->jumlah_malam > 0)
+                                            {{ $paket->jumlah_malam }} Malam
+                                        @endif
+                                    </span>
                                     <h3>
                                         <a href="{{ route('frontend.paket.show', $paket->uuid) }}">
                                             {{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }} - Sub

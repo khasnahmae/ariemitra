@@ -2,7 +2,6 @@
 
 @section('content')
     <style>
-        /* Bento Grid Gallery Styling */
         .bento-gallery {
             display: grid;
             gap: 12px;
@@ -159,23 +158,12 @@
     @endphp
 
     <!-- HERO HEADER / BREADCRUMB -->
-    <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('{{ $headerBg }}');">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
-                <div class="col-md-9 ftco-animate pb-5 text-center">
-                    <p class="breadcrumbs">
-                        <span class="mr-2"><a href="{{ route('frontend.home') }}">Beranda <i
-                                    class="fa fa-chevron-right"></i></a></span>
-                        <span class="mr-2"><a href="{{ route('frontend.paket.index') }}">Paket Wisata <i
-                                    class="fa fa-chevron-right"></i></a></span>
-                        <span>Detail <i class="fa fa-chevron-right"></i></span>
-                    </p>
-                    <h1 class="mb-0 bread">{{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }}</h1>
-                </div>
-            </div>
-        </div>
-    </section>
+    <p class="breadcrumbs">
+        <span class="mr-2"><a href="{{ route('frontend.home') }}">Beranda <i class="fa fa-chevron-right"></i></a></span>
+        <span class="mr-2"><a href="{{ route('frontend.paket.index') }}">Paket Wisata <i
+                    class="fa fa-chevron-right"></i></a></span>
+        <span>{{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }} <i class="fa fa-chevron-right"></i></span>
+    </p>
 
     <!-- DETAIL CONTENT SECTION -->
     <section class="ftco-section bg-white pt-4">
@@ -195,7 +183,7 @@
                     </p>
                 </div>
                 <div class="mt-3 mt-md-0">
-                    <span class="badge badge-primary px-3 py-2 font-weight-normal" style="font-size: 0.9rem;">
+                    <span class="badge badge-secondary px-3 py-2 font-weight-normal" style="font-size: 0.9rem;">
                         <i class="fa fa-clock-o mr-1"></i>
                         {{ $paket->jumlah_hari }} Hari
                         @if ($paket->jumlah_malam > 0)
@@ -227,28 +215,9 @@
                 @endfor
             </div>
 
-            <!-- NAV TABS SUB-HEADER -->
-            <div class="nav-tabs-custom">
-                <a href="#overview" class="nav-link-item active">Overview</a>
-                <a href="#destinasi" class="nav-link-item">Destinasi</a>
-                <a href="#fasilitas" class="nav-link-item">Fasilitas & Layanan</a>
-                <a href="#ketentuan" class="nav-link-item">Ketentuan</a>
-            </div>
-
             <div class="row">
                 <!-- KOLOM KIRI: DETAIL CONTENT -->
                 <div class="col-lg-8">
-
-                    <!-- ABOUT / OVERVIEW -->
-                    <div id="overview" class="mb-5">
-                        <h4 class="font-weight-bold text-dark mb-3">Deskripsi Perjalanan</h4>
-                        <p class="text-secondary" style="line-height: 1.8;">
-                            Nikmati pengalaman perjalanan yang tak terlupakan bersama paket
-                            **{{ $paket->PaketWisata->nama_paket ?? 'Wisata' }} (Sub {{ $paket->nama_sub_paket }})**.
-                            Didesain khusus untuk rombongan dengan layanan *All-In*, armada berkualitas, fasilitas lengkap,
-                            dan biaya transparan tanpa ada biaya tersembunyi.
-                        </p>
-                    </div>
 
                     <!-- DESTINASI YANG DIKUNJUNGI -->
                     <div id="destinasi" class="mb-5">
@@ -256,16 +225,11 @@
                         <div class="row">
                             @foreach ($paket->proposalDestinasi as $pDest)
                                 <div class="col-md-6 mb-3">
-                                    <div class="p-3 bg-light rounded d-flex align-items-center border">
-                                        <div class="icon mr-3 text-primary">
-                                            <span class="fa fa-compass fa-2x"></span>
-                                        </div>
+                                    <div class="d-flex align-items-center">
                                         <div>
                                             <h6 class="mb-0 font-weight-bold text-dark">
                                                 {{ $pDest->destinasi->nama_destinasi ?? '-' }}
                                             </h6>
-                                            <small class="text-muted"><i
-                                                    class="fa fa-map-marker mr-1"></i>{{ $pDest->destinasi->lokasi ?? '-' }}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -275,7 +239,7 @@
 
                     <!-- FASILITAS & LAYANAN -->
                     <div id="fasilitas" class="mb-5">
-                        <h4 class="font-weight-bold text-dark mb-3">Fasilitas & Layanan Termasuk</h4>
+                        <h4 class="font-weight-bold text-dark mb-3">Fasilitas & Layanan</h4>
                         <div class="p-4 bg-light rounded text-dark border" style="white-space: pre-line; line-height: 1.8;">
                             {{ $paket->fasilitas ?? 'Fasilitas menyesuaikan standar layanan tour.' }}
                         </div>
@@ -285,7 +249,7 @@
                     <div id="ketentuan" class="mb-5">
                         <h4 class="font-weight-bold text-dark mb-3">Syarat & Ketentuan</h4>
                         <ul class="text-secondary pl-3" style="line-height: 1.8;">
-                            <li>Harga yang tertera bersifat *estimasi awal* per peserta (per pax).</li>
+                            <li>Harga sewaktu waktu dapat berubah mengikuti kebijakan tarif tol atau HTM objek wisata.</li>
                             <li>Total biaya penawaran akhir disesuaikan kembali dengan jumlah kuota peserta real dan opsi
                                 kustomisasi rute.</li>
                             <li>Pemesanan dan konfirmasi jadwal dapat dilakukan langsung melalui layanan Customer Service WA

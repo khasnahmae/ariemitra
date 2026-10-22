@@ -31,9 +31,9 @@
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a href="{{ route('frontend.home') }}" class="nav-link">Beranda</a></li>
-                    <li class="nav-item"><a href="{{ route('frontend.profil') }}" class="nav-link">Profil</a></li>
                     <li class="nav-item"><a href="{{ route('frontend.paket.index') }}" class="nav-link">Paket
                             Wisata</a></li>
+                    <li class="nav-item"><a href="{{ route('frontend.profil') }}" class="nav-link">Profil</a></li>
                     <li class="nav-item"><a href="{{ route('frontend.kontak') }}" class="nav-link">Kontak</a></li>
                 </ul>
             </div>
