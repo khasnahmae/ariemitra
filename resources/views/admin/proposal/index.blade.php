@@ -49,7 +49,7 @@
                                     <tr>
                                         <th>Nama Paket</th>
                                         <th>Peserta</th>
-                                        <th>Harga / Pax</th>
+                                        <th>Harga / Pax (Setelah Dibulatkan)</th>
                                         <th>Status</th>
                                         <th class="text-end" style="width: 120px;">Aksi</th>
                                     </tr>

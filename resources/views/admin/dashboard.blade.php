@@ -94,15 +94,15 @@
         @endif
 
         <!-- Card Stats Row -->
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-3">
             <!-- Total Omset Approved -->
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="card card-round stat-card shadow-sm h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center">
-                            <div class="icon-shape bg-success-subtle text-success me-3">
+                            {{-- <div class="icon-shape bg-success-subtle text-success me-3">
                                 <i class="fas fa-wallet"></i>
-                            </div>
+                            </div> --}}
                             <div class="overflow-hidden">
                                 <span class="text-muted fw-semibold small d-block mb-1">Omset Approved</span>
                                 <h4 class="fw-bold text-success mb-0 text-truncate">
@@ -119,9 +119,9 @@
                 <div class="card card-round stat-card shadow-sm h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center">
-                            <div class="icon-shape bg-primary-subtle text-primary me-3">
+                            {{-- <div class="icon-shape bg-primary-subtle text-primary me-3">
                                 <i class="far fa-file-alt"></i>
-                            </div>
+                            </div> --}}
                             <div>
                                 <span class="text-muted fw-semibold small d-block mb-1">Total Proposal</span>
                                 <h4 class="fw-bold text-dark mb-0">{{ $totalProposal }}</h4>
@@ -136,9 +136,9 @@
                 <div class="card card-round stat-card shadow-sm h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center">
-                            <div class="icon-shape bg-info-subtle text-info me-3">
+                            {{-- <div class="icon-shape bg-info-subtle text-info me-3">
                                 <i class="fas fa-layer-group"></i>
-                            </div>
+                            </div> --}}
                             <div>
                                 <span class="text-muted fw-semibold small d-block mb-1">Destinasi / Bus</span>
                                 <h4 class="fw-bold text-dark mb-0">{{ $totalDestinasi }} <span
@@ -154,9 +154,9 @@
                 <div class="card card-round stat-card shadow-sm h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center">
-                            <div class="icon-shape bg-secondary-subtle text-secondary me-3">
+                            {{-- <div class="icon-shape bg-secondary-subtle text-secondary me-3">
                                 <i class="fas fa-boxes-packing"></i>
-                            </div>
+                            </div> --}}
                             <div>
                                 <span class="text-muted fw-semibold small d-block mb-1">Kategori Paket</span>
                                 <h4 class="fw-bold text-dark mb-0">{{ $totalPaketWisata }}</h4>

@@ -10,7 +10,6 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Ambil proposal yang aktif (bisa difilter berdasarkan status 'approved' atau 'sent' jika perlu)
         $paketPopuler = Proposal::with(['PaketWisata', 'proposalDestinasi.destinasi'])
             ->latest()
             ->take(6)

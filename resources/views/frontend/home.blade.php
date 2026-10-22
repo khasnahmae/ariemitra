@@ -178,7 +178,18 @@
             <div class="row">
                 @forelse($paketPopuler as $paket)
                     @php
-                        $paketImg = asset('frontend/images/destination-1.jpg');
+                        // Logika Mengambil Gambar dari Destinasi Pertama
+                        $firstDestinasi = $paket->proposalDestinasi->first()?->destinasi;
+                        if ($firstDestinasi && $firstDestinasi->foto) {
+                            $paketImg = \Illuminate\Support\Str::startsWith($firstDestinasi->foto, [
+                                'http://',
+                                'https://',
+                            ])
+                                ? $firstDestinasi->foto
+                                : asset('storage/' . $firstDestinasi->foto);
+                        } else {
+                            $paketImg = asset('frontend/images/destination-1.jpg');
+                        }
                     @endphp
                     <div class="col-md-4 ftco-animate">
                         <div class="project-wrap">
@@ -188,8 +199,13 @@
                                     {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }}/pax</span>
                             </a>
                             <div class="text p-4">
-                                <span class="days"><i class="fa fa-clock-o mr-1"></i>{{ $paket->jumlah_hari }} Hari
-                                    {{ $paket->jumlah_malam }} Malam</span>
+                                <span class="days">
+                                    <i class="fa fa-clock-o mr-1"></i>
+                                    {{ $paket->jumlah_hari }} Hari
+                                    @if ($paket->jumlah_malam > 0)
+                                        {{ $paket->jumlah_malam }} Malam
+                                    @endif
+                                </span>
                                 <h3>
                                     <a href="{{ route('frontend.paket.show', $paket->uuid) }}">
                                         {{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }} - Sub
@@ -222,6 +238,70 @@
             </div>
         </div>
     </section>
+
+    <!-- SECTION GALERI DOKUMENTASI (MODAL POP-UP) -->
+    @if (isset($galeriTerbaru) && $galeriTerbaru->count() > 0)
+        <section class="ftco-section bg-light">
+            <div class="container">
+                <div class="row justify-content-center pb-4">
+                    <div class="col-md-12 heading-section text-center ftco-animate">
+                        <span class="subheading">Galeri Dokumentasi</span>
+                        <h2 class="mb-4">Momen Perjalanan Wisata</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    @foreach ($galeriTerbaru as $galeri)
+                        @php
+                            $fotoUrl = \Illuminate\Support\Str::startsWith($galeri->file_gambar, [
+                                'http://',
+                                'https://',
+                            ])
+                                ? $galeri->file_gambar
+                                : asset('storage/' . $galeri->file_gambar);
+                        @endphp
+                        <div class="col-md-4 ftco-animate mb-4">
+                            <div class="project-wrap rounded overflow-hidden shadow-sm bg-white">
+                                <a href="javascript:void(0)"
+                                    class="img d-flex align-items-center justify-content-center position-relative"
+                                    style="background-image: url('{{ $fotoUrl }}'); height: 240px; background-size: cover; background-position: center;"
+                                    data-toggle="modal" data-target="#galeriModal{{ $galeri->id }}">
+                                    <div class="overlay d-flex align-items-center justify-content-center">
+                                        <span class="fa fa-search-plus text-white fa-2x"></span>
+                                    </div>
+                                </a>
+                                <div class="text p-3 text-center">
+                                    <h5 class="mb-0 font-weight-bold text-dark" style="font-size: 1rem;">
+                                        {{ $galeri->judul }}</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MODAL POP-UP UNTUK DOKUMENTASI -->
+                        <div class="modal fade" id="galeriModal{{ $galeri->id }}" tabindex="-1" role="dialog"
+                            aria-labelledby="galeriModalLabel{{ $galeri->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content border-0 bg-transparent">
+                                    <div class="modal-header border-0 pb-0">
+                                        <h5 class="modal-title text-white font-weight-bold"
+                                            id="galeriModalLabel{{ $galeri->id }}">{{ $galeri->judul }}</h5>
+                                        <button type="button" class="close text-white opacity-100" data-dismiss="modal"
+                                            aria-label="Close" style="font-size: 2rem;">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body text-center p-2">
+                                        <img src="{{ $fotoUrl }}" alt="{{ $galeri->judul }}"
+                                            class="img-fluid rounded shadow-lg"
+                                            style="max-height: 80vh; object-fit: contain;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
 
     <!-- B2B Call To Action Section -->
     <section class="ftco-section ftco-intro ftco-no-pt">

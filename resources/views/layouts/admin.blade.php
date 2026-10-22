@@ -110,7 +110,7 @@
                         <li class="nav-item {{ request()->is('admin/paket-wisata*') ? 'active' : '' }}">
                             <a href="{{ route('admin.paket-wisata.index') }}">
                                 <i class="fas fa-archive"></i>
-                                <p>Paket Wisata</p>
+                                <p>Kategori Paket</p>
                             </a>
                         </li>
                         <li class="nav-item {{ request()->is('admin/galeri*') ? 'active' : '' }}">
