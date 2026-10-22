@@ -1,26 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- HERO / BREADCRUMB HEADER -->
-    <section class="hero-wrap hero-wrap-2 js-fullheight"
-        style="background-image: url('{{ asset('frontend/images/img7.png') }}')">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
-                <div class="col-md-9 ftco-animate pb-5 text-center">
-                    <p class="breadcrumbs">
-                        <span class="mr-2"><a href="{{ route('frontend.home') }}">Beranda <i
-                                    class="fa fa-chevron-right"></i></a></span>
-                        <span>Tentang Kami <i class="fa fa-chevron-right"></i></span>
-                    </p>
-                    <h1 class="mb-0 bread">Profil Perusahaan</h1>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- SERVICES & WELCOME SECTION -->
-    <section class="ftco-section services-section">
+    <section class="ftco-section pt-5 services-section">
         <div class="container">
             <div class="row d-flex">
                 <div class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center">

@@ -1,21 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- HERO / BREADCRUMB HEADER -->
-    <div class="container">
-        <div class="row no-gutters">
-            <div class="col-md-9 pb-5 text-start">
-                <p class="breadcrumbs">
-                    <span class="mr-2"><a href="{{ route('frontend.home') }}">Beranda <i
-                                class="fa fa-chevron-right"></i></a></span>
-                    <span>Paket Wisata <i class="fa fa-chevron-right"></i></span>
-                </p>
-            </div>
-        </div>
-    </div>
 
     <!-- FILTER & SEARCH SECTION -->
-    <section class="ftco-section ftco-no-pb">
+    <section class="ftco-section ftco-no-pb pt-5">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">

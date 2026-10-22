@@ -157,16 +157,8 @@
         $gridClass = 'bento-grid-' . min($totalFoto, 5);
     @endphp
 
-    <!-- HERO HEADER / BREADCRUMB -->
-    <p class="breadcrumbs">
-        <span class="mr-2"><a href="{{ route('frontend.home') }}">Beranda <i class="fa fa-chevron-right"></i></a></span>
-        <span class="mr-2"><a href="{{ route('frontend.paket.index') }}">Paket Wisata <i
-                    class="fa fa-chevron-right"></i></a></span>
-        <span>{{ $paket->PaketWisata->nama_paket ?? 'Paket Wisata' }} <i class="fa fa-chevron-right"></i></span>
-    </p>
-
     <!-- DETAIL CONTENT SECTION -->
-    <section class="ftco-section bg-white pt-4">
+    <section class="ftco-section bg-white pt-5">
         <div class="container">
 
             <!-- HEADER TITLE & BADGE -->
@@ -227,7 +219,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="d-flex align-items-center">
                                         <div>
-                                            <h6 class="mb-0 font-weight-bold text-dark">
+                                            <h6 class="mb-0 font-weight-bold text-secondary">
                                                 {{ $pDest->destinasi->nama_destinasi ?? '-' }}
                                             </h6>
                                         </div>
