@@ -2,22 +2,17 @@
 
 @section('content')
     <!-- HERO / BREADCRUMB HEADER -->
-    <section class="hero-wrap hero-wrap-2 js-fullheight"
-        style="background-image: url('{{ asset('frontend/images/img7.png') }}')">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
-                <div class="col-md-9 ftco-animate pb-5 text-center">
-                    <p class="breadcrumbs">
-                        <span class="mr-2"><a href="{{ route('frontend.home') }}">Beranda <i
-                                    class="fa fa-chevron-right"></i></a></span>
-                        <span>Paket Wisata <i class="fa fa-chevron-right"></i></span>
-                    </p>
-                    <h1 class="mb-0 bread">Eksplorasi Paket Wisata</h1>
-                </div>
+    <div class="container">
+        <div class="row no-gutters">
+            <div class="col-md-9 pb-5 text-start">
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{{ route('frontend.home') }}">Beranda <i
+                                class="fa fa-chevron-right"></i></a></span>
+                    <span>Paket Wisata <i class="fa fa-chevron-right"></i></span>
+                </p>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- FILTER & SEARCH SECTION -->
     <section class="ftco-section ftco-no-pb">
