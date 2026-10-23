@@ -73,76 +73,83 @@
                                 </tr>
 
                                 <!-- Modal Konfirmasi Pembayaran DP / Tunai -->
-                                <div class="modal fade" id="uploadModal{{ $b->id }}" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <form action="{{ route('client.upload.pembayaran', $b->uuid) }}" method="POST"
-                                            enctype="multipart/form-data" class="modal-content">
-                                            @csrf
-                                            <div class="modal-header">
-                                                <h5 class="modal-title fw-bold">Konfirmasi Pembayaran DP</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body text-start">
-                                                <div class="alert alert-secondary py-2 mb-3">
-                                                    <p class="mb-1"><strong>Total Sewa:</strong> Rp
-                                                        {{ number_format($b->biaya_sewa, 0, ',', '.') }}</p>
-                                                    <p class="mb-0 text-danger font-weight-bold">* DP Minimal: Rp 2.000.000
-                                                    </p>
+                                <!-- Modal Konfirmasi Pembayaran DP / Tunai -->
+                                <div class="modal fade" id="uploadModal{{ $b->id }}" tabindex="-1"
+                                    aria-labelledby="uploadModalLabel{{ $b->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <!-- Tambahkan pembungkus modal-content di sini -->
+                                        <div class="modal-content">
+                                            <form action="{{ route('client.upload.pembayaran', $b->uuid) }}" method="POST"
+                                                enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title fw-bold"
+                                                        id="uploadModalLabel{{ $b->id }}">Konfirmasi Pembayaran DP
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                                 </div>
+                                                <div class="modal-body text-start">
+                                                    <div class="alert alert-secondary py-2 mb-3">
+                                                        <p class="mb-1"><strong>Total Sewa:</strong> Rp
+                                                            {{ number_format($b->biaya_sewa, 0, ',', '.') }}</p>
+                                                        <p class="mb-0 text-danger fw-bold">* DP Minimal: Rp 2.000.000</p>
+                                                    </div>
 
-                                                <!-- Pilihan Metode Pembayaran -->
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-bold">Metode Pembayaran</label>
-                                                    <select name="metode_pembayaran" id="metode{{ $b->id }}"
-                                                        class="form-select" onchange="toggleMetode({{ $b->id }})"
-                                                        required>
-                                                        <option value="transfer">Transfer Bank</option>
-                                                        <option value="tunai">Bayar Tunai di Kantor</option>
-                                                    </select>
-                                                </div>
+                                                    <!-- Pilihan Metode Pembayaran -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Metode Pembayaran</label>
+                                                        <select name="metode_pembayaran" id="metode{{ $b->id }}"
+                                                            class="form-select"
+                                                            onchange="toggleMetode({{ $b->id }})" required>
+                                                            <option value="transfer">Transfer Bank</option>
+                                                            <option value="tunai">Bayar Tunai di Kantor</option>
+                                                        </select>
+                                                    </div>
 
-                                                <!-- Informasi Rekening (Tampil Jika Transfer) -->
-                                                <div id="infoBank{{ $b->id }}"
-                                                    class="p-3 bg-light rounded mb-3 border">
-                                                    <h6 class="fw-bold mb-1 text-primary"><i
-                                                            class="fa fa-university me-1"></i> Rekening Tujuan Transfer:
-                                                    </h6>
-                                                    <p class="mb-1 text-dark"><strong>Bank BCA:</strong> 1234-5678-90 (a.n.
-                                                        Arie Mitra Sejati)</p>
-                                                    <p class="mb-0 text-dark"><strong>Bank BRI:</strong> 0987-6543-21 (a.n.
-                                                        Arie Mitra Sejati)</p>
-                                                </div>
+                                                    <!-- Informasi Rekening (Tampil Jika Transfer) -->
+                                                    <div id="infoBank{{ $b->id }}"
+                                                        class="p-3 bg-light rounded mb-3 border">
+                                                        <h6 class="fw-bold mb-1 text-primary"><i
+                                                                class="fa fa-university me-1"></i> Rekening Tujuan Transfer:
+                                                        </h6>
+                                                        <p class="mb-1 text-dark"><strong>Bank BCA:</strong> 1234-5678-90
+                                                            (a.n. Arie Mitra Sejati)</p>
+                                                        <p class="mb-0 text-dark"><strong>Bank BRI:</strong> 0987-6543-21
+                                                            (a.n. Arie Mitra Sejati)</p>
+                                                    </div>
 
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-bold">Nominal Pembayaran (Rp)</label>
-                                                    <input type="number" name="jumlah_bayar" min="2000000"
-                                                        max="{{ $b->biaya_sewa }}" class="form-control" required
-                                                        placeholder="2000000">
-                                                </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Nominal Pembayaran (Rp)</label>
+                                                        <input type="number" name="jumlah_bayar" min="2000000"
+                                                            max="{{ $b->biaya_sewa }}" class="form-control" required
+                                                            placeholder="2000000">
+                                                    </div>
 
-                                                <!-- Field Upload Bukti Pembayaran -->
-                                                <div class="mb-3" id="fieldBukti{{ $b->id }}">
-                                                    <label class="form-label fw-bold">Unggah Bukti Transfer</label>
-                                                    <input type="file" name="bukti_pembayaran"
-                                                        id="inputBukti{{ $b->id }}" class="form-control"
-                                                        accept="image/*">
-                                                </div>
+                                                    <!-- Field Upload Bukti Pembayaran -->
+                                                    <div class="mb-3" id="fieldBukti{{ $b->id }}">
+                                                        <label class="form-label fw-bold">Unggah Bukti Transfer</label>
+                                                        <input type="file" name="bukti_pembayaran"
+                                                            id="inputBukti{{ $b->id }}" class="form-control"
+                                                            accept="image/*" required>
+                                                    </div>
 
-                                                <!-- Catatan Bayar di Tempat -->
-                                                <div id="infoTunai{{ $b->id }}"
-                                                    class="alert alert-info py-2 d-none">
-                                                    <i class="fa fa-info-circle me-1"></i> Silakan datang ke kantor kami di
-                                                    <strong>Jl. Perintis Kemerdekaan No. 20 Taman Pemalang</strong> untuk
-                                                    melakukan pembayaran secara tunai.
+                                                    <!-- Catatan Bayar di Tempat -->
+                                                    <div id="infoTunai{{ $b->id }}"
+                                                        class="alert alert-info py-2 d-none">
+                                                        <i class="fa fa-info-circle me-1"></i> Silakan datang ke kantor kami
+                                                        di <strong>Jl. Perintis Kemerdekaan No. 20 Taman Pemalang</strong>
+                                                        untuk melakukan pembayaran secara tunai.
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Batal</button>
-                                                <button type="submit" class="btn btn-primary"><i
-                                                        class="fa fa-paper-plane me-1"></i> Kirim Konfirmasi</button>
-                                            </div>
-                                        </form>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-primary"><i
+                                                            class="fa fa-paper-plane me-1"></i> Kirim Konfirmasi</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             @empty
