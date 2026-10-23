@@ -99,14 +99,8 @@
                                         <option value="draft"
                                             {{ old('status', $proposal->status) == 'draft' ? 'selected' : '' }}>Draft
                                         </option>
-                                        <option value="sent"
-                                            {{ old('status', $proposal->status) == 'sent' ? 'selected' : '' }}>Sent
-                                        </option>
-                                        <option value="approved"
-                                            {{ old('status', $proposal->status) == 'approved' ? 'selected' : '' }}>Approved
-                                        </option>
-                                        <option value="rejected"
-                                            {{ old('status', $proposal->status) == 'rejected' ? 'selected' : '' }}>Rejected
+                                        <option value="publish"
+                                            {{ old('status', $proposal->status) == 'publish' ? 'selected' : '' }}>publish
                                         </option>
                                     </select>
                                 </div>

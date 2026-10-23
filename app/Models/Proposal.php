@@ -59,4 +59,8 @@ class Proposal extends Model
     {
         return $this->hasMany(ProposalBiayaKomponen::class, 'proposal_id');
     }
+    public function booking()
+    {
+        return $this->hasOne(Booking::class, 'proposal_id');
+    }
 }

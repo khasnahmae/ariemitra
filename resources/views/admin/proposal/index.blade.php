@@ -78,62 +78,75 @@
                                             </td>
                                             <td class="text-end">
                                                 <div class="form-button-action justify-content-end gap-1">
-                                                    {{-- <a href="{{ route('admin.proposal.show', $p->uuid) }}"
-                                                        class="btn btn-link btn-primary btn-lg p-1" data-bs-toggle="tooltip"
-                                                        title="Detail Proposal">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a> --}}
-
-                                                    @if ($p->status !== 'approved')
-                                                        <a href="{{ route('admin.proposal.edit', $p->uuid) }}"
-                                                            class="btn btn-link btn-warning btn-lg p-1"
-                                                            data-bs-toggle="tooltip" title="Edit Proposal">
-                                                            <i class="fa fa-edit"></i>
-                                                        </a>
-                                                    @else
-                                                        <!-- Opsional: Tampilan Disabled Jika Ingin Pengguna Tetap Melihat Tombol Tapi Tidak Bisa Diklik -->
-                                                        {{-- <button class="btn btn-link btn-secondary btn-lg p-1 opacity-50"
-                                                            data-bs-toggle="tooltip"
-                                                            title="Proposal Approved Tidak Dapat Diubah" disabled>
-                                                            <i class="fa fa-edit"></i>
-                                                        </button> --}}
-                                                    @endif
-
-                                                    <a href="{{ route('admin.proposal.export-pdf', $p->uuid) }}"
-                                                        class="btn btn-link btn-info btn-lg p-1" data-bs-toggle="tooltip"
-                                                        title="Cetak PDF">
-                                                        <i class="fa fa-file-pdf"></i>
-                                                    </a>
-
-                                                    @if ($p->status !== 'approved')
-                                                        <form action="{{ route('admin.proposal.destroy', $p->uuid) }}"
+                                            <td class="text-end">
+                                                <div class="form-button-action justify-content-end gap-1">
+                                                    @if (isset($p->booking))
+                                                        <form
+                                                            action="{{ route('admin.booking.send-invoice', $p->booking->uuid) }}"
                                                             method="POST" class="d-inline">
                                                             @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                class="btn btn-link btn-danger btn-lg p-1 delete-button"
-                                                                data-bs-toggle="tooltip" title="Hapus Proposal">
-                                                                <i class="fa fa-times"></i>
+                                                            <button type="submit" class="btn btn-sm btn-primary"
+                                                                data-bs-toggle="tooltip" title="Send to Client">
+                                                                <i class="fa fa-paper-plane me-1"></i> Send to Client
                                                             </button>
                                                         </form>
-                                                    @else
-                                                        <!-- Opsional: Disabled State untuk Hapus -->
-                                                        {{-- <button class="btn btn-link btn-secondary btn-lg p-1 opacity-50"
-                                                            data-bs-toggle="tooltip"
-                                                            title="Proposal Approved Tidak Dapat Dihapus" disabled>
-                                                            <i class="fa fa-times"></i>
-                                                        </button> --}}
+                                                        <a href="{{ route('admin.booking.cetak-invoice', $p->booking->uuid) }}"
+                                                            target="_blank" class="btn btn-sm btn-secondary"
+                                                            title="Cetak Invoice/Bukti Sewa">
+                                                            <i class="fa fa-print"></i>
+                                                        </a>
                                                     @endif
+
+                                                    <a href="{{ route('admin.proposal.edit', $p->uuid) }}"
+                                                        class="btn btn-link btn-warning btn-lg p-1" title="Edit Proposal">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.proposal.export-pdf', $p->uuid) }}"
+                                                        class="btn btn-link btn-info btn-lg p-1" title="Cetak PDF">
+                                                        <i class="fa fa-file-pdf"></i>
+                                                    </a>
+                                                    <form action="{{ route('admin.proposal.destroy', $p->uuid) }}"
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="btn btn-link btn-danger btn-lg p-1 delete-button"
+                                                            title="Hapus Proposal">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                            <a href="{{ route('admin.proposal.edit', $p->uuid) }}"
+                                                class="btn btn-link btn-warning btn-lg p-1" data-bs-toggle="tooltip"
+                                                title="Edit Proposal">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="{{ route('admin.proposal.export-pdf', $p->uuid) }}"
+                                                class="btn btn-link btn-info btn-lg p-1" data-bs-toggle="tooltip"
+                                                title="Cetak PDF">
+                                                <i class="fa fa-file-pdf"></i>
+                                            </a>
+                                            <form action="{{ route('admin.proposal.destroy', $p->uuid) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="btn btn-link btn-danger btn-lg p-1 delete-button"
+                                                    data-bs-toggle="tooltip" title="Hapus Proposal">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </form>
                         </div>
+                        </td>
+                        </tr>
+                        @endforeach
+                        </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection

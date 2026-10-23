@@ -10,7 +10,8 @@ class PaketWisataController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Proposal::with(['PaketWisata', 'proposalDestinasi.destinasi']);
+        $query = Proposal::where('status', 'publish')
+            ->with(['PaketWisata', 'proposalDestinasi.destinasi']);
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -32,13 +33,14 @@ class PaketWisataController extends Controller
 
     public function show($uuid)
     {
-        $paket = Proposal::with([
-            'PaketWisata',
-            'proposalDestinasi.destinasi',
-            'proposalArmada.armada',
-            'proposalBiayaKomponen'
-        ])
+        $paket = Proposal::where('status', 'publish')
             ->where('uuid', $uuid)
+            ->with([
+                'PaketWisata',
+                'proposalDestinasi.destinasi',
+                'proposalArmada.armada',
+                'proposalBiayaKomponen'
+            ])
             ->firstOrFail();
 
         $namaLengkapPaket = "Paket " . ($paket->PaketWisata->nama_paket ?? '') . " (" . $paket->nama_sub_paket . ")";

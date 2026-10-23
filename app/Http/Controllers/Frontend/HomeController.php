@@ -11,6 +11,7 @@ class HomeController extends Controller
     public function index()
     {
         $paketPopuler = Proposal::with(['PaketWisata', 'proposalDestinasi.destinasi'])
+            ->where('status', 'publish')
             ->latest()
             ->take(6)
             ->get();

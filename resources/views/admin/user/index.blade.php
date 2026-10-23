@@ -58,10 +58,12 @@
                                             <td class="fw-bold">{{ $item->nama }}</td>
                                             <td>{{ $item->email }}</td>
                                             <td>
-                                                @if ($item->role === 'admin')
-                                                    <span class="badge badge-danger">Admin</span>
+                                                @if ($item->role === 'owner')
+                                                    <span class="badge badge-danger">Owner</span>
+                                                @elseif ($item->role === 'admin')
+                                                    <span class="badge badge-info">Admin</span>
                                                 @else
-                                                    <span class="badge badge-info">Staff</span>
+                                                    <span class="badge badge-info">Client</span>
                                                 @endif
                                             </td>
                                             <td class="text-muted small">

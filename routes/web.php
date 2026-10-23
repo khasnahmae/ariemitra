@@ -11,7 +11,12 @@ use App\Http\Controllers\Admin\ProposalController;
 use App\Http\Controllers\Admin\PaketWisataController as AdminPaketController;
 use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\BookingAdminController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Client\BookingController as ClientBookingController;
+use App\Http\Controllers\Client\AccountController as ClientAccountController;
+use App\Http\Controllers\Owner\LaporanController;
 
 // ROUTE PUBLIC / FRONTEND
 Route::name('frontend.')->group(function () {
@@ -23,20 +28,30 @@ Route::name('frontend.')->group(function () {
     Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 });
 
-// ROUTE AUTHENTICATION
+// ROUTE AUTHENTICATION (LOGIN & REGISTER CLIENT)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+    Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// ROUTE PANEL ADMIN (Bisa diakses Admin & Staff)
+// ROUTE CLIENT AREA
+Route::middleware(['auth', 'role:client'])->prefix('client')->as('client.')->group(function () {
+    Route::post('/booking/{proposal:uuid}', [ClientBookingController::class, 'store'])->name('booking.store');
+    Route::get('/riwayat', [ClientBookingController::class, 'riwayat'])->name('riwayat');
+    Route::post('/riwayat/{booking:uuid}/upload', [ClientBookingController::class, 'uploadPembayaran'])->name('upload.pembayaran');
+    Route::get('/akun', [ClientAccountController::class, 'index'])->name('account');
+    Route::put('/akun', [ClientAccountController::class, 'update'])->name('account.update');
+});
+
+// ROUTE PANEL ADMIN & OWNER
 Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
 
-    // Dashboard Utama
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // CRUD Master Data
@@ -59,12 +74,19 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
         Route::get('/{proposal:uuid}/edit', [ProposalController::class, 'edit'])->name('edit');
         Route::put('/{proposal:uuid}', [ProposalController::class, 'update'])->name('update');
         Route::delete('/{proposal:uuid}', [ProposalController::class, 'destroy'])->name('destroy');
-
         Route::post('/kalkulasi-ajax', [ProposalController::class, 'hitungSimulasi'])->name('kalkulasi.ajax');
         Route::get('/{proposal:uuid}/export-pdf', [ProposalController::class, 'exportPdf'])->name('export-pdf');
     });
-    // KHUSUS ROLE ADMIN: MANAJEMEN USER (Ubah Password Admin & Staff)
-    Route::middleware(['role:admin'])->group(function () {
+
+    // Kelola Pemesanan & Invoice
+    Route::get('/booking', [BookingAdminController::class, 'index'])->name('booking.index');
+    Route::post('/booking/{uuid}/send-invoice', [BookingAdminController::class, 'sendInvoice'])->name('booking.send-invoice');
+    Route::get('/booking/{uuid}/cetak-invoice', [BookingAdminController::class, 'cetakInvoice'])->name('booking.cetak-invoice');
+    Route::post('/booking/{uuid}/pembayaran-tunai', [BookingAdminController::class, 'konfirmasiTunai'])->name('booking.konfirmasi-tunai');
+
+    // KHUSUS ROLE Owner
+    Route::middleware(['role:owner'])->group(function () {
         Route::resource('user', UserController::class)->scoped(['user' => 'uuid']);
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     });
 });

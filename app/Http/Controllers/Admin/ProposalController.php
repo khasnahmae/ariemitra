@@ -199,7 +199,7 @@ class ProposalController extends Controller
                 'biaya_var_per_pax'   => $biayaVarPerPax,
                 'margin_per_pax'      => $marginPerPax,
                 'harga_akhir_per_pax' => $hargaAkhirPerPax,
-                'status'              => 'draft',
+                'status'              => 'publish',
             ]);
 
             // Save Relasi Destinasi & Tol & Armada
@@ -364,7 +364,7 @@ class ProposalController extends Controller
             'komponen_var.*.nama'     => 'required|string',
             'komponen_var.*.nominal'   => 'required|numeric|min:0',
             'margin_per_pax'          => 'required|numeric|min:0',
-            'status'                  => 'required|in:draft,sent,approved,rejected',
+            'status'                  => 'required|in:draft,publish',
         ]);
 
         $armada = Armada::findOrFail($validated['armada_id']);
@@ -554,9 +554,9 @@ class ProposalController extends Controller
 
     public function destroy(Proposal $proposal)
     {
-        if ($proposal->status === 'approved') {
+        if ($proposal->status === 'publish') {
             return redirect()->route('admin.proposal.index')
-                ->with('error', 'Proposal yang sudah di-approve tidak dapat dihapus!');
+                ->with('error', 'Proposal yang sedang publish tidak dapat dihapus!');
         }
 
         $proposal->delete();

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->decimal('biaya_var_per_pax', 12, 2)->default(0);
             $table->decimal('margin_per_pax', 12, 2)->default(0);
             $table->decimal('harga_akhir_per_pax', 12, 2)->default(0);
-            $table->enum('status', ['draft', 'sent', 'approved', 'rejected'])->default('draft');
+            $table->enum('status', ['draft', 'publish'])->default('publish');
             $table->timestamps();
         });
     }

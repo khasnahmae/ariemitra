@@ -8,9 +8,9 @@
             <div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true">
                 <div class="col-md-7 ftco-animate">
                     <span class="subheading">Solusi Perjalanan Wisata & Study Tour</span>
-                    <h1 class="mb-4">Jelajahi Keindahan Nusantara Dengan Biaya Transparan</h1>
-                    <p class="caps">Menyediakan paket tour sekolah, instansi, keluarga, dan rombongan umum dengan kalkulasi
-                        biaya akurat.</p>
+                    <h1 class="mb-4">Jelajahi Keindahan Nusantara Bersama Kami</h1>
+                    <p class="caps">Menyediakan paket tour sekolah, instansi, keluarga, dan rombongan umum dengan biaya
+                        terjangkau</p>
                     <p>
                         <a href="{{ route('frontend.paket.index') }}" class="btn btn-primary py-3 px-4 mr-2">Lihat Paket
                             Tour</a>
@@ -34,7 +34,7 @@
                                     aria-orientation="vertical">
                                     <a class="nav-link active mr-md-1" id="v-pills-1-tab" data-toggle="pill"
                                         href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Cari
-                                        Paket Tour Rombongan</a>
+                                        Paket Tour</a>
                                 </div>
                             </div>
                             <div class="col-md-12 tab-wrap">

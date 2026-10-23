@@ -66,67 +66,129 @@
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-secondary">
-                        <li class="nav-item {{ request()->is('admin/dashboard*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.dashboard') }}">
-                                <i class="fas fa-home"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-section">
-                            <span class="sidebar-mini-icon"><i class="fa fa-ellipsis-h"></i></span>
-                            <h4 class="text-section">MENU UTAMA</h4>
-                        </li>
-                        <li class="nav-item {{ request()->is('admin/proposal*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.proposal.index') }}">
-                                <i class="far fa-file-alt"></i>
-                                <p>Proposal</p>
-                            </a>
-                        </li>
-                        <li
-                            class="nav-item {{ request()->is('admin/destinasi*') || request()->is('admin/armada*') || request()->is('admin/rute-tol*') ? 'active' : '' }}">
-                            <a data-bs-toggle="collapse" href="#masterData">
-                                <i class="fas fa-layer-group"></i>
-                                <p>Data Master</p>
-                                <span class="caret"></span>
-                            </a>
-                            <div class="collapse {{ request()->is('admin/destinasi*') || request()->is('admin/armada*') || request()->is('admin/rute-tol*') ? 'show' : '' }}"
-                                id="masterData">
-                                <ul class="nav nav-collapse">
-                                    <li class="{{ request()->is('admin/destinasi*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.destinasi.index') }}"><span class="sub-item">Destinasi
-                                                Wisata</span></a>
-                                    </li>
-                                    <li class="{{ request()->is('admin/armada*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.armada.index') }}"><span class="sub-item">Armada
-                                                Transportasi</span></a>
-                                    </li>
-                                    <li class="{{ request()->is('admin/rute-tol*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.rute-tol.index') }}"><span class="sub-item">Tarif Rute
-                                                Tol</span></a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item {{ request()->is('admin/paket-wisata*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.paket-wisata.index') }}">
-                                <i class="fas fa-archive"></i>
-                                <p>Kategori Paket</p>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ request()->is('admin/galeri*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.galeri.index') }}">
-                                <i class="fas fa-camera"></i>
-                                <p>Galeri Foto</p>
-                            </a>
-                        </li>
-                        @if (auth()->check() && auth()->user()->role === 'admin')
-                            <li class="nav-item {{ request()->is('admin.user*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.user.index') }}">
-                                    <i class="fas fa-user-cog"></i>
-                                    <p>Manajemen User</p>
+
+                        {{-- ================= MENU UNTUK ADMIN & OWNER ================= --}}
+                        @if (auth()->check() && in_array(auth()->user()->role, ['admin', 'owner']))
+                            <li class="nav-item {{ request()->is('admin/dashboard*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.dashboard') }}">
+                                    <i class="fas fa-home"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-section">
+                                <span class="sidebar-mini-icon"><i class="fa fa-ellipsis-h"></i></span>
+                                <h4 class="text-section">MENU UTAMA</h4>
+                            </li>
+
+                            <!-- MENU BARU: KELOLA PEMESANAN / BOOKING CLIENT -->
+                            <li class="nav-item {{ request()->is('admin/booking*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.booking.index') }}">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <p>Data Pemesanan</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ request()->is('admin/proposal*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.proposal.index') }}">
+                                    <i class="far fa-file-alt"></i>
+                                    <p>Proposal</p>
+                                </a>
+                            </li>
+
+                            <li
+                                class="nav-item {{ request()->is('admin/destinasi*') || request()->is('admin/armada*') || request()->is('admin/rute-tol*') ? 'active' : '' }}">
+                                <a data-bs-toggle="collapse" href="#masterData">
+                                    <i class="fas fa-layer-group"></i>
+                                    <p>Data Master</p>
+                                    <span class="caret"></span>
+                                </a>
+                                <div class="collapse {{ request()->is('admin/destinasi*') || request()->is('admin/armada*') || request()->is('admin/rute-tol*') ? 'show' : '' }}"
+                                    id="masterData">
+                                    <ul class="nav nav-collapse">
+                                        <li class="{{ request()->is('admin/destinasi*') ? 'active' : '' }}">
+                                            <a href="{{ route('admin.destinasi.index') }}"><span
+                                                    class="sub-item">Destinasi Wisata</span></a>
+                                        </li>
+                                        <li class="{{ request()->is('admin/armada*') ? 'active' : '' }}">
+                                            <a href="{{ route('admin.armada.index') }}"><span class="sub-item">Armada
+                                                    Transportasi</span></a>
+                                        </li>
+                                        <li class="{{ request()->is('admin/rute-tol*') ? 'active' : '' }}">
+                                            <a href="{{ route('admin.rute-tol.index') }}"><span class="sub-item">Tarif
+                                                    Rute Tol</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item {{ request()->is('admin/paket-wisata*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.paket-wisata.index') }}">
+                                    <i class="fas fa-archive"></i>
+                                    <p>Kategori Paket</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ request()->is('admin/galeri*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.galeri.index') }}">
+                                    <i class="fas fa-camera"></i>
+                                    <p>Galeri Foto</p>
+                                </a>
+                            </li>
+
+                            {{-- KHUSUS OWNER --}}
+                            @if (auth()->user()->role === 'owner')
+                                <li class="nav-section">
+                                    <span class="sidebar-mini-icon"><i class="fa fa-ellipsis-h"></i></span>
+                                    <h4 class="text-section">MENU OWNER</h4>
+                                </li>
+
+                                <!-- MENU BARU: LAPORAN -->
+                                <li class="nav-item {{ request()->is('admin/laporan*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.laporan.index') }}">
+                                        <i class="fas fa-chart-line"></i>
+                                        <p>Kelola Laporan</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item {{ request()->is('admin/user*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.user.index') }}">
+                                        <i class="fas fa-user-cog"></i>
+                                        <p>Manajemen User</p>
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+
+                        {{-- ================= MENU KHUSUS CLIENT ================= --}}
+                        @if (auth()->check() && auth()->user()->role === 'client')
+                            <li class="nav-section">
+                                <span class="sidebar-mini-icon"><i class="fa fa-ellipsis-h"></i></span>
+                                <h4 class="text-section">MENU CLIENT</h4>
+                            </li>
+
+                            <li class="nav-item {{ request()->is('paket-wisata*') ? 'active' : '' }}">
+                                <a href="{{ route('frontend.paket.index') }}">
+                                    <i class="fas fa-search-location"></i>
+                                    <p>Pilih Paket Wisata</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ request()->is('client/riwayat*') ? 'active' : '' }}">
+                                <a href="{{ route('client.riwayat') }}">
+                                    <i class="fas fa-history"></i>
+                                    <p>Riwayat Pemesanan</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item {{ request()->is('client/akun*') ? 'active' : '' }}">
+                                <a href="{{ route('client.account') }}">
+                                    <i class="fas fa-user-edit"></i>
+                                    <p>Pengaturan Akun</p>
                                 </a>
                             </li>
                         @endif
+
                     </ul>
                 </div>
             </div>
@@ -163,23 +225,18 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        @if (Auth::user()->role == 'admin')
-                                            <img src="{{ asset('frontend/images/profile.webp') }}" alt="Admin Avatar"
-                                                class="avatar-img rounded-circle img" />
-                                        @else
-                                            <img src="{{ asset('frontend/images/profile.webp') }}"
-                                                alt="Default Avatar" class="avatar-img rounded-circle img" />
-                                        @endif
+                                        <img src="{{ asset('frontend/images/profile.webp') }}" alt="Avatar"
+                                            class="avatar-img rounded-circle img" />
                                     </div>
-                                    {{-- <span class="profile-username">
-                                        <span class="fw-semibold" style="font-size: 18px;">
-                                            {{ Auth::user()->nama }}
-                                        </span>
-                                    </span> --}}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="">Pengaturan</a>
+                                        @if (auth()->check() && auth()->user()->role === 'client')
+                                            <a class="dropdown-item" href="{{ route('client.account') }}">Pengaturan
+                                                Akun</a>
+                                        @else
+                                            <a class="dropdown-item" href="#">Pengaturan</a>
+                                        @endif
                                     </li>
                                 </ul>
                             </li>
@@ -202,9 +259,7 @@
                         <div class="col-md-12">
                             <div class="card card-round">
                                 <div class="card-header">
-                                    {{-- <div class="card-head-row"> --}}
                                     @yield('content')
-                                    {{-- </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -221,7 +276,8 @@
             </footer>
         </div>
     </div>
-    <!-- Modal -->
+
+    <!-- Modal Logout -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -244,104 +300,17 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!--   Core JS Files   -->
     <script src="{{ asset('backend/assets/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/core/bootstrap.min.js') }}"></script>
-    <!-- jQuery Scrollbar -->
     <script src="{{ asset('backend/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
-    <!-- Chart JS -->
-    <script src="{{ asset('backend/assets/js/plugin/chart.js/chart.min.js') }}"></script>
-    <!-- jQuery Sparkline -->
-    <script src="{{ asset('backend/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
-    <!-- Chart Circle -->
-    <script src="{{ asset('backend/assets/js/plugin/chart-circle/circles.min.js') }}"></script>
-    <!-- Datatables -->
     <script src="{{ asset('backend/assets/js/plugin/datatables/datatables.min.js') }}"></script>
-    <!-- Bootstrap Notify -->
-    <script src="{{ asset('backend/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
-    <!-- jQuery Vector Maps -->
-    <script src="{{ asset('backend/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/plugin/jsvectormap/world.js') }}"></script>
-    <!-- Google Maps Plugin -->
-    <script src="{{ asset('backend/assets/js/plugin/gmaps/gmaps.js') }}"></script>
-    <!-- Sweet Alert -->
     <script src="{{ asset('backend/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
-    <!-- Kaiadmin JS -->
-    <script src="{{ asset('backend/assets/js/kaiadmin.min.js') }}"></script>
-    <!-- Datatables -->
-    <script src="{{ asset('backend/assets/js/plugin/datatables/datatables.min.js') }}"></script>
-    <!-- Kaiadmin JS -->
     <script src="{{ asset('backend/assets/js/kaiadmin.min.js') }}"></script>
 
     <script>
         $(document).ready(function() {
             $("#basic-datatables").DataTable({});
-
-            $("#multi-filter-select").DataTable({
-                pageLength: 5,
-                initComplete: function() {
-                    this.api()
-                        .columns()
-                        .every(function() {
-                            var column = this;
-                            var select = $(
-                                    '<select class="form-select"><option value=""></option></select>'
-                                )
-                                .appendTo($(column.footer()).empty())
-                                .on("change", function() {
-                                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                                    column
-                                        .search(val ? "^" + val + "$" : "", true, false)
-                                        .draw();
-                                });
-                            column
-                                .data()
-                                .unique()
-                                .sort()
-                                .each(function(d, j) {
-                                    select.append(
-                                        '<option value="' + d + '">' + d + "</option>"
-                                    );
-                                });
-                        });
-                },
-            });
-            // Add Row
-            $("#add-row").DataTable({
-                pageLength: 5,
-            });
-            var action =
-                '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-            $("#addRowButton").click(function() {
-                $("#add-row")
-                    .dataTable()
-                    .fnAddData([
-                        $("#addName").val(),
-                        $("#addPosition").val(),
-                        $("#addOffice").val(),
-                        action,
-                    ]);
-                $("#addRowModal").modal("hide");
-            });
-        });
-    </script>
-    <script>
-        const passwordInput = document.querySelector('#password');
-        const togglePassword = document.querySelector('#togglePassword');
-        // Fungsi untuk toggle tampilan password
-        togglePassword.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye-slash');
-        });
-        // Fungsi untuk menampilkan ikon saat input password diisi
-        passwordInput.addEventListener('input', function() {
-            if (this.value.length > 0) {
-                togglePassword.classList.remove('d-none');
-            } else {
-                togglePassword.classList.add('d-none');
-            }
         });
     </script>
 
@@ -368,76 +337,6 @@
             });
         </script>
     @endif
-    <script>
-        var SweetAlert2Demo = (function() {
-            //== Demos
-            var initDemos = function() {
-                $(".delete-button").click(function(e) {
-                    var form = $(this).closest("form"); // Mengambil form terdekat
-                    e.preventDefault(); // Mencegah aksi form langsung dieksekusi
-                    Swal.fire({
-                        title: "Yakin ingin menghapus?",
-                        text: "Data yang sudah terhapus tidak bisa kembali lagi!",
-                        icon: "warning",
-                        showCancelButton: true, // Menampilkan tombol Cancel
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, hapus!',
-                        cancelButtonText: 'Tidak, batal!',
-                        buttonsStyling: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Jika pengguna mengklik tombol 'Yes, delete it!', submit form penghapusan
-                            form.submit(); // Aksi submit akan berjalan hanya setelah konfirmasi
-                        } else if (result.dismiss === Swal.DismissReason.cancel) {
-                            // Jika pengguna mengklik 'No, cancel!', tidak terjadi apapun
-                            Swal.fire({
-                                title: 'Dibatalkan',
-                                text: 'Data Anda aman :)',
-                                icon: 'error',
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    });
-                });
-            };
-            return {
-                //== Init
-                init: function() {
-                    initDemos();
-                },
-            };
-        })();
-        //== Class Initialization
-        jQuery(document).ready(function() {
-            SweetAlert2Demo.init();
-        });
-    </script>
-    <script>
-        $(document).on('click', '.mark-as-read', function() {
-            var notificationId = $(this).data('id');
-
-            $.ajax({
-                url: '/notifications/' + notificationId + '/read',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Sembunyikan notifikasi yang telah dibaca
-                        location.reload(); // Bisa diganti dengan memperbarui DOM tanpa reload halaman
-                    }
-                },
-                error: function(xhr) {
-                    console.error(xhr.responseText);
-                }
-            });
-        });
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 
 </html>

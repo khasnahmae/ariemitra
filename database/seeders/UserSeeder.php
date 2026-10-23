@@ -16,25 +16,23 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Account Super Admin / Director
+        User::firstOrCreate(
+            ['email' => 'owner@alamtour.co.id'],
+            [
+                'uuid'     => (string) Str::uuid(),
+                'nama'     => 'Owner',
+                'password' => Hash::make('owner12345'),
+                'role'     => 'owner',
+            ]
+        );
+
         User::firstOrCreate(
             ['email' => 'admin@alamtour.co.id'],
             [
                 'uuid'     => (string) Str::uuid(),
-                'nama'     => 'Administrator Utama',
-                'password' => Hash::make('admin12345'),
+                'nama'     => 'Admin',
+                'password' => Hash::make('admin123'),
                 'role'     => 'admin',
-            ]
-        );
-
-        // 2. Account Manager Marketing (Pembuat Proposal Utama)
-        User::firstOrCreate(
-            ['email' => 'marketing@alamtour.co.id'],
-            [
-                'uuid'     => (string) Str::uuid(),
-                'nama'     => 'Budi Santoso (Marketing Manager)',
-                'password' => Hash::make('marketing123'),
-                'role'     => 'staff',
             ]
         );
     }
