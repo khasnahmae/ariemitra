@@ -60,23 +60,6 @@
                                             </td>
                                             <td class="text-end">
                                                 <div class="form-button-action justify-content-end gap-1">
-                                                    @if (isset($p->booking))
-                                                        <form
-                                                            action="{{ route('admin.booking.send-invoice', $p->booking->uuid) }}"
-                                                            method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-sm btn-primary"
-                                                                data-bs-toggle="tooltip" title="Send to Client">
-                                                                <i class="fa fa-paper-plane me-1"></i> Send to Client
-                                                            </button>
-                                                        </form>
-                                                        <a href="{{ route('admin.booking.cetak-invoice', $p->booking->uuid) }}"
-                                                            target="_blank" class="btn btn-sm btn-secondary"
-                                                            title="Cetak Invoice/Bukti Sewa">
-                                                            <i class="fa fa-print"></i>
-                                                        </a>
-                                                    @endif
-
                                                     <a href="{{ route('admin.proposal.edit', $p->uuid) }}"
                                                         class="btn btn-link btn-warning btn-lg p-1" title="Edit Proposal">
                                                         <i class="fa fa-edit"></i>

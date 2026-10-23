@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Bukti Sewa - {{ $booking->no_invoice }}</title>
+    <title>
+        {{ request('type') == 'bukti_sewa' || in_array($booking->status, ['booked', 'lunas']) ? 'BUKTI SEWA' : 'INVOICE PERINTAH BAYAR' }}
+        - {{ $booking->no_invoice }}</title>
     <style>
         body {
             font-family: 'Times New Roman', serif;
@@ -21,13 +23,13 @@
         .logo-title {
             font-size: 22px;
             font-weight: bold;
-            color: #b30000;
+            color: #1A2171;
             text-transform: uppercase;
         }
 
         .sub-header {
             font-size: 13px;
-            margin-top: -5px;
+            margin-top: -3px;
         }
 
         .title {
@@ -47,6 +49,13 @@
         table.content td {
             padding: 4px 0;
             vertical-align: top;
+        }
+
+        .bank-box {
+            border: 1px dashed #000;
+            padding: 10px;
+            margin: 15px 0;
+            background: #f9f9f9;
         }
 
         .perhatian {
@@ -81,7 +90,7 @@
 <body onload="window.print()">
 
     <div class="no-print" style="margin-bottom: 20px;">
-        <button onclick="window.print()">Cetak Faktur</button>
+        <button onclick="window.print()">Cetak Dokumen</button>
     </div>
 
     <div class="header">
@@ -91,86 +100,80 @@
         <div class="sub-header">HP. 0823 2400 8886 Fax. (0284) 5859370</div>
     </div>
 
-    <div class="title">BUKTI SEWA KENDARAAN / PAKET WISATA</div>
+    <div class="title">
+        {{ request('type') == 'bukti_sewa' || in_array($booking->status, ['booked', 'lunas']) ? 'BUKTI SEWA KENDARAAN / PAKET WISATA' : 'INVOICE PERINTAH PEMBAYARAN' }}
+    </div>
 
     <table class="content">
         <tr>
-            <td width="25%">Telah terima dari</td>
+            <td width="25%">Kepada Yth.</td>
             <td width="2%">:</td>
             <td width="43%">{{ $booking->nama_pemesan }}</td>
-            <td width="8%">Telp</td>
-            <td width="22%">: {{ $booking->telepon_pemesan }}</td>
+            <td width="8%">No. Inv</td>
+            <td width="22%">: {{ $booking->no_invoice }}</td>
         </tr>
         <tr>
             <td>Alamat Penjemputan</td>
             <td>:</td>
-            <td colspan="3">{{ $booking->alamat_penjemputan }}</td>
+            <td>{{ $booking->alamat_penjemputan }}</td>
+            <td>Telp</td>
+            <td>: {{ $booking->telepon_pemesan }}</td>
         </tr>
         <tr>
             <td>Guna Membayar</td>
             <td>:</td>
-            <td colspan="3">Persekot/Pelunasan Biaya Sewa {{ $booking->tujuan_wisata }}</td>
+            <td colspan="3">Pemesanan Paket Wisata {{ $booking->tujuan_wisata }}</td>
         </tr>
         <tr>
-            <td>Hari/Tanggal</td>
+            <td>Hari/Tanggal Keberangkatan</td>
             <td>:</td>
             <td colspan="3">{{ \Carbon\Carbon::parse($booking->tanggal_keberangkatan)->isoFormat('dddd, D MMMM Y') }}
             </td>
         </tr>
-        <tr>
-            <td>Jam Penjemputan</td>
-            <td>:</td>
-            <td colspan="3">{{ $booking->jam_penjemputan ?? '08.00 WIB' }}</td>
-        </tr>
-        <tr>
-            <td>Tujuan</td>
-            <td>:</td>
-            <td colspan="3">{{ $booking->tujuan_wisata }}</td>
-        </tr>
     </table>
 
-    <div style="font-weight: bold; margin-top: 15px;">Perincian</div>
+    <div style="font-weight: bold; margin-top: 15px;">Rincian Biaya</div>
     <table class="content">
         <tr>
-            <td width="25%">Biaya Sewa</td>
+            <td width="25%">Total Biaya Sewa</td>
             <td width="2%">:</td>
             <td>Rp {{ number_format($booking->biaya_sewa, 0, ',', '.') }}</td>
         </tr>
         <tr>
-            <td>Uang Muka I</td>
+            <td>Uang Muka I (DP)</td>
             <td>:</td>
             <td>Rp {{ number_format($booking->dp_1, 0, ',', '.') }}</td>
         </tr>
         <tr>
-            <td>Uang Muka II</td>
-            <td>:</td>
-            <td>Rp {{ number_format($booking->dp_2, 0, ',', '.') }}</td>
-        </tr>
-        <tr>
-            <td>Sisa</td>
+            <td>Sisa Pembayaran</td>
             <td>:</td>
             <td><strong>Rp {{ number_format($booking->sisa_pembayaran, 0, ',', '.') }}</strong></td>
         </tr>
     </table>
 
+    @if (!in_array($booking->status, ['booked', 'lunas']))
+        <!-- BOX INSTRUKSI TRANSFER JIKA MASIH PERINTAH BAYAR -->
+        <div class="bank-box">
+            <strong>Instruksi Pembayaran Transfer:</strong><br>
+            Silakan melakukan pembayaran DP minimal <strong>Rp 2.000.000</strong> atau Pelunasan ke rekening resmi
+            kami:<br>
+            <strong>Bank BCA: 1234-5678-90</strong> a.n. Arie Mitra Sejati<br>
+            <strong>Bank BRI: 0987-6543-21</strong> a.n. Arie Mitra Sejati
+        </div>
+    @endif
+
     <div class="perhatian">
-        <strong>Perhatian!</strong>
+        <strong>Ketentuan & Perhatian:</strong>
         <ol style="padding-left: 15px; margin-top: 5px;">
-            <li>Penumpang agar tidak melebihi batas toleransi kapasitas tempat duduk.</li>
-            <li>Mel, Tol, Parkir ditanggung oleh Panitia Rombongan.</li>
-            <li>Keluar kota tujuan maksimal 20 km, lebih dari itu dikenakan biaya tambahan.</li>
-            <li>Keterlambatan waktu akibat kelalaian rombongan dapat mengurangi tempat yang dituju.</li>
-            <li>Pembatalan dikenai biaya administrasi 10% dari biaya sewa.</li>
-            <li>Pelunasan minimal 7 (tujuh) hari, sebelum pemberangkatan.</li>
-            <li>Apabila bus mengalami kerusakan (mogok), penyewa harus bersedia menunggu diganti dengan bus lain.</li>
-            <li>Apabila Kru Bus kurang sopan santun segera memberikan informasi ke kantor pusat Telp. 0823 2400 8886.
-            </li>
+            <li>Pembayaran DP minimal Rp 2.000.000 sebagai komitmen pemesanan.</li>
+            <li>Pelunasan wajib dilakukan maksimal 7 (tujuh) hari sebelum pemberangkatan.</li>
+            <li>Pembatalan sepihak dikenakan biaya administrasi 10% dari total biaya sewa.</li>
         </ol>
     </div>
 
     <table class="footer-table">
         <tr>
-            <td width="50%">Penyewa</td>
+            <td width="50%">Penyewa / Client</td>
             <td width="50%">
                 Pemalang, {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y') }}<br>
                 BIRO PERJALANAN<br>
@@ -178,14 +181,10 @@
             </td>
         </tr>
         <tr>
-            <td style="padding-top: 60px;">( {{ $booking->nama_pemesan }} )</td>
-            <td style="padding-top: 60px;">( Admin )</td>
+            <td style="padding-top: 50px;">( {{ $booking->nama_pemesan }} )</td>
+            <td style="padding-top: 50px;">( Admin / Petugas )</td>
         </tr>
     </table>
-
-    <div class="banner-bottom">
-        MELAYANI : STUDY TOUR, ZIARAH WALI, WISATA JAWA - BALI
-    </div>
 
 </body>
 
