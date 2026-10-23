@@ -16,6 +16,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\BookingController as ClientBookingController;
 use App\Http\Controllers\Client\AccountController as ClientAccountController;
+use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
+use App\Http\Controllers\Client\PaketWisataClientController;
 use App\Http\Controllers\Owner\LaporanController;
 
 // ROUTE PUBLIC / FRONTEND
@@ -42,6 +44,10 @@ Route::post('/logout', [LoginController::class, 'logout'])
 
 // ROUTE CLIENT AREA
 Route::middleware(['auth', 'role:client'])->prefix('client')->as('client.')->group(function () {
+    Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
+    // Menu Pilih Paket Wisata Khusus Client Panel
+    Route::get('/paket-wisata', [PaketWisataClientController::class, 'index'])->name('paket.index');
+    Route::get('/paket-wisata/{uuid}', [PaketWisataClientController::class, 'show'])->name('paket.show');
     Route::post('/booking/{proposal:uuid}', [ClientBookingController::class, 'store'])->name('booking.store');
     Route::get('/riwayat', [ClientBookingController::class, 'riwayat'])->name('riwayat');
     Route::post('/riwayat/{booking:uuid}/upload', [ClientBookingController::class, 'uploadPembayaran'])->name('upload.pembayaran');

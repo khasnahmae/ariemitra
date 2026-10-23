@@ -24,20 +24,6 @@
             </div>
         </div>
 
-        <!-- Alert Flash Messages -->
-        {{-- @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fa fa-exclamation-triangle me-1"></i> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif --}}
-
         <!-- Main Card Content -->
         <div class="row">
             <div class="col-md-12">
@@ -66,18 +52,12 @@
                                                 Rp {{ number_format($p->harga_akhir_per_pax, 0, ',', '.') }}
                                             </td>
                                             <td>
-                                                @if ($p->status == 'approved')
-                                                    <span class="badge badge-success">Approved</span>
-                                                @elseif($p->status == 'sent')
-                                                    <span class="badge badge-warning">Sent</span>
-                                                @elseif($p->status == 'rejected')
-                                                    <span class="badge badge-danger">Rejected</span>
+                                                @if ($p->status == 'publish')
+                                                    <span class="badge badge-success">Publish</span>
                                                 @else
                                                     <span class="badge badge-count">Draft</span>
                                                 @endif
                                             </td>
-                                            <td class="text-end">
-                                                <div class="form-button-action justify-content-end gap-1">
                                             <td class="text-end">
                                                 <div class="form-button-action justify-content-end gap-1">
                                                     @if (isset($p->booking))
@@ -117,36 +97,14 @@
                                                     </form>
                                                 </div>
                                             </td>
-                                            <a href="{{ route('admin.proposal.edit', $p->uuid) }}"
-                                                class="btn btn-link btn-warning btn-lg p-1" data-bs-toggle="tooltip"
-                                                title="Edit Proposal">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                            <a href="{{ route('admin.proposal.export-pdf', $p->uuid) }}"
-                                                class="btn btn-link btn-info btn-lg p-1" data-bs-toggle="tooltip"
-                                                title="Cetak PDF">
-                                                <i class="fa fa-file-pdf"></i>
-                                            </a>
-                                            <form action="{{ route('admin.proposal.destroy', $p->uuid) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="btn btn-link btn-danger btn-lg p-1 delete-button"
-                                                    data-bs-toggle="tooltip" title="Hapus Proposal">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </form>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        </td>
-                        </tr>
-                        @endforeach
-                        </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 @endsection

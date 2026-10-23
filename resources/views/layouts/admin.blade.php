@@ -162,14 +162,9 @@
 
                         {{-- ================= MENU KHUSUS CLIENT ================= --}}
                         @if (auth()->check() && auth()->user()->role === 'client')
-                            <li class="nav-section">
-                                <span class="sidebar-mini-icon"><i class="fa fa-ellipsis-h"></i></span>
-                                <h4 class="text-section">MENU CLIENT</h4>
-                            </li>
-
-                            <li class="nav-item {{ request()->is('paket-wisata*') ? 'active' : '' }}">
-                                <a href="{{ route('frontend.paket.index') }}">
-                                    <i class="fas fa-search-location"></i>
+                            <li class="nav-item {{ request()->is('client/paket-wisata*') ? 'active' : '' }}">
+                                <a href="{{ route('client.paket.index') }}">
+                                    <i class="far fa-file-alt"></i>
                                     <p>Pilih Paket Wisata</p>
                                 </a>
                             </li>
