@@ -67,6 +67,63 @@
                                                     </button>
                                                 </form>
                                             @endif
+                                            <!-- Jika Menunggu Verifikasi Transfer / Tunai dari Client -->
+                                            @if ($b->status == 'pending_verification')
+                                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                    data-bs-target="#modalVerifikasi{{ $b->id }}"
+                                                    title="Verifikasi Pembayaran">
+                                                    <i class="fa fa-check-circle me-1"></i> Verifikasi Bayar
+                                                </button>
+
+                                                <!-- Modal Verifikasi Pembayaran -->
+                                                <div class="modal fade" id="modalVerifikasi{{ $b->id }}"
+                                                    tabindex="-1">
+                                                    <div class="modal-dialog">
+                                                        <form
+                                                            action="{{ route('admin.booking.konfirmasi-tunai', $b->uuid) }}"
+                                                            method="POST" class="modal-content">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title fw-bold">Verifikasi Pembayaran Client
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <p><strong>Pemesan:</strong> {{ $b->nama_pemesan }}</p>
+                                                                <p><strong>Metode:</strong> <span
+                                                                        class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran) }}</span>
+                                                                </p>
+                                                                <p><strong>Nominal Dibayar:</strong> Rp
+                                                                    {{ number_format($b->dp_1, 0, ',', '.') }}</p>
+
+                                                                @if ($b->metode_pembayaran == 'transfer' && $b->bukti_pembayaran)
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label fw-bold">Bukti
+                                                                            Transfer:</label><br>
+                                                                        <a href="{{ asset('storage/' . $b->bukti_pembayaran) }}"
+                                                                            target="_blank">
+                                                                            <img src="{{ asset('storage/' . $b->bukti_pembayaran) }}"
+                                                                                class="img-fluid rounded border"
+                                                                                style="max-height: 200px;">
+                                                                        </a>
+                                                                    </div>
+                                                                @endif
+
+                                                                <input type="hidden" name="jumlah_bayar"
+                                                                    value="{{ $b->dp_1 }}">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-success"><i
+                                                                        class="fa fa-check me-1"></i> Setujui & Terbitkan
+                                                                    Bukti Sewa</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            @endif
 
                                             <!-- 2. Tombol Cetak Invoice / Perintah Bayar -->
                                             <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}" target="_blank"
@@ -115,7 +172,8 @@
                                                     <hr>
                                                     <div class="mb-3">
                                                         <label class="form-label font-weight-bold">Jumlah Pembayaran Tunai
-                                                            (DP Min. Rp 2.000.000)</label>
+                                                            (DP Min. Rp 2.000.000)
+                                                        </label>
                                                         <input type="number" name="jumlah_bayar" min="2000000"
                                                             max="{{ $b->biaya_sewa }}" class="form-control"
                                                             placeholder="2000000" required>

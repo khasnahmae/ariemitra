@@ -52,22 +52,32 @@ class BookingController extends Controller
 
     public function uploadPembayaran(Request $request, $uuid)
     {
-        $booking = Booking::where('uuid', $uuid)->where('user_id', Auth::id())->firstOrFail();
+        $booking = Booking::where('uuid', $uuid)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
         $request->validate([
+            'metode_pembayaran' => 'required|in:transfer,tunai',
             'jumlah_bayar' => 'required|numeric|min:2000000',
-            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pembayaran' => 'required_if:metode_pembayaran,transfer|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $path = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+        if ($request->metode_pembayaran === 'transfer') {
+            $path = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+            $booking->bukti_pembayaran = $path;
+            $booking->metode_pembayaran = 'transfer';
+        } else {
+            $booking->metode_pembayaran = 'tunai';
+            // Pilihan tunai di kantor tidak memerlukan unggah file
+        }
 
         $booking->dp_1 = $request->jumlah_bayar;
         $booking->sisa_pembayaran = $booking->biaya_sewa - $request->jumlah_bayar;
-        $booking->bukti_pembayaran = $path;
-        $booking->metode_pembayaran = 'transfer';
-        $booking->status = 'booked';
+
+        // Status diubah menjadi pending_verification agar Admin perlu memverifikasi terlebih dahulu
+        $booking->status = 'pending_verification';
         $booking->save();
 
-        return back()->with('success', 'Bukti pembayaran berhasil diunggah! Status pesanan Anda telah diperbarui menjadi Booked.');
+        return back()->with('success', 'Konfirmasi pembayaran berhasil dikirim! Silakan tunggu verifikasi dari Admin.');
     }
 }
