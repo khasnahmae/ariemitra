@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class BookingController extends Controller
 {
@@ -59,25 +60,31 @@ class BookingController extends Controller
         $request->validate([
             'metode_pembayaran' => 'required|in:transfer,tunai',
             'jumlah_bayar' => 'required|numeric|min:2000000',
-            'bukti_pembayaran' => 'required_if:metode_pembayaran,transfer|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pembayaran' => 'required_if:metode_pembayaran,transfer|nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        if ($request->metode_pembayaran === 'transfer') {
-            $path = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
-            $booking->bukti_pembayaran = $path;
+        if ($request->metode_pembayaran === 'transfer' && $request->hasFile('bukti_pembayaran')) {
+            // Gunakan Cloudinary untuk Vercel
+            if (class_exists('CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary')) {
+                $uploadedFileUrl = Cloudinary::upload($request->file('bukti_pembayaran')->getRealPath(), [
+                    'folder' => 'bukti_pembayaran'
+                ])->getSecurePath();
+                $booking->bukti_pembayaran = $uploadedFileUrl;
+            } else {
+                $booking->bukti_pembayaran = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+            }
             $booking->metode_pembayaran = 'transfer';
         } else {
             $booking->metode_pembayaran = 'tunai';
-            // Pilihan tunai di kantor tidak memerlukan unggah file
         }
 
         $booking->dp_1 = $request->jumlah_bayar;
         $booking->sisa_pembayaran = $booking->biaya_sewa - $request->jumlah_bayar;
 
-        // Status diubah menjadi pending_verification agar Admin perlu memverifikasi terlebih dahulu
-        $booking->status = 'pending_verification';
+        // Gunakan status 'booked' agar sesuai dengan ENUM database
+        $booking->status = 'booked';
         $booking->save();
 
-        return back()->with('success', 'Konfirmasi pembayaran berhasil dikirim! Silakan tunggu verifikasi dari Admin.');
+        return redirect()->route('client.riwayat')->with('success', 'Konfirmasi pembayaran berhasil dikirim!');
     }
 }
