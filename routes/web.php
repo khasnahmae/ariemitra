@@ -88,6 +88,7 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
     Route::get('/booking', [BookingAdminController::class, 'index'])->name('booking.index');
     Route::post('/booking/{uuid}/send-invoice', [BookingAdminController::class, 'sendInvoice'])->name('booking.send-invoice');
     Route::get('/booking/{uuid}/cetak-invoice', [BookingAdminController::class, 'cetakInvoice'])->name('booking.cetak-invoice');
+    Route::get('/booking/{uuid}/cetak-bukti-sewa', [BookingAdminController::class, 'cetakBuktiSewa'])->name('admin.booking.cetak-bukti-sewa');
     Route::post('/booking/{uuid}/pembayaran-tunai', [BookingAdminController::class, 'konfirmasiTunai'])->name('booking.konfirmasi-tunai');
 
     // KHUSUS ROLE Owner

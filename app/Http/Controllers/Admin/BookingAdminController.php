@@ -23,26 +23,50 @@ class BookingAdminController extends Controller
         return back()->with('success', 'Invoice berhasil diterbitkan dan dikirim ke Client!');
     }
 
+    // CETAK INVOICE / PERINTAH BAYAR AWAL
     public function cetakInvoice($uuid)
     {
         $booking = Booking::with(['proposal.PaketWisata', 'proposal.proposalArmada.armada'])->where('uuid', $uuid)->firstOrFail();
         return view('admin.booking.cetak_invoice', compact('booking'));
     }
 
+    // CETAK BUKTI SEWA / KUITANSI RESMI (ADA RIWAYAT PEMBAYARAN)
+    public function cetakBuktiSewa($uuid)
+    {
+        $booking = Booking::with(['proposal.PaketWisata', 'proposal.proposalArmada.armada'])->where('uuid', $uuid)->firstOrFail();
+        return view('admin.booking.cetak_bukti_sewa', compact('booking'));
+    }
+
+    // VERIFIKASI / INPUT PEMBAYARAN (TUNAI ATALAU TRANSFER)
     public function konfirmasiTunai(Request $request, $uuid)
     {
         $booking = Booking::where('uuid', $uuid)->firstOrFail();
 
         $request->validate([
-            'jumlah_bayar' => 'required|numeric|min:2000000',
+            'jumlah_bayar' => 'required|numeric|min:100000',
         ]);
 
-        $booking->dp_1 = $request->jumlah_bayar;
-        $booking->sisa_pembayaran = $booking->biaya_sewa - $request->jumlah_bayar;
-        $booking->metode_pembayaran = 'tunai';
-        $booking->status = 'booked';
+        $bayarBaru = $request->jumlah_bayar;
+
+        // Logika akumulasi DP1 / DP2
+        if ($booking->dp_1 == 0) {
+            $booking->dp_1 = $bayarBaru;
+        } else {
+            $booking->dp_2 += $bayarBaru;
+        }
+
+        $totalBayar = $booking->dp_1 + $booking->dp_2;
+        $booking->sisa_pembayaran = max(0, $booking->biaya_sewa - $totalBayar);
+
+        // Tentukan Status (Lunas atau Booked)
+        if ($booking->sisa_pembayaran <= 0) {
+            $booking->status = 'lunas';
+        } else {
+            $booking->status = 'booked';
+        }
+
         $booking->save();
 
-        return back()->with('success', 'Pembayaran tunai berhasil dicatat!');
+        return back()->with('success', 'Pembayaran berhasil diverifikasi/dicatat!');
     }
 }

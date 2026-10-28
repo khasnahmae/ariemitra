@@ -45,6 +45,8 @@
                                             <span class="badge bg-warning text-dark">Pending</span>
                                         @elseif($b->status == 'sent')
                                             <span class="badge bg-info">Tagihan Terkirim</span>
+                                        @elseif($b->status == 'pending_verification')
+                                            <span class="badge bg-info">Verifikasi</span>
                                         @elseif($b->status == 'booked')
                                             <span class="badge bg-success">Booked (DP Received)</span>
                                         @elseif($b->status == 'lunas')
@@ -116,8 +118,8 @@
                                                                 <button type="button" class="btn btn-secondary"
                                                                     data-bs-dismiss="modal">Batal</button>
                                                                 <button type="submit" class="btn btn-success"><i
-                                                                        class="fa fa-check me-1"></i> Setujui & Terbitkan
-                                                                    Bukti Sewa</button>
+                                                                        class="fa fa-check me-1"></i> Terima
+                                                                    Pembayaran</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -141,8 +143,8 @@
 
                                             <!-- 4. Tombol Cetak Bukti Sewa Resmi (Hanya setelah ada komitmen bayar DP/Lunas) -->
                                             @if (in_array($b->status, ['booked', 'lunas']))
-                                                <a href="{{ route('admin.booking.cetak-invoice', ['uuid' => $b->uuid, 'type' => 'bukti_sewa']) }}"
-                                                    target="_blank" class="btn btn-sm btn-secondary"
+                                                <a href="{{ route('admin.booking.cetak-bukti-sewa', $b->uuid) }}"
+                                                    target="_blank" class="btn btn-secondary btn-sm"
                                                     title="Cetak Bukti Sewa Resmi">
                                                     <i class="fa fa-print me-1"></i> Bukti Sewa
                                                 </a>
