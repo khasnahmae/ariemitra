@@ -20,23 +20,20 @@
                         <h5 class="fw-bold text-success mb-3">Rp
                             {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }} / Pax</h5>
 
-                        <table class="table table-borderless">
-                            <tr>
-                                <td width="35%" class="fw-bold">Durasi Tour</td>
-                                <td>: {{ $paket->jumlah_hari }} Hari {{ $paket->jumlah_malam }} Malam</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold">Minimal Peserta</td>
-                                <td>: {{ $paket->jumlah_peserta }} Pax</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold">Menginap</td>
-                                <td>: {{ ucfirst($paket->is_menginap) }}</td>
-                            </tr>
-                        </table>
+                        <h6 class="fw-bold mb-2">Durasi Tour</h6>
+                        <p class="text-muted">: {{ $paket->jumlah_hari }} Hari @if ($p->jumlah_malam > 0)
+                                {{ $p->jumlah_malam }} Malam
+                            @endif
+                        </p>
+
+                        <h6 class="fw-bold mb-2">Minimal Peserta</h6>
+                        <p class="text-muted">: {{ $paket->jumlah_peserta }} Pax</p>
+
+                        <h6 class="fw-bold mb-2">Menginap</h6>
+                        <p class="text-muted">: {{ ucfirst($paket->is_menginap) }}</p>
 
                         <hr>
-                        <h6 class="fw-bold mb-2">Destinasi Wisata Ditolak / Ditinggali:</h6>
+                        <h6 class="fw-bold mb-2">Destinasi Wisata:</h6>
                         <ul class="ps-3">
                             @foreach ($paket->proposalDestinasi as $pd)
                                 <li>{{ $pd->destinasi->nama_destinasi ?? '-' }}</li>

@@ -223,7 +223,7 @@
                                     @endif
                                 </p>
                                 <ul>
-                                    <li><span class="fa fa-users text-info mr-1"></span> Min. {{ $paket->jumlah_peserta }}
+                                    <li>{{ $paket->jumlah_peserta }}
                                         Pax</li>
                                     <li><span class="fa fa-check-circle text-success mr-1"></span> All-In</li>
                                 </ul>

@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="position-absolute bottom-0 start-0 end-0 p-2 bg-dark bg-opacity-50 text-white">
                                     <small class="fw-bold">
-                                        <i class="fa fa-users text-warning me-1"></i> Min. {{ $p->jumlah_peserta }} Pax
+                                        {{ $p->jumlah_peserta }} Pax
                                     </small>
                                 </div>
                             </div>

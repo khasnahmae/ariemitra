@@ -105,7 +105,7 @@
                                     </p>
 
                                     <ul class="mb-0 pt-2 border-top">
-                                        <li><span class="fa fa-users text-info mr-1"></span> Min.
+                                        <li>
                                             {{ $paket->jumlah_peserta }} Pax</li>
                                         <li><span class="fa fa-check-circle text-success mr-1"></span> All-In</li>
                                     </ul>
