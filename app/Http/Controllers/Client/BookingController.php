@@ -59,12 +59,11 @@ class BookingController extends Controller
 
         $request->validate([
             'metode_pembayaran' => 'required|in:transfer,tunai',
-            'jumlah_bayar' => 'required|numeric|min:2000000',
+            'jumlah_bayar' => 'required|numeric|min:100000',
             'bukti_pembayaran' => 'required_if:metode_pembayaran,transfer|nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($request->metode_pembayaran === 'transfer' && $request->hasFile('bukti_pembayaran')) {
-            // Gunakan Cloudinary untuk Vercel
             if (class_exists('CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary')) {
                 $uploadedFileUrl = Cloudinary::upload($request->file('bukti_pembayaran')->getRealPath(), [
                     'folder' => 'bukti_pembayaran'
@@ -78,10 +77,13 @@ class BookingController extends Controller
             $booking->metode_pembayaran = 'tunai';
         }
 
-        $booking->dp_1 = $request->jumlah_bayar;
-        $booking->sisa_pembayaran = $booking->biaya_sewa - $request->jumlah_bayar;
+        // SIMPAN TEMPORARY PEMBAYARAN PADA DP 1 ATAU DP 2 TANPA MENIMPA DP 1 LAMA
+        if ($booking->dp_1 == 0) {
+            $booking->dp_1 = $request->jumlah_bayar;
+        } else {
+            $booking->dp_2 = $request->jumlah_bayar;
+        }
 
-        // Gunakan status 'booked' agar sesuai dengan ENUM database
         $booking->status = 'pending_verification';
         $booking->save();
 

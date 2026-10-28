@@ -93,12 +93,17 @@
 
                                                                     @php
                                                                         // Ambil nominal DP yang diunggah client atau gunakan sisa pembayaran jika DP bernilai 0
-                                                                        $nominalDraft =
-                                                                            $b->dp_1 > 0
-                                                                                ? $b->dp_1
-                                                                                : ($b->dp_2 > 0
-                                                                                    ? $b->dp_2
-                                                                                    : $b->biaya_sewa);
+                                                                        // JIKA STATUS SEBELUMNYA SUDAH 'BOOKED' (VERIFIKASI KEDUA), AMBIL DP_2 ATAU SISA TAGIHAN
+                                                                        if ($b->dp_1 > 0 && $b->dp_2 > 0) {
+                                                                            $nominalDraft = $b->dp_2;
+                                                                        } elseif ($b->dp_1 > 0 && $b->dp_2 == 0) {
+                                                                            $nominalDraft = $b->sisa_pembayaran;
+                                                                        } else {
+                                                                            $nominalDraft =
+                                                                                $b->dp_1 > 0
+                                                                                    ? $b->dp_1
+                                                                                    : $b->biaya_sewa;
+                                                                        }
 
                                                                         $fotoUrl = '';
                                                                         if (!empty($b->bukti_pembayaran)) {

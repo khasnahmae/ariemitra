@@ -45,20 +45,21 @@ class BookingAdminController extends Controller
 
         $nominalBayar = (float) $request->jumlah_bayar;
 
-        // Jika DP 1 belum tercatat / verifikasi awal
-        if ($booking->dp_1 == 0) {
-            $booking->dp_1 = $nominalBayar;
-        } else if ($booking->dp_2 == 0) {
+        // Jika DP 1 sudah ada dan status transaksi sebelumnya sudah 'booked', masukkan ke DP 2
+        if ($booking->dp_1 > 0 && $booking->status === 'pending_verification' && $booking->dp_2 > 0) {
+            // Nominal sudah tersimpan dari upload client di dp_2
             $booking->dp_2 = $nominalBayar;
+        } elseif ($booking->dp_1 == 0) {
+            $booking->dp_1 = $nominalBayar;
         } else {
-            $booking->dp_2 += $nominalBayar;
+            $booking->dp_2 = $nominalBayar;
         }
 
-        // Kalkulasi ulang total bayar dan sisa tagihan
-        $totalBayar = $booking->dp_1 + $booking->dp_2;
-        $booking->sisa_pembayaran = max(0, $booking->biaya_sewa - $totalBayar);
+        // Kalkulasi total bayar dan sisa tagihan
+        $totalBayar = (float)$booking->dp_1 + (float)$booking->dp_2;
+        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalBayar);
 
-        // Update status sesuai sisa tagihan
+        // Update status transaksi
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {
