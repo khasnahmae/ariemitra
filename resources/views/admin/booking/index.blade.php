@@ -79,49 +79,67 @@
                                                 <!-- Modal Verifikasi Pembayaran -->
                                                 <div class="modal fade" id="modalVerifikasi{{ $b->id }}"
                                                     tabindex="-1">
-                                                    <div class="modal-dialog">
-                                                        <form
-                                                            action="{{ route('admin.booking.konfirmasi-tunai', $b->uuid) }}"
-                                                            method="POST" class="modal-content">
-                                                            @csrf
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title fw-bold">Verifikasi Pembayaran Client
-                                                                </h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal"></button>
-                                                            </div>
-                                                            <div class="modal-body text-start">
-                                                                <p><strong>Pemesan:</strong> {{ $b->nama_pemesan }}</p>
-                                                                <p><strong>Metode:</strong> <span
-                                                                        class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran) }}</span>
-                                                                </p>
-                                                                <p><strong>Nominal Dibayar:</strong> Rp
-                                                                    {{ number_format($b->dp_1, 0, ',', '.') }}</p>
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <form
+                                                                action="{{ route('admin.booking.konfirmasi-tunai', $b->uuid) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title fw-bold">Verifikasi Pembayaran
+                                                                        Client</h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"></button>
+                                                                </div>
+                                                                <div class="modal-body text-start">
+                                                                    <p class="mb-1"><strong>Pemesan:</strong>
+                                                                        {{ $b->nama_pemesan }}</p>
+                                                                    <p class="mb-1"><strong>Metode:</strong> <span
+                                                                            class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran) }}</span>
+                                                                    </p>
+                                                                    <p class="mb-3"><strong>Nominal Dibayar:</strong> Rp
+                                                                        {{ number_format($b->dp_1 > 0 ? $b->dp_1 : $b->dp_2, 0, ',', '.') }}
+                                                                    </p>
 
-                                                                @if ($b->metode_pembayaran == 'transfer' && $b->bukti_pembayaran)
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label fw-bold">Bukti
-                                                                            Transfer:</label><br>
-                                                                        <a href="{{ asset('storage/' . $b->bukti_pembayaran) }}"
-                                                                            target="_blank">
-                                                                            <img src="{{ asset('storage/' . $b->bukti_pembayaran) }}"
-                                                                                class="img-fluid rounded border"
-                                                                                style="max-height: 200px;">
-                                                                        </a>
-                                                                    </div>
-                                                                @endif
+                                                                    @if ($b->metode_pembayaran == 'transfer' && $b->bukti_pembayaran)
+                                                                        @php
+                                                                            // Cek apakah bukti_pembayaran sudah berupa URL lengkap dari Cloudinary / HTTP
+                                                                            $fotoUrl = \Illuminate\Support\Str::startsWith(
+                                                                                $b->bukti_pembayaran,
+                                                                                ['http://', 'https://'],
+                                                                            )
+                                                                                ? $b->bukti_pembayaran
+                                                                                : asset(
+                                                                                    'storage/' . $b->bukti_pembayaran,
+                                                                                );
+                                                                        @endphp
 
-                                                                <input type="hidden" name="jumlah_bayar"
-                                                                    value="{{ $b->dp_1 }}">
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Batal</button>
-                                                                <button type="submit" class="btn btn-success"><i
-                                                                        class="fa fa-check me-1"></i> Terima
-                                                                    Pembayaran</button>
-                                                            </div>
-                                                        </form>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label fw-bold">Bukti
+                                                                                Transfer:</label><br>
+                                                                            <a href="{{ $fotoUrl }}" target="_blank">
+                                                                                <img src="{{ $fotoUrl }}"
+                                                                                    class="img-fluid rounded border shadow-sm"
+                                                                                    style="max-height: 250px; width: auto;"
+                                                                                    alt="Bukti Transfer">
+                                                                            </a>
+                                                                            <small class="text-muted d-block mt-1">* Klik
+                                                                                gambar untuk memperbesar</small>
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <input type="hidden" name="jumlah_bayar"
+                                                                        value="{{ $b->dp_1 > 0 ? $b->dp_1 : $b->dp_2 }}">
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Batal</button>
+                                                                    <button type="submit" class="btn btn-success"><i
+                                                                            class="fa fa-check me-1"></i> Terima
+                                                                        Pembayaran</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endif
