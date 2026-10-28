@@ -31,7 +31,7 @@ return new class extends Migration {
             $table->enum('metode_pembayaran', ['transfer', 'tunai'])->nullable();
 
             // Status Workflow
-            $table->enum('status', ['pending', 'sent', 'booked', 'lunas', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'sent', 'pending_verification', 'booked', 'lunas', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

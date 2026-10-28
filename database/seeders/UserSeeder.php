@@ -35,5 +35,14 @@ class UserSeeder extends Seeder
                 'role'     => 'admin',
             ]
         );
+        User::firstOrCreate(
+            ['email' => 'khasnahm@gmail.com'],
+            [
+                'uuid'     => (string) Str::uuid(),
+                'nama'     => 'Khasnah',
+                'password' => Hash::make('khasnah'),
+                'role'     => 'client',
+            ]
+        );
     }
 }

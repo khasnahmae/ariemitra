@@ -82,7 +82,7 @@ class BookingController extends Controller
         $booking->sisa_pembayaran = $booking->biaya_sewa - $request->jumlah_bayar;
 
         // Gunakan status 'booked' agar sesuai dengan ENUM database
-        $booking->status = 'booked';
+        $booking->status = 'pending_verification';
         $booking->save();
 
         return redirect()->route('client.riwayat')->with('success', 'Konfirmasi pembayaran berhasil dikirim!');
