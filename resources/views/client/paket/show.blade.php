@@ -21,8 +21,8 @@
                             {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }} / Pax</h5>
 
                         <h6 class="fw-bold mb-2">Durasi Tour</h6>
-                        <p class="text-muted">: {{ $paket->jumlah_hari }} Hari @if ($p->jumlah_malam > 0)
-                                {{ $p->jumlah_malam }} Malam
+                        <p class="text-muted">: {{ $paket->jumlah_hari }} Hari @if ($paket->jumlah_malam > 0)
+                                {{ $paket->jumlah_malam }} Malam
                             @endif
                         </p>
 
