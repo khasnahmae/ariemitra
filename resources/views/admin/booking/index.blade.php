@@ -77,6 +77,7 @@
                                                 </button>
 
                                                 <!-- Modal Verifikasi Pembayaran -->
+                                                <!-- Modal Verifikasi Pembayaran -->
                                                 <div class="modal fade" id="modalVerifikasi{{ $b->id }}"
                                                     tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered">
@@ -97,23 +98,25 @@
                                                                     <p class="mb-1"><strong>Metode:</strong> <span
                                                                             class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran) }}</span>
                                                                     </p>
+
+                                                                    @php
+                                                                        // Ambil nominal yang baru saja diinput oleh client
+                                                                        $nominalKonfirmasi =
+                                                                            $b->dp_2 > 0 ? $b->dp_2 : $b->dp_1;
+
+                                                                        $fotoUrl = \Illuminate\Support\Str::startsWith(
+                                                                            $b->bukti_pembayaran,
+                                                                            ['http://', 'https://'],
+                                                                        )
+                                                                            ? $b->bukti_pembayaran
+                                                                            : asset('storage/' . $b->bukti_pembayaran);
+                                                                    @endphp
+
                                                                     <p class="mb-3"><strong>Nominal Dibayar:</strong> Rp
-                                                                        {{ number_format($b->dp_1 > 0 ? $b->dp_1 : $b->dp_2, 0, ',', '.') }}
+                                                                        {{ number_format($nominalKonfirmasi, 0, ',', '.') }}
                                                                     </p>
 
                                                                     @if ($b->metode_pembayaran == 'transfer' && $b->bukti_pembayaran)
-                                                                        @php
-                                                                            // Cek apakah bukti_pembayaran sudah berupa URL lengkap dari Cloudinary / HTTP
-                                                                            $fotoUrl = \Illuminate\Support\Str::startsWith(
-                                                                                $b->bukti_pembayaran,
-                                                                                ['http://', 'https://'],
-                                                                            )
-                                                                                ? $b->bukti_pembayaran
-                                                                                : asset(
-                                                                                    'storage/' . $b->bukti_pembayaran,
-                                                                                );
-                                                                        @endphp
-
                                                                         <div class="mb-3">
                                                                             <label class="form-label fw-bold">Bukti
                                                                                 Transfer:</label><br>
@@ -123,13 +126,12 @@
                                                                                     style="max-height: 250px; width: auto;"
                                                                                     alt="Bukti Transfer">
                                                                             </a>
-                                                                            <small class="text-muted d-block mt-1">* Klik
-                                                                                gambar untuk memperbesar</small>
                                                                         </div>
                                                                     @endif
 
+                                                                    <!-- Hidden input mengirim nominal bayar yang valid -->
                                                                     <input type="hidden" name="jumlah_bayar"
-                                                                        value="{{ $b->dp_1 > 0 ? $b->dp_1 : $b->dp_2 }}">
+                                                                        value="{{ $nominalKonfirmasi }}">
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary"
