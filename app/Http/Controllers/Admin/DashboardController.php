@@ -19,6 +19,39 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+
+        if ($user->role === 'client') {
+            $totalPemesanan = Booking::where('user_id', $user->id)->count();
+            $bookingAktif = Booking::where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'sent', 'booked'])
+                ->count();
+            $totalSelesai = Booking::where('user_id', $user->id)
+                ->where('status', 'lunas')
+                ->count();
+
+            $recentBookings = Booking::where('user_id', $user->id)
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $paketRekomendasi = Proposal::with('PaketWisata')
+                ->where('status', 'publish')
+                ->latest()
+                ->take(3)
+                ->get();
+
+            return view('admin.dashboard', compact(
+                'totalPemesanan',
+                'bookingAktif',
+                'totalSelesai',
+                'recentBookings',
+                'paketRekomendasi'
+            ));
+        }
+
+
+
         $totalProposal = Proposal::count();
         $proposalApproved = Proposal::where('status', 'approved')->count();
         $proposalDraft = Proposal::where('status', 'draft')->count();
@@ -63,6 +96,7 @@ class DashboardController extends Controller
             ->latest()
             ->take(3)
             ->get();
+
 
         return view('admin.dashboard', compact(
             'totalProposal',

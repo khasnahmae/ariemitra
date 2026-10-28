@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="page-inner">
+    <div class="page-inner py-4">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
                 <h3 class="fw-bold mb-1">Selamat Datang, {{ Auth::user()->nama }}! 👋</h3>
                 <h6 class="op-7 mb-0">Kelola pemesanan paket wisata dan informasi akun Anda di sini.</h6>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
-                <a href="{{ route('frontend.paket.index') }}" class="btn btn-primary btn-round">
+                <a href="{{ route('client.paket.index') }}" class="btn btn-primary btn-round">
                     <i class="fa fa-search me-1"></i> Jelajahi Paket Wisata
                 </a>
             </div>
@@ -28,7 +28,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category">Total Pemesanan</p>
-                                    <h4 class="card-title">{{ $totalPemesanan }}</h4>
+                                    <h4 class="card-title">{{ $totalPemesanan ?? 0 }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category">Pemesanan Aktif</p>
-                                    <h4 class="card-title">{{ $bookingAktif }}</h4>
+                                    <h4 class="card-title">{{ $bookingAktif ?? 0 }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category">Perjalanan Selesai</p>
-                                    <h4 class="card-title">{{ $totalSelesai }}</h4>
+                                    <h4 class="card-title">{{ $totalSelesai ?? 0 }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -103,11 +103,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($recentBookings as $b)
+                                    @forelse($recentBookings ?? [] as $b)
                                         <tr>
                                             <td><span class="fw-bold text-primary">{{ $b->no_invoice }}</span></td>
                                             <td>{{ $b->tujuan_wisata }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d M Y') }}
+                                            </td>
                                             <td>
                                                 @if ($b->status == 'pending')
                                                     <span class="badge bg-warning text-dark">Menunggu Invoice</span>
@@ -142,7 +143,7 @@
                         <div class="card-title">Rekomendasi Paket</div>
                     </div>
                     <div class="card-body">
-                        @forelse($paketRekomendasi as $p)
+                        @forelse($paketRekomendasi ?? [] as $p)
                             <div class="d-flex align-items-center mb-3 pb-2 border-bottom">
                                 <div class="flex-1">
                                     <h6 class="fw-bold mb-1">{{ $p->nama_sub_paket }}</h6>
@@ -151,7 +152,7 @@
                                     <span class="text-success fw-bold">Rp
                                         {{ number_format($p->harga_akhir_per_pax, 0, ',', '.') }} /pax</span>
                                 </div>
-                                <a href="{{ route('frontend.paket.show', $p->PaketWisata->slug ?? '#') }}"
+                                <a href="{{ route('client.paket.show', $p->uuid) }}"
                                     class="btn btn-sm btn-outline-primary btn-round ms-2">
                                     Detail
                                 </a>
