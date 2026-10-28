@@ -52,7 +52,7 @@
                                         <div class="d-flex justify-content-end gap-1">
 
                                             <!-- Tombol 1: Lihat Invoice / Perintah Bayar -->
-                                            @if (in_array($b->status, ['sent', 'pending_verification', 'booked', 'lunas']))
+                                            @if (in_array($b->status, ['pending', 'sent', 'pending_verification', 'booked', 'lunas']))
                                                 <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}"
                                                     target="_blank" class="btn btn-sm btn-outline-info"
                                                     title="Lihat Dokumen Perintah Bayar">
@@ -114,7 +114,8 @@
                                                                 class="fa fa-university me-1"></i> Rekening Tujuan Transfer:
                                                         </h6>
                                                         <p class="mb-1 text-dark"><strong>Bank BCA:</strong> 1234-5678-90
-                                                            (a.n. Arie Mitra Sejati)</p>
+                                                            (a.n. Arie Mitra Sejati)
+                                                        </p>
                                                         <p class="mb-0 text-dark"><strong>Bank BRI:</strong> 0987-6543-21
                                                             (a.n. Arie Mitra Sejati)</p>
                                                     </div>

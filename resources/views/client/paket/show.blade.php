@@ -2,11 +2,6 @@
 
 @section('content')
     <div class="page-inner">
-        <div class="mb-3">
-            <a href="{{ route('client.paket.index') }}" class="btn btn-label-secondary btn-round btn-sm">
-                <i class="fa fa-arrow-left me-1"></i> Kembali ke Daftar Paket
-            </a>
-        </div>
 
         <div class="row">
             <!-- Informasi Paket -->
@@ -21,19 +16,19 @@
                             {{ number_format($paket->harga_akhir_per_pax, 0, ',', '.') }} / Pax</h5>
 
                         <h6 class="fw-bold mb-2">Durasi Tour</h6>
-                        <p class="text-muted">: {{ $paket->jumlah_hari }} Hari @if ($paket->jumlah_malam > 0)
+                        <p class="text-muted">{{ $paket->jumlah_hari }} Hari @if ($paket->jumlah_malam > 0)
                                 {{ $paket->jumlah_malam }} Malam
                             @endif
                         </p>
 
                         <h6 class="fw-bold mb-2">Minimal Peserta</h6>
-                        <p class="text-muted">: {{ $paket->jumlah_peserta }} Pax</p>
+                        <p class="text-muted">{{ $paket->jumlah_peserta }} Pax</p>
 
                         <h6 class="fw-bold mb-2">Menginap</h6>
-                        <p class="text-muted">: {{ ucfirst($paket->is_menginap) }}</p>
+                        <p class="text-muted">{{ ucfirst($paket->is_menginap) }}</p>
 
                         <hr>
-                        <h6 class="fw-bold mb-2">Destinasi Wisata:</h6>
+                        <h6 class="fw-bold mb-2">Destinasi Wisata</h6>
                         <ul class="ps-3">
                             @foreach ($paket->proposalDestinasi as $pd)
                                 <li>{{ $pd->destinasi->nama_destinasi ?? '-' }}</li>
@@ -42,7 +37,7 @@
 
                         @if ($paket->fasilitas)
                             <hr>
-                            <h6 class="fw-bold mb-2">Fasilitas Termasuk:</h6>
+                            <h6 class="fw-bold mb-2">Fasilitas</h6>
                             <p class="text-muted">{!! nl2br(e($paket->fasilitas)) !!}</p>
                         @endif
                     </div>
@@ -86,6 +81,9 @@
                             <button type="submit" class="btn btn-success btn-round w-100 fw-bold">
                                 <i class="fa fa-paper-plane me-1"></i> Ajukan Booking Sekarang
                             </button>
+                            <a href="{{ route('client.paket.index') }}" class="btn btn-outline-secondary btn-round">
+                                <i class="fa fa-arrow-left me-1"></i> Kembali ke Daftar Paket
+                            </a>
                         </form>
                     </div>
                 </div>

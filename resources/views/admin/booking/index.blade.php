@@ -57,16 +57,15 @@
                                         <div class="d-flex justify-content-end gap-1">
 
                                             <!-- 1. Tombol Kirim Tagihan/Send to Client -->
-                                            @if ($b->status == 'pending')
+                                            {{-- @if ($b->status == 'pending')
                                                 <form action="{{ route('admin.booking.send-invoice', $b->uuid) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-primary"
                                                         title="Kirim Tagihan Perintah Bayar">
-                                                        <i class="fa fa-paper-plane me-1"></i> Send to Client
-                                                    </button>
+                                                        <i class="fa fa-paper-plane me-1"></i> Kirim Invoice </button>
                                                 </form>
-                                            @endif
+                                            @endif --}}
                                             <!-- Jika Menunggu Verifikasi Transfer / Tunai dari Client -->
                                             @if ($b->status == 'pending_verification')
                                                 <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
@@ -136,7 +135,7 @@
                                                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#modalTunai{{ $b->id }}"
                                                     title="Terima Bayar Tunai di Kantor">
-                                                    <i class="fa fa-money-bill-wave"></i> Bayar
+                                                    <i class="fa fa-money-bill-wave"></i> Telah Terima Tunai
                                                 </button>
                                             @endif
 
