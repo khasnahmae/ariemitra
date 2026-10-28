@@ -60,13 +60,13 @@
                                             </a>
 
                                             <!-- 2. Tombol Bukti Sewa Resmi (Tampil jika sudah ada pembayaran DP/Lunas) -->
-                                            @if (in_array($b->status, ['booked', 'lunas']))
+                                            {{-- @if (in_array($b->status, ['booked', 'lunas']))
                                                 <a href="{{ route('admin.booking.cetak-bukti-sewa', $b->uuid) }}"
                                                     target="_blank" class="btn btn-sm btn-outline-secondary"
                                                     title="Lihat Bukti Sewa Kuitansi">
                                                     <i class="fa fa-print me-1"></i> Bukti Sewa
                                                 </a>
-                                            @endif
+                                            @endif --}}
 
                                             <!-- 3. Tombol Upload / Pembayaran Lanjutan (Aktif jika belum Lunas & Tidak Sedang Di-verifikasi) -->
                                             @if (in_array($b->status, ['sent', 'booked']))
