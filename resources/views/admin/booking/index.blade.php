@@ -67,6 +67,7 @@
                                                 </button>
 
                                                 <!-- Modal Verifikasi Pembayaran -->
+                                                <!-- Modal Verifikasi Pembayaran -->
                                                 <div class="modal fade" id="modalVerifikasi{{ $b->id }}"
                                                     tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered">
@@ -91,15 +92,14 @@
                                                                     </p>
 
                                                                     @php
-                                                                        // Menentukan nominal pembayaran terkini yang diajukan client
-                                                                        $nominalKonfirmasi =
-                                                                            $b->dp_2 > 0
-                                                                                ? $b->dp_2
-                                                                                : ($b->dp_1 > 0
-                                                                                    ? $b->dp_1
-                                                                                    : 0);
+                                                                        // Ambil nominal DP yang diunggah client atau gunakan sisa pembayaran jika DP bernilai 0
+                                                                        $nominalDraft =
+                                                                            $b->dp_1 > 0
+                                                                                ? $b->dp_1
+                                                                                : ($b->dp_2 > 0
+                                                                                    ? $b->dp_2
+                                                                                    : $b->biaya_sewa);
 
-                                                                        // Cek foto bukti pembayaran aman dari NULL
                                                                         $fotoUrl = '';
                                                                         if (!empty($b->bukti_pembayaran)) {
                                                                             $fotoUrl = \Illuminate\Support\Str::startsWith(
@@ -113,12 +113,6 @@
                                                                         }
                                                                     @endphp
 
-                                                                    <p class="mb-3">
-                                                                        <strong>Nominal Dibayar:</strong>
-                                                                        Rp
-                                                                        {{ number_format($nominalKonfirmasi, 0, ',', '.') }}
-                                                                    </p>
-
                                                                     @if (!empty($b->bukti_pembayaran))
                                                                         <div class="mb-3">
                                                                             <label class="form-label fw-bold">Bukti Transfer
@@ -126,15 +120,20 @@
                                                                             <a href="{{ $fotoUrl }}" target="_blank">
                                                                                 <img src="{{ $fotoUrl }}"
                                                                                     class="img-fluid rounded border shadow-sm"
-                                                                                    style="max-height: 250px; width: auto;"
+                                                                                    style="max-height: 220px; width: auto;"
                                                                                     alt="Bukti Transfer">
                                                                             </a>
                                                                         </div>
                                                                     @endif
 
-                                                                    <!-- Hidden input mengirim nominal bayar yang valid -->
-                                                                    <input type="hidden" name="jumlah_bayar"
-                                                                        value="{{ $nominalKonfirmasi }}">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label fw-bold">Nominal Pembayaran
+                                                                            Diterima (Rp)</label>
+                                                                        <input type="number" name="jumlah_bayar"
+                                                                            value="{{ $nominalDraft }}"
+                                                                            class="form-control" min="1"
+                                                                            max="{{ $b->biaya_sewa }}" required>
+                                                                    </div>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary"
@@ -196,7 +195,8 @@
                                                     <hr>
                                                     <div class="mb-3">
                                                         <label class="form-label fw-bold">Jumlah Pembayaran Tunai
-                                                            (Rp)</label>
+                                                            (Rp)
+                                                        </label>
                                                         <input type="number" name="jumlah_bayar" min="2000000"
                                                             max="{{ $b->biaya_sewa }}" class="form-control"
                                                             placeholder="2000000" required>
