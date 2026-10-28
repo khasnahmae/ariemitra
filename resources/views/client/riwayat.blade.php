@@ -35,7 +35,7 @@
                                     </td>
                                     <td>
                                         @if ($b->status == 'pending')
-                                            <span class="badge bg-warning text-dark">Menunggu Invoice</span>
+                                            <span class="badge bg-warning text-dark">Pending</span>
                                         @elseif($b->status == 'sent')
                                             <span class="badge bg-info">Invoice Diterbitkan</span>
                                         @elseif($b->status == 'pending_verification')
@@ -56,12 +56,12 @@
                                                 <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}"
                                                     target="_blank" class="btn btn-sm btn-outline-info"
                                                     title="Lihat Dokumen Perintah Bayar">
-                                                    <i class="fa fa-file-invoice-dollar me-1"></i> Perintah Bayar
+                                                    <i class="fa fa-file-invoice-dollar me-1"></i> Lihat Invoice
                                                 </a>
                                             @endif
 
                                             <!-- Tombol 2: Modal Konfirmasi Pembayaran DP / Tunai -->
-                                            @if ($b->status == 'sent')
+                                            @if (in_array($b->status, ['pending', 'sent']))
                                                 <button class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#uploadModal{{ $b->id }}">
                                                     <i class="fa fa-money-bill-wave me-1"></i> Bayar / Upload DP

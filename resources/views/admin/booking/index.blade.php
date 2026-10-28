@@ -127,7 +127,7 @@
                                             <!-- 2. Tombol Cetak Invoice / Perintah Bayar -->
                                             <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}" target="_blank"
                                                 class="btn btn-sm btn-outline-info" title="Cetak Perintah Bayar / Invoice">
-                                                <i class="fa fa-file-invoice-dollar me-1"></i> Perintah Bayar
+                                                <i class="fa fa-file-invoice-dollar me-1"></i> Cetak Invoice
                                             </a>
 
                                             <!-- 3. Tombol Input Bayar Tunai Kantor -->
