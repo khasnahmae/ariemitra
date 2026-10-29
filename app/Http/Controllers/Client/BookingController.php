@@ -55,7 +55,7 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('client.riwayat')->with('success', 'Permintaan booking berhasil diajukan! Silakan Lakukan Pembayaran.');
+        return redirect()->route('client.riwayat')->with('success', 'Permintaan booking berhasil diajukan!');
     }
 
     public function riwayat()
@@ -77,7 +77,6 @@ class BookingController extends Controller
         $tglBerangkat = Carbon::parse($booking->tanggal_keberangkatan);
         $selisihHari = $today->diffInDays($tglBerangkat, false);
 
-        // Aturan Minimal Pembayaran (DP minimal 2jt, H-7 wajib pelunasan)
         $minBayar = 2000000;
         if ($selisihHari <= 7 || $booking->status === 'booked') {
             $minBayar = $booking->sisa_pembayaran;
@@ -108,7 +107,6 @@ class BookingController extends Controller
 
         $booking->metode_pembayaran = $request->metode_pembayaran;
 
-        // Simpan sementara nominal pembayaran
         if ($booking->dp_1 == 0) {
             $booking->dp_1 = $request->jumlah_bayar;
         } else {

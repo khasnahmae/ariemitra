@@ -13,7 +13,7 @@ class BookingAdminController extends Controller
         try {
             $bookings = Booking::latest()->get();
         } catch (\Exception $e) {
-            $bookings = collect(); // Mengembalikan koleksi kosong jika database error
+            $bookings = collect();
         }
 
         return view('admin.booking.index', compact('bookings'));

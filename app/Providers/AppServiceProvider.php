@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        // AMAN DENGAN TRY-CATCH
+        // Safe View Composer agar tidak memicu HTTP 500
         View::composer('layouts.admin', function ($view) {
             try {
                 if (Schema::hasTable('bookings')) {
