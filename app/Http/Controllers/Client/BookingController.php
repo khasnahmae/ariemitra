@@ -22,11 +22,11 @@ class BookingController extends Controller
             'telepon_pemesan' => 'required|string|max:20',
         ]);
 
-        $namaPaket = $proposal->PaketWisata->nama_paket ?? 'Paket Wisata';
+        $namaPaket = $proposal->PaketWisata->nama_paket ?? ($proposal->paketWisata->nama_paket ?? 'Paket Wisata');
         $subPaket = $proposal->nama_sub_paket ?? '';
         $tujuanWisata = $namaPaket . ($subPaket ? ' - ' . $subPaket : '');
 
-        // PERIKSA BENTROK TANGGAL: Cek apakah tanggal keberangkatan dengan tujuan sama sudah di-booked/lunas oleh client lain
+        // PENCEGAHAN BENTROK TANGGAL
         $isBooked = Booking::where('tujuan_wisata', $tujuanWisata)
             ->where('tanggal_keberangkatan', $request->tanggal_keberangkatan)
             ->whereIn('status', ['booked', 'lunas'])
@@ -34,7 +34,7 @@ class BookingController extends Controller
 
         if ($isBooked) {
             return back()->withInput()->withErrors([
-                'tanggal_keberangkatan' => 'Maaf, tanggal keberangkatan untuk paket ini sudah dipesan oleh rombongan lain. Silakan pilih tanggal lain.'
+                'tanggal_keberangkatan' => 'Maaf, tanggal keberangkatan untuk paket ini sudah dipesan oleh rombongan lain.'
             ]);
         }
 
@@ -60,8 +60,7 @@ class BookingController extends Controller
 
     public function riwayat()
     {
-        $bookings = Booking::with('proposal.PaketWisata')
-            ->where('user_id', Auth::id())
+        $bookings = Booking::where('user_id', Auth::id())
             ->latest()
             ->get();
 
@@ -74,19 +73,16 @@ class BookingController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        $today = \Carbon\Carbon::today();
-        $tglBerangkat = \Carbon\Carbon::parse($booking->tanggal_keberangkatan);
-
-        // PERBAIKAN SINTAKS: Gunakan panah (->) bukan titik dua ganda (::)
+        $today = Carbon::today();
+        $tglBerangkat = Carbon::parse($booking->tanggal_keberangkatan);
         $selisihHari = $today->diffInDays($tglBerangkat, false);
 
-        // Hitung aturan minimal pembayaran (DP 2jt atau sisa pelunasan jika H-7 / sudah booked)
+        // Aturan Minimal Pembayaran (DP minimal 2jt, H-7 wajib pelunasan)
         $minBayar = 2000000;
         if ($selisihHari <= 7 || $booking->status === 'booked') {
             $minBayar = $booking->sisa_pembayaran;
         }
 
-        // Hindari minBayar melebihi sisa_pembayaran jika sisa kurang dari 2jt
         $limitMin = min($minBayar, $booking->sisa_pembayaran);
 
         $request->validate([
@@ -106,14 +102,13 @@ class BookingController extends Controller
                     $booking->bukti_pembayaran = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
                 }
             } catch (\Exception $e) {
-                // Fallback jika unggah Cloudinary bermasalah
                 $booking->bukti_pembayaran = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
             }
         }
 
         $booking->metode_pembayaran = $request->metode_pembayaran;
 
-        // Simpan nominal ke dp_1 jika belum ada, atau dp_2 jika sudah pernah DP
+        // Simpan sementara nominal pembayaran
         if ($booking->dp_1 == 0) {
             $booking->dp_1 = $request->jumlah_bayar;
         } else {

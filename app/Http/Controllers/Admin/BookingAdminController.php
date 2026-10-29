@@ -10,8 +10,13 @@ class BookingAdminController extends Controller
 {
     public function index()
     {
-        // Panggilan tanpa relasi bermasalah agar tidak crash 500
-        $bookings = Booking::with('user')->latest()->get();
+        // Gunakan try-catch agar jika eager loading relasi bermasalah, query fallback tetap berjalan aman
+        try {
+            $bookings = Booking::with(['user', 'proposal'])->latest()->get();
+        } catch (\Exception $e) {
+            $bookings = Booking::latest()->get();
+        }
+
         return view('admin.booking.index', compact('bookings'));
     }
 
@@ -37,19 +42,18 @@ class BookingAdminController extends Controller
 
         $bayar = (float) $request->jumlah_bayar;
 
-        // Jika verifikasi pertama dan DP 1 belum terisi/masih 0
+        // Jika DP 1 sudah ada, tambahkan ke DP 2. Jika belum, masukkan ke DP 1
         if ($booking->dp_1 == 0) {
             $booking->dp_1 = $bayar;
-        } elseif ($booking->dp_1 > 0 && $booking->status === 'pending_verification' && $booking->dp_2 == 0) {
-            // Jika ini verifikasi untuk pembayaran pelunasan/DP 2
+        } else {
             $booking->dp_2 = $bayar;
         }
 
-        // Kalkulasi total yang telah dibayar
-        $totalMasuk = (float) $booking->dp_1 + (float) $booking->dp_2;
-        $booking->sisa_pembayaran = max(0, (float) $booking->biaya_sewa - $totalMasuk);
+        // Kalkulasi Total dan Sisa Tagihan
+        $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
+        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
 
-        // Tentukan status transaksi
+        // Tentukan Status Transaksi
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {

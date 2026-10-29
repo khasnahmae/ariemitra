@@ -85,12 +85,18 @@
                                                                     </p>
 
                                                                     @php
-                                                                        $nominalDraft =
-                                                                            $b->dp_2 > 0
-                                                                                ? $b->dp_2
-                                                                                : ($b->dp_1 > 0
-                                                                                    ? $b->dp_1
-                                                                                    : $b->biaya_sewa);
+                                                                        // Penentuan nominal draft yang AMAN dari nilai 0 / Null
+                                                                        if ($b->dp_2 > 0) {
+                                                                            $nominalDraft = $b->dp_2;
+                                                                        } elseif ($b->dp_1 > 0) {
+                                                                            $nominalDraft = $b->dp_1;
+                                                                        } else {
+                                                                            $nominalDraft =
+                                                                                $b->sisa_pembayaran > 0
+                                                                                    ? $b->sisa_pembayaran
+                                                                                    : $b->biaya_sewa;
+                                                                        }
+
                                                                         $fotoUrl =
                                                                             !empty($b->bukti_pembayaran) &&
                                                                             \Illuminate\Support\Str::startsWith(
@@ -122,7 +128,8 @@
                                                                         <input type="number" name="jumlah_bayar"
                                                                             value="{{ $nominalDraft }}"
                                                                             class="form-control" min="1"
-                                                                            max="{{ $b->biaya_sewa }}" required>
+                                                                            max="{{ $b->sisa_pembayaran > 0 ? $b->sisa_pembayaran : $b->biaya_sewa }}"
+                                                                            required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
