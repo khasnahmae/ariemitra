@@ -23,20 +23,6 @@
                 </a>
             </div>
         </div>
-
-        {{-- @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fa fa-exclamation-triangle me-1"></i> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif --}}
-
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-round">
@@ -45,7 +31,6 @@
                             <table id="basic-datatables" class="display table table-striped table-hover align-middle w-100">
                                 <thead>
                                     <tr>
-                                        {{-- <th>No</th> --}}
                                         <th>Nama Destinasi</th>
                                         <th>Lokasi / Kota</th>
                                         <th>HTM / Pax</th>
@@ -55,7 +40,6 @@
                                 <tbody>
                                     @foreach ($destinasiList as $index => $destinasi)
                                         <tr>
-                                            {{-- <td>{{ $index + 1 }}</td> --}}
                                             <td class="fw-bold">{{ $destinasi->nama_destinasi }}</td>
                                             <td><i class="fas fa-map-marker-alt text-danger me-1"></i>
                                                 {{ $destinasi->lokasi }}</td>

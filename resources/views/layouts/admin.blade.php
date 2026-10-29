@@ -344,6 +344,52 @@
             });
         </script>
     @endif
+    <script>
+        var SweetAlert2Demo = (function() {
+            //== Demos
+            var initDemos = function() {
+                $(".delete-button").click(function(e) {
+                    var form = $(this).closest("form"); // Mengambil form terdekat
+                    e.preventDefault(); // Mencegah aksi form langsung dieksekusi
+                    Swal.fire({
+                        title: "Yakin ingin menghapus?",
+                        text: "Data yang sudah terhapus tidak bisa kembali lagi!",
+                        icon: "warning",
+                        showCancelButton: true, // Menampilkan tombol Cancel
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Tidak, batal!',
+                        buttonsStyling: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Jika pengguna mengklik tombol 'Yes, delete it!', submit form penghapusan
+                            form.submit(); // Aksi submit akan berjalan hanya setelah konfirmasi
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            // Jika pengguna mengklik 'No, cancel!', tidak terjadi apapun
+                            Swal.fire({
+                                title: 'Dibatalkan',
+                                text: 'Data Anda aman :)',
+                                icon: 'error',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                });
+            };
+            return {
+                //== Init
+                init: function() {
+                    initDemos();
+                },
+            };
+        })();
+        //== Class Initialization
+        jQuery(document).ready(function() {
+            SweetAlert2Demo.init();
+        });
+    </script>
 </body>
 
 </html>

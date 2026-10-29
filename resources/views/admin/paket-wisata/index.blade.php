@@ -24,14 +24,6 @@
                 </a>
             </div>
         </div>
-        {{-- 
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif --}}
-
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-round">
@@ -62,7 +54,6 @@
                                                         @method('DELETE')
                                                         <button type="submit"
                                                             class="btn btn-link btn-danger btn-lg p-1 delete-button"
-                                                            onclick="return confirm('Apakah Anda yakin ingin menghapus paket ini?')"
                                                             title="Hapus Paket">
                                                             <i class="fa fa-times"></i>
                                                         </button>

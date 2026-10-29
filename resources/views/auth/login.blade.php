@@ -126,6 +126,13 @@
                 </button>
             </form>
 
+            <div class="mt-6 text-center text-xs font-semibold text-slate-500">
+                Belum memiliki akun?
+                <a href="{{ route('register') }}" class="text-[#1A2171] font-bold hover:underline ml-1">
+                    Daftar di sini
+                </a>
+            </div>
+
             <!-- Footer Text -->
             <div class="mt-8 text-center text-xs font-semibold text-slate-500">
                 &copy; {{ date('Y') }} Arie Mitra Tour & Travel. <a href="{{ route('frontend.home') }}"

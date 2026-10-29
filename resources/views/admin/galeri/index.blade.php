@@ -23,14 +23,6 @@
                 </a>
             </div>
         </div>
-
-        {{-- @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif --}}
-
         <div class="row">
             @forelse($galeriList as $galeri)
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">

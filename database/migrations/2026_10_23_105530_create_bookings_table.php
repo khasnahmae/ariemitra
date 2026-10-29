@@ -31,7 +31,6 @@ return new class extends Migration {
             $table->string('metode_dp_1')->nullable();
             $table->string('metode_dp_2')->nullable();
 
-            // Dihapus status 'sent' yang tidak digunakan
             $table->enum('status', ['pending', 'pending_verification', 'booked', 'lunas', 'cancelled'])->default('pending');
             $table->timestamps();
         });

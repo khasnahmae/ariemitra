@@ -3,14 +3,6 @@
 @section('content')
     <div class="page-inner">
         <h3 class="fw-bold mb-4">Daftar Permintaan Pemesanan Client</h3>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
         <div class="card card-round">
             <div class="card-body">
                 <div class="table-responsive">
