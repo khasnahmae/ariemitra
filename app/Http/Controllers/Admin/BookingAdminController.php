@@ -10,7 +10,6 @@ class BookingAdminController extends Controller
 {
     public function index()
     {
-        // Gunakan try-catch agar jika eager loading relasi bermasalah, query fallback tetap berjalan aman
         try {
             $bookings = Booking::with(['user', 'proposal'])->latest()->get();
         } catch (\Exception $e) {
@@ -42,17 +41,18 @@ class BookingAdminController extends Controller
 
         $bayar = (float) $request->jumlah_bayar;
 
-        // Tetapkan nilai pembayaran secara pasti
-        if ($booking->dp_1 == 0 || $booking->dp_1 == $bayar) {
+        // Tentukan alokasi ke DP 1 atau DP 2 secara aman
+        if ($booking->dp_1 == 0) {
             $booking->dp_1 = $bayar;
         } else {
             $booking->dp_2 = $bayar;
         }
 
-        // Hitung total uang masuk secara akurat
+        // Kalkulasi Total dan Sisa Tagihan
         $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
         $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
 
+        // Tentukan Status Transaksi
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {

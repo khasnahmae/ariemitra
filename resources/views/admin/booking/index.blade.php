@@ -85,22 +85,19 @@
                                                                     </p>
 
                                                                     @php
-                                                                        // Ambil nominal yang baru diajukan client secara presisi
-                                                                        if ($b->status === 'pending_verification') {
-                                                                            $nominalDraft =
-                                                                                $b->dp_2 > 0
-                                                                                    ? $b->dp_2
-                                                                                    : ($b->dp_1 > 0
-                                                                                        ? $b->dp_1
-                                                                                        : $b->sisa_pembayaran);
+                                                                        // Ambil nominal draft secara presisi dari pembayaran terbaru
+                                                                        if ($b->dp_2 > 0) {
+                                                                            $nominalDraft = $b->dp_2;
+                                                                        } elseif ($b->dp_1 > 0) {
+                                                                            $nominalDraft = $b->dp_1;
                                                                         } else {
-                                                                            $nominalDraft = $b->sisa_pembayaran;
+                                                                            $nominalDraft = $b->biaya_sewa;
                                                                         }
 
-                                                                        // Ambil batas max yang aman
-                                                                        $maxInput = max(
-                                                                            $nominalDraft,
-                                                                            $b->sisa_pembayaran,
+                                                                        // Penentuan limit max input yang aman
+                                                                        $maxVal = max(
+                                                                            (float) $nominalDraft,
+                                                                            (float) $b->biaya_sewa,
                                                                         );
 
                                                                         $fotoUrl =
@@ -114,7 +111,6 @@
                                                                                     'storage/' . $b->bukti_pembayaran,
                                                                                 );
                                                                     @endphp
-
 
                                                                     @if (!empty($b->bukti_pembayaran) && $b->metode_pembayaran == 'transfer')
                                                                         <div class="mb-3">
@@ -135,7 +131,7 @@
                                                                         <input type="number" name="jumlah_bayar"
                                                                             value="{{ round($nominalDraft) }}"
                                                                             class="form-control" min="1"
-                                                                            max="{{ round($maxInput) }}" required>
+                                                                            max="{{ round($maxVal) }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -188,9 +184,9 @@
                                                                     <label class="form-label fw-bold">Jumlah Pembayaran
                                                                         Tunai (Rp)</label>
                                                                     <input type="number" name="jumlah_bayar" min="100000"
-                                                                        max="{{ $b->sisa_pembayaran }}"
+                                                                        max="{{ max(100000, $b->sisa_pembayaran) }}"
                                                                         class="form-control"
-                                                                        value="{{ $b->sisa_pembayaran }}" required>
+                                                                        value="{{ round($b->sisa_pembayaran) }}" required>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
