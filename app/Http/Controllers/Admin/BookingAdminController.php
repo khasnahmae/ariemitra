@@ -42,18 +42,18 @@ class BookingAdminController extends Controller
 
         $bayar = (float) $request->jumlah_bayar;
 
-        // Jika DP 1 sudah ada, tambahkan ke DP 2. Jika belum, masukkan ke DP 1
-        if ($booking->dp_1 == 0) {
+        // Tetapkan nilai pembayaran secara pasti
+        if ($booking->dp_1 == 0 || $booking->dp_1 == $bayar) {
             $booking->dp_1 = $bayar;
         } else {
             $booking->dp_2 = $bayar;
         }
 
-        // Kalkulasi Total dan Sisa Tagihan
+        // Hitung total uang masuk secara akurat
         $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
         $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
 
-        // Tentukan Status Transaksi
+        // Update status transaksi
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {

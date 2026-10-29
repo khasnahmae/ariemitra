@@ -85,17 +85,23 @@
                                                                     </p>
 
                                                                     @php
-                                                                        // Penentuan nominal draft yang AMAN dari nilai 0 / Null
-                                                                        if ($b->dp_2 > 0) {
-                                                                            $nominalDraft = $b->dp_2;
-                                                                        } elseif ($b->dp_1 > 0) {
-                                                                            $nominalDraft = $b->dp_1;
-                                                                        } else {
+                                                                        // Ambil nominal yang baru diajukan client secara presisi
+                                                                        if ($b->status === 'pending_verification') {
                                                                             $nominalDraft =
-                                                                                $b->sisa_pembayaran > 0
-                                                                                    ? $b->sisa_pembayaran
-                                                                                    : $b->biaya_sewa;
+                                                                                $b->dp_2 > 0
+                                                                                    ? $b->dp_2
+                                                                                    : ($b->dp_1 > 0
+                                                                                        ? $b->dp_1
+                                                                                        : $b->sisa_pembayaran);
+                                                                        } else {
+                                                                            $nominalDraft = $b->sisa_pembayaran;
                                                                         }
+
+                                                                        // Ambil batas max yang aman
+                                                                        $maxInput = max(
+                                                                            $nominalDraft,
+                                                                            $b->sisa_pembayaran,
+                                                                        );
 
                                                                         $fotoUrl =
                                                                             !empty($b->bukti_pembayaran) &&
@@ -108,6 +114,7 @@
                                                                                     'storage/' . $b->bukti_pembayaran,
                                                                                 );
                                                                     @endphp
+
 
                                                                     @if (!empty($b->bukti_pembayaran) && $b->metode_pembayaran == 'transfer')
                                                                         <div class="mb-3">
@@ -126,10 +133,9 @@
                                                                         <label class="form-label fw-bold">Nominal Pembayaran
                                                                             Diterima (Rp)</label>
                                                                         <input type="number" name="jumlah_bayar"
-                                                                            value="{{ $nominalDraft }}"
+                                                                            value="{{ round($nominalDraft) }}"
                                                                             class="form-control" min="1"
-                                                                            max="{{ $b->sisa_pembayaran > 0 ? $b->sisa_pembayaran : $b->biaya_sewa }}"
-                                                                            required>
+                                                                            max="{{ round($maxInput) }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
