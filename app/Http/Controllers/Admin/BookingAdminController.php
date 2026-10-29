@@ -44,31 +44,43 @@ class BookingAdminController extends Controller
         $booking = Booking::where('uuid', $uuid)->firstOrFail();
 
         $request->validate([
-            'jumlah_bayar' => 'required|numeric|min:1|max:' . $booking->biaya_sewa,
+            'jumlah_bayar' => 'required|numeric|min:1',
         ]);
 
         $nominalBayar = (float) $request->jumlah_bayar;
 
-        // Tentukan alokasi pembayaran (DP 1 atau DP 2/Pelunasan)
-        if ((float)$booking->dp_1 == 0) {
+        // JIKA VERIFIKASI PERTAMA (Status masih pending_verification dan dp_2 masih 0)
+        if ($booking->status === 'pending_verification' && (float)$booking->dp_2 == 0) {
             $booking->dp_1 = $nominalBayar;
         } else {
-            $booking->dp_2 += $nominalBayar;
+            // JIKA VERIFIKASI PELUNASAN / DP KEDUA
+            $booking->dp_2 = $nominalBayar;
         }
 
-        // Akumulasi total pembayaran bersih
-        $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
-        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
-        $booking->nominal_pending = 0; // Reset nominal pending
+        // HITUNG DENGAN CASTING FLOAT AGAR BEBAS ERROR MATH NULL
+        $dp1 = (float) ($booking->dp_1 ?? 0);
+        $dp2 = (float) ($booking->dp_2 ?? 0);
+        $biayaSewa = (float) ($booking->biaya_sewa ?? 0);
 
-        // Update status sesuai sisa tagihan
+        $totalMasuk = $dp1 + $dp2;
+        $booking->sisa_pembayaran = max(0, $biayaSewa - $totalMasuk);
+
+        // Tentukan Status Transaksi
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {
             $booking->status = 'booked';
         }
 
-        $booking->is_read_admin = true;
+        // Riset nominal pending jika ada kolomnya
+        if (\Schema::hasColumn('bookings', 'nominal_pending')) {
+            $booking->nominal_pending = 0;
+        }
+
+        if (\Schema::hasColumn('bookings', 'is_read_admin')) {
+            $booking->is_read_admin = true;
+        }
+
         $booking->save();
 
         return back()->with('success', 'Pembayaran berhasil diverifikasi dan dicatat!');
