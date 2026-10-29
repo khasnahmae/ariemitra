@@ -10,8 +10,12 @@ class BookingAdminController extends Controller
 {
     public function index()
     {
-        // Ambil data booking secara langsung tanpa eager loading bertingkat yang rawan error
-        $bookings = Booking::latest()->get();
+        try {
+            $bookings = Booking::latest()->get();
+        } catch (\Exception $e) {
+            $bookings = collect(); // Mengembalikan koleksi kosong jika database error
+        }
+
         return view('admin.booking.index', compact('bookings'));
     }
 
