@@ -24,11 +24,11 @@ class Booking extends Model
 
     public function user()
     {
-        return $table = $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function proposal()
     {
-        return $this->belongsTo(Proposal::class);
+        return $this->belongsTo(Proposal::class, 'proposal_id');
     }
 }

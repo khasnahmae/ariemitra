@@ -10,19 +10,20 @@ class BookingAdminController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['user', 'proposal.PaketWisata'])->latest()->get();
+        // Panggilan tanpa relasi bermasalah agar tidak crash 500
+        $bookings = Booking::with('user')->latest()->get();
         return view('admin.booking.index', compact('bookings'));
     }
 
     public function cetakInvoice($uuid)
     {
-        $booking = Booking::with(['proposal.PaketWisata', 'proposal.proposalArmada.armada'])->where('uuid', $uuid)->firstOrFail();
+        $booking = Booking::where('uuid', $uuid)->firstOrFail();
         return view('admin.booking.cetak_invoice', compact('booking'));
     }
 
     public function cetakBuktiSewa($uuid)
     {
-        $booking = Booking::with(['proposal.PaketWisata', 'proposal.proposalArmada.armada'])->where('uuid', $uuid)->firstOrFail();
+        $booking = Booking::where('uuid', $uuid)->firstOrFail();
         return view('admin.booking.cetak_bukti_sewa', compact('booking'));
     }
 
@@ -36,13 +37,19 @@ class BookingAdminController extends Controller
 
         $bayar = (float) $request->jumlah_bayar;
 
-        // Ambil akumulasi total pembayaran
-        $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
+        // Jika verifikasi pertama dan DP 1 belum terisi/masih 0
+        if ($booking->dp_1 == 0) {
+            $booking->dp_1 = $bayar;
+        } elseif ($booking->dp_1 > 0 && $booking->status === 'pending_verification' && $booking->dp_2 == 0) {
+            // Jika ini verifikasi untuk pembayaran pelunasan/DP 2
+            $booking->dp_2 = $bayar;
+        }
 
-        // Update sisa pembayaran
-        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
+        // Kalkulasi total yang telah dibayar
+        $totalMasuk = (float) $booking->dp_1 + (float) $booking->dp_2;
+        $booking->sisa_pembayaran = max(0, (float) $booking->biaya_sewa - $totalMasuk);
 
-        // Jika sisa pembayaran lunas maka status 'lunas', jika masih ada sisa maka 'booked'
+        // Tentukan status transaksi
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {

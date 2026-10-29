@@ -86,7 +86,11 @@
 
                                                                     @php
                                                                         $nominalDraft =
-                                                                            $b->dp_2 > 0 ? $b->dp_2 : $b->dp_1;
+                                                                            $b->dp_2 > 0
+                                                                                ? $b->dp_2
+                                                                                : ($b->dp_1 > 0
+                                                                                    ? $b->dp_1
+                                                                                    : $b->biaya_sewa);
                                                                         $fotoUrl =
                                                                             !empty($b->bukti_pembayaran) &&
                                                                             \Illuminate\Support\Str::startsWith(
