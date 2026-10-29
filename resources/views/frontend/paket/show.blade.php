@@ -217,13 +217,9 @@
                         <div class="row">
                             @foreach ($paket->proposalDestinasi as $pDest)
                                 <div class="col-md-6 mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div>
-                                            <h6 class="mb-0 font-weight-bold text-secondary">
-                                                {{ $pDest->destinasi->nama_destinasi ?? '-' }}
-                                            </h6>
-                                        </div>
-                                    </div>
+                                    <h6 class="mb-0 font-weight-bold text-secondary">
+                                        {{ $pDest->destinasi->nama_destinasi ?? '-' }}
+                                    </h6>
                                 </div>
                             @endforeach
                         </div>
