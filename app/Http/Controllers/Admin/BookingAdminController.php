@@ -11,6 +11,10 @@ class BookingAdminController extends Controller
     public function index()
     {
         $bookings = Booking::with(['user', 'proposal.PaketWisata'])->latest()->get();
+
+        // Tandai seluruh pesanan telah dibuka oleh admin
+        Booking::where('is_read', false)->update(['is_read' => true]);
+
         return view('admin.booking.index', compact('bookings'));
     }
 
@@ -40,26 +44,23 @@ class BookingAdminController extends Controller
         $booking = Booking::where('uuid', $uuid)->firstOrFail();
 
         $request->validate([
-            'jumlah_bayar' => 'required|numeric|min:1',
+            'jumlah_bayar' => 'required|numeric|min:100000',
         ]);
 
-        $nominalBayar = (float) $request->jumlah_bayar;
+        $nominalDiterima = (float) $request->jumlah_bayar;
 
-        // Jika DP 1 sudah ada dan status transaksi sebelumnya sudah 'booked', masukkan ke DP 2
-        if ($booking->dp_1 > 0 && $booking->status === 'pending_verification' && $booking->dp_2 > 0) {
-            // Nominal sudah tersimpan dari upload client di dp_2
-            $booking->dp_2 = $nominalBayar;
-        } elseif ($booking->dp_1 == 0) {
-            $booking->dp_1 = $nominalBayar;
+        // Alokasikan pembayaran ke DP 1 atau DP 2
+        if ($booking->dp_1 == 0) {
+            $booking->dp_1 = $nominalDiterima;
         } else {
-            $booking->dp_2 = $nominalBayar;
+            $booking->dp_2 += $nominalDiterima;
         }
 
-        // Kalkulasi total bayar dan sisa tagihan
-        $totalBayar = (float)$booking->dp_1 + (float)$booking->dp_2;
-        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalBayar);
+        $booking->nominal_konfirmasi = 0; // Reset draf nominal konfirmasi
+        $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
+        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
 
-        // Update status transaksi
+        // Update status sesuai kriteria pelunasan
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {
@@ -68,6 +69,6 @@ class BookingAdminController extends Controller
 
         $booking->save();
 
-        return back()->with('success', 'Pembayaran berhasil diverifikasi & dicatat!');
+        return back()->with('success', 'Pembayaran sebesar Rp ' . number_format($nominalDiterima, 0, ',', '.') . ' berhasil diverifikasi!');
     }
 }

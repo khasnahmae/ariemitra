@@ -32,8 +32,7 @@
                                     <td><strong class="text-primary">{{ $b->no_invoice }}</strong></td>
                                     <td>
                                         <strong>{{ $b->nama_pemesan }}</strong><br>
-                                        <small class="text-muted"><i
-                                                class="fa fa-phone me-1"></i>{{ $b->telepon_pemesan }}</small>
+                                        <small class="text-muted">{{ $b->telepon_pemesan }}</small>
                                     </td>
                                     <td>{{ $b->tujuan_wisata }}</td>
                                     <td>{{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d/m/Y') }}</td>

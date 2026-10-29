@@ -62,11 +62,17 @@
                                 <input type="text" name="telepon_pemesan" class="form-control" required
                                     placeholder="08xxxxxxxxxx">
                             </div>
+
                             <div class="mb-3">
-                                <label class="form-label font-weight-bold">Tanggal Keberangkatan</label>
-                                <input type="date" name="tanggal_keberangkatan" class="form-control"
-                                    min="{{ date('Y-m-d') }}" required>
+                                <label class="form-label fw-bold">Tanggal Keberangkatan (Min. H-7)</label>
+                                <input type="date" id="tanggal_keberangkatan" name="tanggal_keberangkatan"
+                                    class="form-control @error('tanggal_keberangkatan') is-invalid @enderror"
+                                    min="{{ \Carbon\Carbon::now()->addDays(7)->format('Y-m-d') }}" required>
+                                @error('tanggal_keberangkatan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="mb-3">
                                 <label class="form-label font-weight-bold">Alamat Penjemputan</label>
                                 <textarea name="alamat_penjemputan" class="form-control" rows="3" required
@@ -90,4 +96,16 @@
             </div>
         </div>
     </div>
+    <script>
+        const bookedDates = @json($bookedDates ?? []);
+        const inputDate = document.getElementById('tanggal_keberangkatan');
+
+        inputDate.addEventListener('input', function() {
+            if (bookedDates.includes(this.value)) {
+                alert(
+                    'Tanggal ini sudah dipesan oleh rombongan lain untuk tujuan wisata ini. Silakan pilih tanggal lain.');
+                this.value = '';
+            }
+        });
+    </script>
 @endsection
