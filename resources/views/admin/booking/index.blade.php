@@ -85,21 +85,12 @@
                                                                     </p>
 
                                                                     @php
-                                                                        // Ambil nominal draft secara presisi dari pembayaran terbaru
-                                                                        if ($b->dp_2 > 0) {
-                                                                            $nominalDraft = $b->dp_2;
-                                                                        } elseif ($b->dp_1 > 0) {
-                                                                            $nominalDraft = $b->dp_1;
-                                                                        } else {
-                                                                            $nominalDraft = $b->biaya_sewa;
-                                                                        }
-
-                                                                        // Penentuan limit max input yang aman
-                                                                        $maxVal = max(
-                                                                            (float) $nominalDraft,
-                                                                            (float) $b->biaya_sewa,
-                                                                        );
-
+                                                                        $nominalDraft =
+                                                                            $b->dp_2 > 0
+                                                                                ? $b->dp_2
+                                                                                : ($b->dp_1 > 0
+                                                                                    ? $b->dp_1
+                                                                                    : $b->biaya_sewa);
                                                                         $fotoUrl =
                                                                             !empty($b->bukti_pembayaran) &&
                                                                             \Illuminate\Support\Str::startsWith(
@@ -130,8 +121,7 @@
                                                                             Diterima (Rp)</label>
                                                                         <input type="number" name="jumlah_bayar"
                                                                             value="{{ round($nominalDraft) }}"
-                                                                            class="form-control" min="1"
-                                                                            max="{{ round($maxVal) }}" required>
+                                                                            class="form-control" min="1" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -184,7 +174,6 @@
                                                                     <label class="form-label fw-bold">Jumlah Pembayaran
                                                                         Tunai (Rp)</label>
                                                                     <input type="number" name="jumlah_bayar" min="100000"
-                                                                        max="{{ max(100000, $b->sisa_pembayaran) }}"
                                                                         class="form-control"
                                                                         value="{{ round($b->sisa_pembayaran) }}" required>
                                                                 </div>
