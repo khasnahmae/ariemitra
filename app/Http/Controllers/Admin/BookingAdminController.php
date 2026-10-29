@@ -10,7 +10,6 @@ class BookingAdminController extends Controller
 {
     public function index()
     {
-        // Ambil data pemesanan secara langsung & aman dari exception
         $bookings = Booking::latest()->get();
         return view('admin.booking.index', compact('bookings'));
     }
@@ -37,17 +36,18 @@ class BookingAdminController extends Controller
 
         $bayar = (float) $request->jumlah_bayar;
 
-        // Tentukan alokasi DP 1 atau DP 2
+        // Jika DP 1 belum diisi atau ini verifikasi pertama
         if ($booking->dp_1 == 0) {
             $booking->dp_1 = $bayar;
         } else {
             $booking->dp_2 = $bayar;
         }
 
-        // Kalkulasi Total dan Sisa Tagihan
+        // Kalkulasi Total Terbayar dan Sisa Tagihan secara presisi
         $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
         $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
 
+        // Update status transaksi
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {

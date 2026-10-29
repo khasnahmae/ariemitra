@@ -90,8 +90,6 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
     Route::get('/booking/{uuid}/cetak-bukti-sewa', [BookingAdminController::class, 'cetakBuktiSewa'])->name('admin.booking.cetak-bukti-sewa');
     Route::post('/booking/{uuid}/verifikasi', [App\Http\Controllers\Admin\BookingAdminController::class, 'verifikasiPembayaran'])->name('booking.verifikasi-pembayaran');
 
-    Route::post('/booking/{uuid}/pembayaran-tunai', [BookingAdminController::class, 'konfirmasiTunai'])->name('booking.konfirmasi-tunai');
-
     // KHUSUS ROLE Owner
     Route::middleware(['role:owner'])->group(function () {
         Route::resource('user', UserController::class)->scoped(['user' => 'uuid']);
