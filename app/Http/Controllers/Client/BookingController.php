@@ -74,35 +74,52 @@ class BookingController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        $today = Carbon::today();
-        $tglBerangkat = Carbon::parse($booking->tanggal_keberangkatan);
-        $selisihHari = $today::diffInDays($tglBerangkat, false);
+        $today = \Carbon\Carbon::today();
+        $tglBerangkat = \Carbon\Carbon::parse($booking->tanggal_keberangkatan);
 
-        // Aturan Nominal Minimal: DP minimal 2jt, atau jika H-7 wajib Pelunasan
+        // PERBAIKAN SINTAKS: Gunakan panah (->) bukan titik dua ganda (::)
+        $selisihHari = $today->diffInDays($tglBerangkat, false);
+
+        // Hitung aturan minimal pembayaran (DP 2jt atau sisa pelunasan jika H-7 / sudah booked)
         $minBayar = 2000000;
         if ($selisihHari <= 7 || $booking->status === 'booked') {
             $minBayar = $booking->sisa_pembayaran;
         }
 
+        // Hindari minBayar melebihi sisa_pembayaran jika sisa kurang dari 2jt
+        $limitMin = min($minBayar, $booking->sisa_pembayaran);
+
         $request->validate([
             'metode_pembayaran' => 'required|in:transfer,tunai',
-            'jumlah_bayar' => 'required|numeric|min:' . min($minBayar, $booking->sisa_pembayaran) . '|max:' . $booking->sisa_pembayaran,
+            'jumlah_bayar' => 'required|numeric|min:' . $limitMin . '|max:' . $booking->sisa_pembayaran,
             'bukti_pembayaran' => 'required_if:metode_pembayaran,transfer|nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($request->metode_pembayaran === 'transfer' && $request->hasFile('bukti_pembayaran')) {
-            if (class_exists('CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary')) {
-                $uploadedFileUrl = Cloudinary::upload($request->file('bukti_pembayaran')->getRealPath(), [
-                    'folder' => 'bukti_pembayaran'
-                ])->getSecurePath();
-                $booking->bukti_pembayaran = $uploadedFileUrl;
-            } else {
+            try {
+                if (class_exists('CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary')) {
+                    $uploadedFileUrl = Cloudinary::upload($request->file('bukti_pembayaran')->getRealPath(), [
+                        'folder' => 'bukti_pembayaran'
+                    ])->getSecurePath();
+                    $booking->bukti_pembayaran = $uploadedFileUrl;
+                } else {
+                    $booking->bukti_pembayaran = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+                }
+            } catch (\Exception $e) {
+                // Fallback jika unggah Cloudinary bermasalah
                 $booking->bukti_pembayaran = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
             }
         }
 
         $booking->metode_pembayaran = $request->metode_pembayaran;
-        $booking->pembayaran_terakhir = $request->jumlah_bayar; // Simpan draft ke field penampung temporary
+
+        // Simpan nominal ke dp_1 jika belum ada, atau dp_2 jika sudah pernah DP
+        if ($booking->dp_1 == 0) {
+            $booking->dp_1 = $request->jumlah_bayar;
+        } else {
+            $booking->dp_2 = $request->jumlah_bayar;
+        }
+
         $booking->status = 'pending_verification';
         $booking->save();
 
