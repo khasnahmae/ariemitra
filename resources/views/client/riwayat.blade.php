@@ -126,11 +126,19 @@
                                                             (a.n. Arie Mitra Sejati)</p>
                                                     </div>
 
+                                                    @php
+                                                        // Menghitung Sisa Tagihan yang Valid untuk Pelunasan
+                                                        $sisaHarusBayar = $b->biaya_sewa - $b->dp_1;
+                                                        if ($sisaHarusBayar <= 0) {
+                                                            $sisaHarusBayar = $b->sisa_pembayaran;
+                                                        }
+                                                    @endphp
+
                                                     <div class="mb-3">
                                                         <label class="form-label fw-bold">Nominal Pembayaran (Rp)</label>
                                                         <input type="number" name="jumlah_bayar" min="100000"
                                                             max="{{ $b->sisa_pembayaran }}" class="form-control" required
-                                                            value="{{ $b->sisa_pembayaran }}">
+                                                            value="{{ (int) ($b->status == 'booked' ? $sisaHarusBayar : $b->sisa_pembayaran) }}">
                                                     </div>
 
                                                     <div class="mb-3" id="fieldBukti{{ $b->id }}">

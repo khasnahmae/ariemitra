@@ -134,15 +134,18 @@
             @if ($booking->dp_1 > 0)
                 <tr>
                     <td>Pembayaran DP I (Uang Muka)</td>
-                    <td>{{ strtoupper($booking->metode_pembayaran ?? 'TUNAI/TRANSFER') }}</td>
+                    <td>{{ strtoupper($booking->metode_dp_1 ?? ($booking->metode_pembayaran ?? 'TUNAI')) }}</td>
                     <td>Rp {{ number_format($booking->dp_1, 0, ',', '.') }}</td>
                 </tr>
             @endif
 
-            @if ($booking->dp_2 > 0)
+            @if (
+                $booking->dp_2 > 0 &&
+                    in_array($booking->status, ['lunas', 'booked']) &&
+                    $booking->sisa_pembayaran < $booking->biaya_sewa - $booking->dp_1)
                 <tr>
                     <td>Pembayaran Pelunasan / DP II</td>
-                    <td>{{ strtoupper($booking->metode_pembayaran ?? 'TUNAI/TRANSFER') }}</td>
+                    <td>{{ strtoupper($booking->metode_dp_2 ?? ($booking->metode_pembayaran ?? 'TRANSFER')) }}</td>
                     <td>Rp {{ number_format($booking->dp_2, 0, ',', '.') }}</td>
                 </tr>
             @endif

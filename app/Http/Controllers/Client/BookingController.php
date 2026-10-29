@@ -77,16 +77,19 @@ class BookingController extends Controller
         $tglBerangkat = Carbon::parse($booking->tanggal_keberangkatan);
         $selisihHari = $today->diffInDays($tglBerangkat, false);
 
+        // Hitung Sisa Tagihan Sebenarnya yang Belum Diverifikasi
+        $sisaReal = $booking->sisa_pembayaran;
+
         $minBayar = 2000000;
-        if ($selisihHari <= 7 || $booking->status === 'booked') {
-            $minBayar = $booking->sisa_pembayaran;
+        if ($selisihHari <= 7 || $booking->dp_1 > 0) {
+            $minBayar = $sisaReal;
         }
 
-        $limitMin = min($minBayar, $booking->sisa_pembayaran);
+        $limitMin = min($minBayar, $sisaReal);
 
         $request->validate([
             'metode_pembayaran' => 'required|in:transfer,tunai',
-            'jumlah_bayar' => 'required|numeric|min:' . $limitMin . '|max:' . $booking->sisa_pembayaran,
+            'jumlah_bayar' => 'required|numeric|min:' . $limitMin . '|max:' . $sisaReal,
             'bukti_pembayaran' => 'required_if:metode_pembayaran,transfer|nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -105,14 +108,16 @@ class BookingController extends Controller
             }
         }
 
-        $booking->metode_pembayaran = $request->metode_pembayaran;
-
+        // SIMPAN KEDALAM FIELD METODE MASING-MASING TAHAP
         if ($booking->dp_1 == 0) {
             $booking->dp_1 = $request->jumlah_bayar;
+            $booking->metode_dp_1 = $request->metode_pembayaran;
         } else {
             $booking->dp_2 = $request->jumlah_bayar;
+            $booking->metode_dp_2 = $request->metode_pembayaran;
         }
 
+        $booking->metode_pembayaran = $request->metode_pembayaran;
         $booking->status = 'pending_verification';
         $booking->save();
 
