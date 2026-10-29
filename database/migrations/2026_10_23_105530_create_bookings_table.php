@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('proposal_id')->constrained('proposal')->onDelete('cascade');
 
-            // Detail Penjemputan & Penyewaan
+            // Detail Pemesanan
             $table->string('nama_pemesan');
             $table->string('telepon_pemesan', 20);
             $table->text('alamat_penjemputan');
@@ -26,12 +26,14 @@ return new class extends Migration {
             $table->decimal('biaya_sewa', 12, 2);
             $table->decimal('dp_1', 12, 2)->default(0);
             $table->decimal('dp_2', 12, 2)->default(0);
+            $table->decimal('nominal_pending', 12, 2)->default(0); // Nominal yang baru di-submit client
             $table->decimal('sisa_pembayaran', 12, 2);
             $table->string('bukti_pembayaran')->nullable();
             $table->enum('metode_pembayaran', ['transfer', 'tunai'])->nullable();
 
-            // Status Workflow
+            // Status & Notifikasi
             $table->enum('status', ['pending', 'sent', 'pending_verification', 'booked', 'lunas', 'cancelled'])->default('pending');
+            $table->boolean('is_read_admin')->default(false);
             $table->timestamps();
         });
     }

@@ -32,7 +32,8 @@
                                     <td><strong class="text-primary">{{ $b->no_invoice }}</strong></td>
                                     <td>
                                         <strong>{{ $b->nama_pemesan }}</strong><br>
-                                        <small class="text-muted">{{ $b->telepon_pemesan }}</small>
+                                        <small class="text-muted"><i
+                                                class="fa fa-phone me-1"></i>{{ $b->telepon_pemesan }}</small>
                                     </td>
                                     <td>{{ $b->tujuan_wisata }}</td>
                                     <td>{{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d/m/Y') }}</td>
@@ -57,7 +58,7 @@
                                     <td class="text-end">
                                         <div class="d-flex justify-content-end gap-1">
 
-                                            <!-- 1. Tombol Verifikasi Pembayaran (Jika Client sudah konfirmasi bayar) -->
+                                            <!-- 1. Tombol Verifikasi Pembayaran dari Client -->
                                             @if ($b->status == 'pending_verification')
                                                 <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                     data-bs-target="#modalVerifikasi{{ $b->id }}"
@@ -65,7 +66,6 @@
                                                     <i class="fa fa-check-circle me-1"></i> Verifikasi Bayar
                                                 </button>
 
-                                                <!-- Modal Verifikasi Pembayaran -->
                                                 <!-- Modal Verifikasi Pembayaran -->
                                                 <div class="modal fade" id="modalVerifikasi{{ $b->id }}"
                                                     tabindex="-1">
@@ -91,19 +91,10 @@
                                                                     </p>
 
                                                                     @php
-                                                                        // Ambil nominal DP yang diunggah client atau gunakan sisa pembayaran jika DP bernilai 0
-                                                                        // JIKA STATUS SEBELUMNYA SUDAH 'BOOKED' (VERIFIKASI KEDUA), AMBIL DP_2 ATAU SISA TAGIHAN
-                                                                        if ($b->dp_1 > 0 && $b->dp_2 > 0) {
-                                                                            $nominalDraft = $b->dp_2;
-                                                                        } elseif ($b->dp_1 > 0 && $b->dp_2 == 0) {
-                                                                            $nominalDraft = $b->sisa_pembayaran;
-                                                                        } else {
-                                                                            $nominalDraft =
-                                                                                $b->dp_1 > 0
-                                                                                    ? $b->dp_1
-                                                                                    : $b->biaya_sewa;
-                                                                        }
-
+                                                                        $nominalDraft =
+                                                                            $b->nominal_pending > 0
+                                                                                ? $b->nominal_pending
+                                                                                : $b->sisa_pembayaran;
                                                                         $fotoUrl = '';
                                                                         if (!empty($b->bukti_pembayaran)) {
                                                                             $fotoUrl = \Illuminate\Support\Str::startsWith(
@@ -131,12 +122,12 @@
                                                                     @endif
 
                                                                     <div class="mb-3">
-                                                                        <label class="form-label fw-bold">Nominal Pembayaran
-                                                                            Diterima (Rp)</label>
+                                                                        <label class="form-label fw-bold">Nominal Diterima
+                                                                            (Rp)</label>
                                                                         <input type="number" name="jumlah_bayar"
                                                                             value="{{ $nominalDraft }}"
                                                                             class="form-control" min="1"
-                                                                            max="{{ $b->biaya_sewa }}" required>
+                                                                            max="{{ $b->sisa_pembayaran }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -152,22 +143,63 @@
                                                 </div>
                                             @endif
 
-                                            <!-- 2. Tombol Cetak Invoice / Perintah Bayar Awal -->
+                                            <!-- 2. Cetak Invoice Awal -->
                                             <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}" target="_blank"
                                                 class="btn btn-sm btn-outline-info" title="Cetak Perintah Bayar / Invoice">
-                                                <i class="fa fa-file-invoice-dollar me-1"></i> Cetak Invoice
+                                                <i class="fa fa-file-invoice-dollar me-1"></i> Invoice
                                             </a>
 
-                                            <!-- 3. Tombol Input Bayar Tunai Langsung di Kantor -->
-                                            @if (in_array($b->status, ['pending', 'sent']))
+                                            <!-- 3. Terima Bayar Tunai Langsung -->
+                                            @if (in_array($b->status, ['pending', 'sent', 'booked']))
                                                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#modalTunai{{ $b->id }}"
                                                     title="Terima Bayar Tunai di Kantor">
                                                     <i class="fa fa-money-bill-wave"></i> Bayar Tunai
                                                 </button>
+
+                                                <div class="modal fade" id="modalTunai{{ $b->id }}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <form
+                                                            action="{{ route('admin.booking.konfirmasi-tunai', $b->uuid) }}"
+                                                            method="POST" class="modal-content">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title fw-bold">Terima Pembayaran Tunai</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <p class="mb-1"><strong>Pemesan:</strong>
+                                                                    {{ $b->nama_pemesan }}</p>
+                                                                <p class="mb-1"><strong>Total Biaya:</strong> Rp
+                                                                    {{ number_format($b->biaya_sewa, 0, ',', '.') }}</p>
+                                                                <p class="mb-2 text-danger"><strong>Sisa Tagihan:</strong>
+                                                                    Rp
+                                                                    {{ number_format($b->sisa_pembayaran, 0, ',', '.') }}
+                                                                </p>
+                                                                <hr>
+                                                                <div class="mb-3">
+                                                                    <label class="form-label fw-bold">Nominal Pembayaran
+                                                                        Tunai (Rp)</label>
+                                                                    <input type="number" name="jumlah_bayar"
+                                                                        min="1" max="{{ $b->sisa_pembayaran }}"
+                                                                        class="form-control" placeholder="2000000"
+                                                                        required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-success">
+                                                                    <i class="fa fa-check me-1"></i> Simpan Pembayaran
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             @endif
 
-                                            <!-- 4. Tombol Cetak Bukti Sewa Resmi (Hanya setelah ada komitmen bayar DP/Lunas) -->
+                                            <!-- 4. Cetak Bukti Sewa Resmi (Setelah DP/Lunas) -->
                                             @if (in_array($b->status, ['booked', 'lunas']))
                                                 <a href="{{ route('admin.booking.cetak-bukti-sewa', $b->uuid) }}"
                                                     target="_blank" class="btn btn-secondary btn-sm"
@@ -179,44 +211,6 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                                <!-- Modal Terima Pembayaran Tunai di Kantor -->
-                                @if (in_array($b->status, ['pending', 'sent']))
-                                    <div class="modal fade" id="modalTunai{{ $b->id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <form action="{{ route('admin.booking.konfirmasi-tunai', $b->uuid) }}"
-                                                method="POST" class="modal-content">
-                                                @csrf
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title fw-bold">Terima Pembayaran Tunai Kantor</h5>
-                                                    <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body text-start">
-                                                    <p class="mb-1"><strong>Pemesan:</strong> {{ $b->nama_pemesan }}</p>
-                                                    <p class="mb-2"><strong>Total Biaya:</strong> Rp
-                                                        {{ number_format($b->biaya_sewa, 0, ',', '.') }}</p>
-                                                    <hr>
-                                                    <div class="mb-3">
-                                                        <label class="form-label fw-bold">Jumlah Pembayaran Tunai
-                                                            (Rp)
-                                                        </label>
-                                                        <input type="number" name="jumlah_bayar" min="2000000"
-                                                            max="{{ $b->biaya_sewa }}" class="form-control"
-                                                            placeholder="2000000" required>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-success">
-                                                        <i class="fa fa-check me-1"></i> Simpan Pembayaran
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endif
                             @endforeach
                         </tbody>
                     </table>
