@@ -78,10 +78,10 @@
                                 jadwal dan menerbitkan invoice resmi.
                             </div>
 
-                            <button type="submit" class="btn btn-success btn-round w-100 fw-bold">
+                            <button type="submit" class="btn btn-success btn-round w-100 fw-bold mb-3">
                                 <i class="fa fa-paper-plane me-1"></i> Ajukan Booking Sekarang
                             </button>
-                            <a href="{{ route('client.paket.index') }}" class="btn btn-outline-secondary btn-round">
+                            <a href="{{ route('client.paket.index') }}" class="btn btn-outline-secondary btn-round w-100">
                                 <i class="fa fa-arrow-left me-1"></i> Kembali ke Daftar Paket
                             </a>
                         </form>

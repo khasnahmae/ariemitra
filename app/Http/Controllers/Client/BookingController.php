@@ -38,7 +38,7 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('client.riwayat')->with('success', 'Permintaan booking berhasil dikirim! Silakan tunggu konfirmasi invoice dari Admin.');
+        return redirect()->route('client.riwayat')->with('success', 'Permintaan booking berhasil dikirim! Silakan tunggu konfirmasi dari Admin.');
     }
 
     public function riwayat()

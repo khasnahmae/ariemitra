@@ -39,11 +39,8 @@
                             <!-- Thumbnail Gambar Paket -->
                             <div class="position-relative"
                                 style="height: 180px; background-image: url('{{ $paketImg }}'); background-size: cover; background-position: center;">
+
                                 <div class="position-absolute top-0 start-0 m-3">
-                                    <span
-                                        class="badge bg-secondary font-monospace shadow-sm">{{ $p->nama_sub_paket }}</span>
-                                </div>
-                                <div class="position-absolute top-0 end-0 m-3">
                                     <span class="badge bg-info shadow-sm">
                                         <i class="fa fa-clock me-1"></i> {{ $p->jumlah_hari }} Hari
                                         @if ($p->jumlah_malam > 0)
@@ -61,11 +58,11 @@
                             <!-- Body Card -->
                             <div class="card-body d-flex flex-column p-3">
                                 <h5 class="card-title fw-bold text-primary mb-2">
-                                    {{ $p->PaketWisata->nama_paket ?? 'Paket Wisata' }}
+                                    {{ $p->PaketWisata->nama_paket ?? 'Paket Wisata' }} - {{ $p->nama_sub_paket }}
                                 </h5>
 
                                 <!-- Lokasi Destinasi -->
-                                <p class="text-muted small mb-3">
+                                <p class="text-muted small">
                                     <i class="fa fa-map-marker-alt text-danger me-1"></i>
                                     @foreach ($p->proposalDestinasi->take(2) as $pDest)
                                         {{ $pDest->destinasi->nama_destinasi ?? '' }}{{ !$loop->last ? ', ' : '' }}
