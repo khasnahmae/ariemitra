@@ -9,6 +9,8 @@
             font-family: 'Times New Roman', serif;
             margin: 30px;
             color: #000;
+            position: relative;
+            /* Diperlukan agar stempel bisa diposisikan terhadap body */
         }
 
         .header {
@@ -70,6 +72,27 @@
             font-size: 13px;
         }
 
+        /* STYLES UNTUK STEMPEL LUNAS */
+        .stamp-lunas {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            color: rgba(220, 53, 69, 0.45);
+            /* Warna merah dengan transparansi overlay */
+            border: 5px double rgba(220, 53, 69, 0.45);
+            font-size: 52px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            text-transform: uppercase;
+            padding: 10px 30px;
+            letter-spacing: 6px;
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 9999;
+            user-select: none;
+        }
+
         @media print {
             .no-print {
                 display: none;
@@ -83,6 +106,11 @@
     <div class="no-print" style="margin-bottom: 20px;">
         <button onclick="window.print()">Cetak Dokumen</button>
     </div>
+
+    <!-- STEMPEL WATERMARK LUNAS (Tampil Hanya Jika Status Lunas atau Sisa Bayar <= 0) -->
+    @if (strtolower($booking->status) == 'lunas' || $booking->sisa_pembayaran <= 0)
+        <div class="stamp-lunas">L U N A S</div>
+    @endif
 
     <div class="header">
         <div style="font-size: 13px; font-weight: bold;">BIRO PERJALANAN TOUR & TRAVEL</div>
@@ -139,10 +167,7 @@
                 </tr>
             @endif
 
-            @if (
-                $booking->dp_2 > 0 &&
-                    in_array($booking->status, ['lunas', 'booked']) &&
-                    $booking->sisa_pembayaran < $booking->biaya_sewa - $booking->dp_1)
+            @if ($booking->dp_2 > 0 && in_array($booking->status, ['lunas', 'booked']))
                 <tr>
                     <td>Pembayaran Pelunasan / DP II</td>
                     <td>{{ strtoupper($booking->metode_dp_2 ?? ($booking->metode_pembayaran ?? 'TRANSFER')) }}</td>
@@ -164,12 +189,17 @@
             <td style="color: green;"><strong>Rp
                     {{ number_format($booking->dp_1 + $booking->dp_2, 0, ',', '.') }}</strong></td>
         </tr>
-        <tr>
-            <td>Sisa Pembayaran Tagihan</td>
-            <td>:</td>
-            <td style="color: red;"><strong>Rp {{ number_format($booking->sisa_pembayaran, 0, ',', '.') }}</strong>
-            </td>
-        </tr>
+
+        <!-- LOGIKA: HANYA TAMPILKAN SISA PEMBAYARAN JIKA BELUM LUNAS -->
+        @if (strtolower($booking->status) != 'lunas' && $booking->sisa_pembayaran > 0)
+            <tr>
+                <td>Sisa Pembayaran Tagihan</td>
+                <td>:</td>
+                <td style="color: red;"><strong>Rp {{ number_format($booking->sisa_pembayaran, 0, ',', '.') }}</strong>
+                </td>
+            </tr>
+        @endif
+
         <tr>
             <td>Status Transaksi</td>
             <td>:</td>
