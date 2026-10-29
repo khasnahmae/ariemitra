@@ -41,7 +41,7 @@
                                     </td>
                                     <td>
                                         @if ($b->status == 'pending')
-                                            <span class="badge bg-warning text-dark">Pending (Belum Bayar)</span>
+                                            <span class="badge bg-warning text-dark">Pending</span>
                                         @elseif($b->status == 'pending_verification')
                                             <span class="badge bg-info">Verifikasi Pembayaran</span>
                                         @elseif($b->status == 'booked')
@@ -55,7 +55,7 @@
                                     <td class="text-end">
                                         <div class="d-flex justify-content-end gap-1">
 
-                                            <!-- 1. Tombol Verifikasi Pembayaran dari Client -->
+                                            <!-- 1. Modal Verifikasi Pembayaran -->
                                             @if ($b->status == 'pending_verification')
                                                 <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                     data-bs-target="#modalVerifikasi{{ $b->id }}"
@@ -63,7 +63,6 @@
                                                     <i class="fa fa-check-circle me-1"></i> Verifikasi Bayar
                                                 </button>
 
-                                                <!-- Modal Verifikasi -->
                                                 <div class="modal fade" id="modalVerifikasi{{ $b->id }}"
                                                     tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered">
@@ -82,10 +81,12 @@
                                                                     <p class="mb-1"><strong>Pemesan:</strong>
                                                                         {{ $b->nama_pemesan }}</p>
                                                                     <p class="mb-1"><strong>Metode:</strong> <span
-                                                                            class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran ?? 'TUNAI') }}</span>
+                                                                            class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran ?? 'TRANSFER') }}</span>
                                                                     </p>
 
                                                                     @php
+                                                                        $nominalDraft =
+                                                                            $b->dp_2 > 0 ? $b->dp_2 : $b->dp_1;
                                                                         $fotoUrl =
                                                                             !empty($b->bukti_pembayaran) &&
                                                                             \Illuminate\Support\Str::startsWith(
@@ -115,9 +116,9 @@
                                                                         <label class="form-label fw-bold">Nominal Pembayaran
                                                                             Diterima (Rp)</label>
                                                                         <input type="number" name="jumlah_bayar"
-                                                                            value="{{ $b->pembayaran_terakhir > 0 ? $b->pembayaran_terakhir : $b->sisa_pembayaran }}"
+                                                                            value="{{ $nominalDraft }}"
                                                                             class="form-control" min="1"
-                                                                            max="{{ $b->sisa_pembayaran }}" required>
+                                                                            max="{{ $b->biaya_sewa }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -133,13 +134,13 @@
                                                 </div>
                                             @endif
 
-                                            <!-- 2. Cetak Invoice Perintah Bayar -->
+                                            <!-- 2. Cetak Invoice -->
                                             <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}" target="_blank"
                                                 class="btn btn-sm btn-outline-info" title="Cetak Perintah Bayar">
                                                 <i class="fa fa-file-invoice-dollar me-1"></i> Invoice
                                             </a>
 
-                                            <!-- 3. Bayar Tunai Langsung di Kantor -->
+                                            <!-- 3. Terima Tunai Langsung di Kantor -->
                                             @if (in_array($b->status, ['pending', 'booked']))
                                                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#modalTunai{{ $b->id }}"
@@ -147,7 +148,6 @@
                                                     <i class="fa fa-money-bill-wave"></i> Bayar Tunai
                                                 </button>
 
-                                                <!-- Modal Tunai Kantor -->
                                                 <div class="modal fade" id="modalTunai{{ $b->id }}" tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                         <form
@@ -188,7 +188,7 @@
                                                 </div>
                                             @endif
 
-                                            <!-- 4. Cetak Bukti Sewa Kuitansi -->
+                                            <!-- 4. Cetak Bukti Sewa -->
                                             @if (in_array($b->status, ['booked', 'lunas']))
                                                 <a href="{{ route('admin.booking.cetak-bukti-sewa', $b->uuid) }}"
                                                     target="_blank" class="btn btn-secondary btn-sm"

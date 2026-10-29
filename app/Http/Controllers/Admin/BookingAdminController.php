@@ -31,24 +31,18 @@ class BookingAdminController extends Controller
         $booking = Booking::where('uuid', $uuid)->firstOrFail();
 
         $request->validate([
-            'jumlah_bayar' => 'required|numeric|min:1|max:' . $booking->sisa_pembayaran,
+            'jumlah_bayar' => 'required|numeric|min:1',
         ]);
 
         $bayar = (float) $request->jumlah_bayar;
 
-        // Tentukan alokasi pembayaran ke DP 1 atau DP 2
-        if ($booking->dp_1 == 0) {
-            $booking->dp_1 = $bayar;
-        } else {
-            $booking->dp_2 += $bayar;
-        }
-
-        // Kalkulasi Total dan Sisa
+        // Ambil akumulasi total pembayaran
         $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
-        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
-        $booking->pembayaran_terakhir = 0; // Reset draft temporary
 
-        // Tentukan Status Akhir
+        // Update sisa pembayaran
+        $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
+
+        // Jika sisa pembayaran lunas maka status 'lunas', jika masih ada sisa maka 'booked'
         if ($booking->sisa_pembayaran <= 0) {
             $booking->status = 'lunas';
         } else {
@@ -57,6 +51,6 @@ class BookingAdminController extends Controller
 
         $booking->save();
 
-        return back()->with('success', 'Pembayaran berhasil diverifikasi dan dicatat!');
+        return back()->with('success', 'Pembayaran berhasil diverifikasi!');
     }
 }

@@ -4,6 +4,13 @@
     <div class="page-inner">
         <h3 class="fw-bold mb-4">Riwayat Pemesanan Paket Wisata</h3>
 
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         <div class="card card-round">
             <div class="card-body">
                 <div class="table-responsive">
@@ -31,10 +38,8 @@
                                     <td>
                                         @if ($b->status == 'pending')
                                             <span class="badge bg-warning text-dark">Pending</span>
-                                        @elseif($b->status == 'sent')
-                                            <span class="badge bg-info">Invoice Diterbitkan</span>
                                         @elseif($b->status == 'pending_verification')
-                                            <span class="badge bg-primary">Verifikasi Admin</span>
+                                            <span class="badge bg-info">Menunggu Verifikasi Admin</span>
                                         @elseif($b->status == 'booked')
                                             <span class="badge bg-success">Booked (DP Diterima)</span>
                                         @elseif($b->status == 'lunas')
@@ -46,27 +51,27 @@
                                     <td class="text-end">
                                         <div class="d-flex justify-content-end gap-1">
 
-                                            <!-- 1. Tombol Lihat Perintah Bayar (Invoice Awal) -->
+                                            <!-- 1. Invoice Perintah Bayar -->
                                             <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}" target="_blank"
                                                 class="btn btn-sm btn-outline-info" title="Lihat Dokumen Perintah Bayar">
                                                 <i class="fa fa-file-invoice-dollar me-1"></i> Invoice
                                             </a>
 
-                                            <!-- 2. Tombol Bukti Sewa Resmi (Tampil jika sudah ada pembayaran DP/Lunas) -->
-                                            {{-- @if (in_array($b->status, ['booked', 'lunas']))
+                                            <!-- 2. Bukti Sewa Kuitansi (Jika Sudah DP/Lunas) -->
+                                            @if (in_array($b->status, ['booked', 'lunas']))
                                                 <a href="{{ route('admin.booking.cetak-bukti-sewa', $b->uuid) }}"
                                                     target="_blank" class="btn btn-sm btn-outline-secondary"
                                                     title="Lihat Bukti Sewa Kuitansi">
                                                     <i class="fa fa-print me-1"></i> Bukti Sewa
                                                 </a>
-                                            @endif --}}
+                                            @endif
 
-                                            <!-- 3. Tombol Upload / Pembayaran Lanjutan (Aktif jika belum Lunas & Tidak Sedang Di-verifikasi) -->
-                                            @if (in_array($b->status, ['sent', 'booked', 'pending']))
+                                            <!-- 3. Tombol Upload Pembayaran / Pelunasan -->
+                                            @if (in_array($b->status, ['pending', 'booked']))
                                                 <button class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#uploadModal{{ $b->id }}">
                                                     <i class="fa fa-money-bill-wave me-1"></i>
-                                                    {{ $b->status == 'booked' ? 'Pelunasan' : 'Bayar / Upload DP' }}
+                                                    {{ $b->status == 'booked' ? 'Pelunasan / Bayar DP2' : 'Bayar / Upload DP' }}
                                                 </button>
                                             @endif
 
@@ -74,17 +79,16 @@
                                     </td>
                                 </tr>
 
-                                <!-- Modal Konfirmasi Pembayaran DP / Pelunasan -->
+                                <!-- Modal Konfirmasi Pembayaran -->
                                 <div class="modal fade" id="uploadModal{{ $b->id }}" tabindex="-1"
-                                    aria-labelledby="uploadModalLabel{{ $b->id }}" aria-hidden="true">
+                                    aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <form action="{{ route('client.upload.pembayaran', $b->uuid) }}" method="POST"
                                                 enctype="multipart/form-data">
                                                 @csrf
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title fw-bold"
-                                                        id="uploadModalLabel{{ $b->id }}">
+                                                    <h5 class="modal-title fw-bold">
                                                         Konfirmasi Pembayaran
                                                         ({{ $b->status == 'booked' ? 'Pelunasan' : 'DP awal' }})
                                                     </h5>
@@ -101,7 +105,6 @@
                                                             Rp {{ number_format($b->sisa_pembayaran, 0, ',', '.') }}</p>
                                                     </div>
 
-                                                    <!-- Pilihan Metode Pembayaran -->
                                                     <div class="mb-3">
                                                         <label class="form-label fw-bold">Metode Pembayaran</label>
                                                         <select name="metode_pembayaran" id="metode{{ $b->id }}"
@@ -112,7 +115,6 @@
                                                         </select>
                                                     </div>
 
-                                                    <!-- Informasi Rekening -->
                                                     <div id="infoBank{{ $b->id }}"
                                                         class="p-3 bg-light rounded mb-3 border">
                                                         <h6 class="fw-bold mb-1 text-primary"><i
@@ -128,11 +130,9 @@
                                                         <label class="form-label fw-bold">Nominal Pembayaran (Rp)</label>
                                                         <input type="number" name="jumlah_bayar" min="100000"
                                                             max="{{ $b->sisa_pembayaran }}" class="form-control" required
-                                                            placeholder="Masukkan nominal pembayaran"
                                                             value="{{ $b->sisa_pembayaran }}">
                                                     </div>
 
-                                                    <!-- Field Upload Bukti Pembayaran -->
                                                     <div class="mb-3" id="fieldBukti{{ $b->id }}">
                                                         <label class="form-label fw-bold">Unggah Bukti Transfer</label>
                                                         <input type="file" name="bukti_pembayaran"
@@ -159,8 +159,7 @@
                                 </div>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">Belum ada riwayat pemesanan.
-                                    </td>
+                                    <td colspan="7" class="text-center text-muted py-4">Belum ada riwayat pemesanan.</td>
                                 </tr>
                             @endforelse
                         </tbody>
