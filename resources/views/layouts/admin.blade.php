@@ -82,12 +82,21 @@
                             </li>
 
                             <!-- MENU BARU: KELOLA PEMESANAN / BOOKING CLIENT -->
-                            <li class="nav-item">
+                            <li class="nav-item {{ request()->is('admin/booking.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.booking.index') }}">
                                     <i class="fas fa-shopping-cart"></i>
                                     <p>Data Pemesanan</p>
-                                    @if (isset($pendingBookingCount) && $pendingBookingCount > 0)
-                                        <span class="badge bg-danger ms-auto">{{ $pendingBookingCount }}</span>
+
+                                    @php
+                                        // Menghitung pesanan baru / perlu verifikasi secara langsung
+                                        $countPending = \App\Models\Booking::whereIn('status', [
+                                            'pending',
+                                            'pending_verification',
+                                        ])->count();
+                                    @endphp
+
+                                    @if ($countPending > 0)
+                                        <span class="badge bg-danger ms-auto">{{ $countPending }}</span>
                                     @endif
                                 </a>
                             </li>
