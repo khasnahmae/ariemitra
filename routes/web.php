@@ -85,10 +85,14 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
     });
 
     // Kelola Pemesanan & Invoice
+    // Kelola Pemesanan & Invoice
     Route::get('/booking', [BookingAdminController::class, 'index'])->name('booking.index');
     Route::get('/booking/{uuid}/cetak-invoice', [BookingAdminController::class, 'cetakInvoice'])->name('booking.cetak-invoice');
-    Route::get('/booking/{uuid}/cetak-bukti-sewa', [BookingAdminController::class, 'cetakBuktiSewa'])->name('admin.booking.cetak-bukti-sewa');
-    Route::post('/booking/{uuid}/verifikasi', [App\Http\Controllers\Admin\BookingAdminController::class, 'verifikasiPembayaran'])->name('booking.verifikasi-pembayaran');
+
+    // PERBAIKAN: Ubah name menjadi 'booking.cetak-bukti-sewa' (tanpa 'admin.' di depannya)
+    Route::get('/booking/{uuid}/cetak-bukti-sewa', [BookingAdminController::class, 'cetakBuktiSewa'])->name('booking.cetak-bukti-sewa');
+
+    Route::post('/booking/{uuid}/verifikasi', [BookingAdminController::class, 'verifikasiPembayaran'])->name('booking.verifikasi-pembayaran');
 
     // KHUSUS ROLE Owner
     Route::middleware(['role:owner'])->group(function () {

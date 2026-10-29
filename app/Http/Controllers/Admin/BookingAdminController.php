@@ -36,14 +36,14 @@ class BookingAdminController extends Controller
 
         $bayar = (float) $request->jumlah_bayar;
 
-        // Jika DP 1 belum diisi atau ini verifikasi pertama
+        // Logika verifikasi DP 1 / DP 2 tanpa menimpa data awal secara ganda
         if ($booking->dp_1 == 0) {
             $booking->dp_1 = $bayar;
-        } else {
+        } elseif ($booking->dp_2 == 0 && $booking->status === 'pending_verification') {
             $booking->dp_2 = $bayar;
         }
 
-        // Kalkulasi Total Terbayar dan Sisa Tagihan secara presisi
+        // Kalkulasi Total Terbayar dan Sisa Tagihan
         $totalMasuk = (float)$booking->dp_1 + (float)$booking->dp_2;
         $booking->sisa_pembayaran = max(0, (float)$booking->biaya_sewa - $totalMasuk);
 
