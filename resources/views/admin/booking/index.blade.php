@@ -32,8 +32,7 @@
                                     <td><strong class="text-primary">{{ $b->no_invoice }}</strong></td>
                                     <td>
                                         <strong>{{ $b->nama_pemesan }}</strong><br>
-                                        <small class="text-muted"><i
-                                                class="fa fa-phone me-1"></i>{{ $b->telepon_pemesan }}</small>
+                                        <small class="text-muted">{{ $b->telepon_pemesan }}</small>
                                     </td>
                                     <td>{{ $b->tujuan_wisata }}</td>
                                     <td>{{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d/m/Y') }}</td>
@@ -42,13 +41,11 @@
                                     </td>
                                     <td>
                                         @if ($b->status == 'pending')
-                                            <span class="badge bg-warning text-dark">Pending</span>
-                                        @elseif($b->status == 'sent')
-                                            <span class="badge bg-info">Tagihan Terkirim</span>
+                                            <span class="badge bg-warning text-dark">Pending (Belum Bayar)</span>
                                         @elseif($b->status == 'pending_verification')
-                                            <span class="badge bg-primary">Perlu Verifikasi</span>
+                                            <span class="badge bg-info">Verifikasi Pembayaran</span>
                                         @elseif($b->status == 'booked')
-                                            <span class="badge bg-success">Booked (DP Received)</span>
+                                            <span class="badge bg-success">Booked (DP Diterima)</span>
                                         @elseif($b->status == 'lunas')
                                             <span class="badge bg-primary">Lunas</span>
                                         @else
@@ -66,38 +63,32 @@
                                                     <i class="fa fa-check-circle me-1"></i> Verifikasi Bayar
                                                 </button>
 
-                                                <!-- Modal Verifikasi Pembayaran -->
+                                                <!-- Modal Verifikasi -->
                                                 <div class="modal fade" id="modalVerifikasi{{ $b->id }}"
                                                     tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                         <div class="modal-content">
                                                             <form
-                                                                action="{{ route('admin.booking.konfirmasi-tunai', $b->uuid) }}"
+                                                                action="{{ route('admin.booking.verifikasi-pembayaran', $b->uuid) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title fw-bold">Verifikasi Pembayaran
-                                                                        Client</h5>
+                                                                    </h5>
                                                                     <button type="button" class="btn-close"
                                                                         data-bs-dismiss="modal"></button>
                                                                 </div>
                                                                 <div class="modal-body text-start">
                                                                     <p class="mb-1"><strong>Pemesan:</strong>
                                                                         {{ $b->nama_pemesan }}</p>
-                                                                    <p class="mb-1">
-                                                                        <strong>Metode:</strong>
-                                                                        <span
-                                                                            class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran ?? 'TRANSFER') }}</span>
+                                                                    <p class="mb-1"><strong>Metode:</strong> <span
+                                                                            class="badge bg-secondary">{{ strtoupper($b->metode_pembayaran ?? 'TUNAI') }}</span>
                                                                     </p>
 
                                                                     @php
-                                                                        $nominalDraft =
-                                                                            $b->nominal_pending > 0
-                                                                                ? $b->nominal_pending
-                                                                                : $b->sisa_pembayaran;
-                                                                        $fotoUrl = '';
-                                                                        if (!empty($b->bukti_pembayaran)) {
-                                                                            $fotoUrl = \Illuminate\Support\Str::startsWith(
+                                                                        $fotoUrl =
+                                                                            !empty($b->bukti_pembayaran) &&
+                                                                            \Illuminate\Support\Str::startsWith(
                                                                                 $b->bukti_pembayaran,
                                                                                 ['http://', 'https://'],
                                                                             )
@@ -105,27 +96,26 @@
                                                                                 : asset(
                                                                                     'storage/' . $b->bukti_pembayaran,
                                                                                 );
-                                                                        }
                                                                     @endphp
 
-                                                                    @if (!empty($b->bukti_pembayaran))
+                                                                    @if (!empty($b->bukti_pembayaran) && $b->metode_pembayaran == 'transfer')
                                                                         <div class="mb-3">
-                                                                            <label class="form-label fw-bold">Bukti Transfer
-                                                                                / Bayar:</label><br>
+                                                                            <label class="form-label fw-bold">Bukti
+                                                                                Transfer:</label><br>
                                                                             <a href="{{ $fotoUrl }}" target="_blank">
                                                                                 <img src="{{ $fotoUrl }}"
                                                                                     class="img-fluid rounded border shadow-sm"
-                                                                                    style="max-height: 220px; width: auto;"
+                                                                                    style="max-height: 200px;"
                                                                                     alt="Bukti Transfer">
                                                                             </a>
                                                                         </div>
                                                                     @endif
 
                                                                     <div class="mb-3">
-                                                                        <label class="form-label fw-bold">Nominal Diterima
-                                                                            (Rp)</label>
+                                                                        <label class="form-label fw-bold">Nominal Pembayaran
+                                                                            Diterima (Rp)</label>
                                                                         <input type="number" name="jumlah_bayar"
-                                                                            value="{{ $nominalDraft }}"
+                                                                            value="{{ $b->pembayaran_terakhir > 0 ? $b->pembayaran_terakhir : $b->sisa_pembayaran }}"
                                                                             class="form-control" min="1"
                                                                             max="{{ $b->sisa_pembayaran }}" required>
                                                                     </div>
@@ -133,9 +123,9 @@
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary"
                                                                         data-bs-dismiss="modal">Batal</button>
-                                                                    <button type="submit" class="btn btn-success">
-                                                                        <i class="fa fa-check me-1"></i> Terima Pembayaran
-                                                                    </button>
+                                                                    <button type="submit" class="btn btn-success"><i
+                                                                            class="fa fa-check me-1"></i> Terima
+                                                                        Pembayaran</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -143,67 +133,66 @@
                                                 </div>
                                             @endif
 
-                                            <!-- 2. Cetak Invoice Awal -->
+                                            <!-- 2. Cetak Invoice Perintah Bayar -->
                                             <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}" target="_blank"
-                                                class="btn btn-sm btn-outline-info" title="Cetak Perintah Bayar / Invoice">
+                                                class="btn btn-sm btn-outline-info" title="Cetak Perintah Bayar">
                                                 <i class="fa fa-file-invoice-dollar me-1"></i> Invoice
                                             </a>
 
-                                            <!-- 3. Terima Bayar Tunai Langsung -->
-                                            @if (in_array($b->status, ['pending', 'sent', 'booked']))
+                                            <!-- 3. Bayar Tunai Langsung di Kantor -->
+                                            @if (in_array($b->status, ['pending', 'booked']))
                                                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#modalTunai{{ $b->id }}"
-                                                    title="Terima Bayar Tunai di Kantor">
+                                                    title="Terima Tunai di Kantor">
                                                     <i class="fa fa-money-bill-wave"></i> Bayar Tunai
                                                 </button>
 
+                                                <!-- Modal Tunai Kantor -->
                                                 <div class="modal fade" id="modalTunai{{ $b->id }}" tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                         <form
-                                                            action="{{ route('admin.booking.konfirmasi-tunai', $b->uuid) }}"
+                                                            action="{{ route('admin.booking.verifikasi-pembayaran', $b->uuid) }}"
                                                             method="POST" class="modal-content">
                                                             @csrf
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title fw-bold">Terima Pembayaran Tunai</h5>
+                                                                <h5 class="modal-title fw-bold">Terima Pembayaran Tunai
+                                                                    Kantor</h5>
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal"></button>
                                                             </div>
                                                             <div class="modal-body text-start">
                                                                 <p class="mb-1"><strong>Pemesan:</strong>
                                                                     {{ $b->nama_pemesan }}</p>
-                                                                <p class="mb-1"><strong>Total Biaya:</strong> Rp
-                                                                    {{ number_format($b->biaya_sewa, 0, ',', '.') }}</p>
-                                                                <p class="mb-2 text-danger"><strong>Sisa Tagihan:</strong>
-                                                                    Rp
+                                                                <p class="mb-2"><strong>Sisa Tagihan:</strong> Rp
                                                                     {{ number_format($b->sisa_pembayaran, 0, ',', '.') }}
                                                                 </p>
                                                                 <hr>
                                                                 <div class="mb-3">
-                                                                    <label class="form-label fw-bold">Nominal Pembayaran
+                                                                    <label class="form-label fw-bold">Jumlah Pembayaran
                                                                         Tunai (Rp)</label>
-                                                                    <input type="number" name="jumlah_bayar"
-                                                                        min="1" max="{{ $b->sisa_pembayaran }}"
-                                                                        class="form-control" placeholder="2000000"
-                                                                        required>
+                                                                    <input type="number" name="jumlah_bayar" min="100000"
+                                                                        max="{{ $b->sisa_pembayaran }}"
+                                                                        class="form-control"
+                                                                        value="{{ $b->sisa_pembayaran }}" required>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
                                                                     data-bs-dismiss="modal">Batal</button>
-                                                                <button type="submit" class="btn btn-success">
-                                                                    <i class="fa fa-check me-1"></i> Simpan Pembayaran
-                                                                </button>
+                                                                <button type="submit" class="btn btn-success"><i
+                                                                        class="fa fa-check me-1"></i> Simpan
+                                                                    Pembayaran</button>
                                                             </div>
                                                         </form>
                                                     </div>
                                                 </div>
                                             @endif
 
-                                            <!-- 4. Cetak Bukti Sewa Resmi (Setelah DP/Lunas) -->
+                                            <!-- 4. Cetak Bukti Sewa Kuitansi -->
                                             @if (in_array($b->status, ['booked', 'lunas']))
                                                 <a href="{{ route('admin.booking.cetak-bukti-sewa', $b->uuid) }}"
                                                     target="_blank" class="btn btn-secondary btn-sm"
-                                                    title="Cetak Bukti Sewa Resmi">
+                                                    title="Cetak Bukti Sewa">
                                                     <i class="fa fa-print me-1"></i> Bukti Sewa
                                                 </a>
                                             @endif

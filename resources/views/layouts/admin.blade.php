@@ -82,16 +82,12 @@
                             </li>
 
                             <!-- MENU BARU: KELOLA PEMESANAN / BOOKING CLIENT -->
-                            @php
-                                $unreadBookingCount = \App\Models\Booking::where('is_read_admin', false)->count();
-                            @endphp
-
-                            <li class="nav-item {{ request()->routeIs('admin.booking.*') ? 'active' : '' }}">
+                            <li class="nav-item">
                                 <a href="{{ route('admin.booking.index') }}">
                                     <i class="fas fa-shopping-cart"></i>
                                     <p>Data Pemesanan</p>
-                                    @if ($unreadBookingCount > 0)
-                                        <span class="badge bg-danger ms-auto">{{ $unreadBookingCount }}</span>
+                                    @if (isset($pendingBookingCount) && $pendingBookingCount > 0)
+                                        <span class="badge bg-danger ms-auto">{{ $pendingBookingCount }}</span>
                                     @endif
                                 </a>
                             </li>
