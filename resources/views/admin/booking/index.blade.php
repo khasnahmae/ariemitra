@@ -27,26 +27,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($bookings as $b)
+                            @forelse ($bookings as $b)
                                 <tr>
-                                    <td><strong class="text-primary">{{ $b->no_invoice }}</strong></td>
+                                    <td><strong class="text-primary">{{ $b->no_invoice ?? '-' }}</strong></td>
                                     <td>
-                                        <strong>{{ $b->nama_pemesan }}</strong><br>
-                                        <small class="text-muted">{{ $b->telepon_pemesan }}</small>
+                                        <strong>{{ $b->nama_pemesan ?? '-' }}</strong><br>
+                                        <small class="text-muted">{{ $b->telepon_pemesan ?? '-' }}</small>
                                     </td>
-                                    <td>{{ $b->tujuan_wisata }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d/m/Y') }}</td>
+                                    <td>{{ $b->tujuan_wisata ?? '-' }}</td>
+                                    <td>{{ !empty($b->tanggal_keberangkatan) ? \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d/m/Y') : '-' }}
+                                    </td>
                                     <td class="fw-bold text-success">
-                                        Rp {{ number_format($b->biaya_sewa, 0, ',', '.') }}
+                                        Rp {{ number_format($b->biaya_sewa ?? 0, 0, ',', '.') }}
                                     </td>
                                     <td>
-                                        @if ($b->status == 'pending')
+                                        @if (($b->status ?? '') == 'pending')
                                             <span class="badge bg-warning text-dark">Pending</span>
-                                        @elseif($b->status == 'pending_verification')
+                                        @elseif(($b->status ?? '') == 'pending_verification')
                                             <span class="badge bg-info">Verifikasi Pembayaran</span>
-                                        @elseif($b->status == 'booked')
+                                        @elseif(($b->status ?? '') == 'booked')
                                             <span class="badge bg-success">Booked (DP Diterima)</span>
-                                        @elseif($b->status == 'lunas')
+                                        @elseif(($b->status ?? '') == 'lunas')
                                             <span class="badge bg-primary">Lunas</span>
                                         @else
                                             <span class="badge bg-danger">Batal</span>
@@ -56,7 +57,7 @@
                                         <div class="d-flex justify-content-end gap-1">
 
                                             <!-- 1. Modal Verifikasi Pembayaran -->
-                                            @if ($b->status == 'pending_verification')
+                                            @if (($b->status ?? '') == 'pending_verification')
                                                 <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                     data-bs-target="#modalVerifikasi{{ $b->id }}"
                                                     title="Verifikasi Pembayaran">
@@ -103,7 +104,7 @@
                                                                                 );
                                                                     @endphp
 
-                                                                    @if (!empty($b->bukti_pembayaran) && $b->metode_pembayaran == 'transfer')
+                                                                    @if (!empty($b->bukti_pembayaran) && ($b->metode_pembayaran ?? '') == 'transfer')
                                                                         <div class="mb-3">
                                                                             <label class="form-label fw-bold">Bukti
                                                                                 Transfer:</label><br>
@@ -120,7 +121,7 @@
                                                                         <label class="form-label fw-bold">Nominal Pembayaran
                                                                             Diterima (Rp)</label>
                                                                         <input type="number" name="jumlah_bayar"
-                                                                            value="{{ round($nominalDraft) }}"
+                                                                            value="{{ (int) $nominalDraft }}"
                                                                             class="form-control" min="1" required>
                                                                     </div>
                                                                 </div>
@@ -144,7 +145,7 @@
                                             </a>
 
                                             <!-- 3. Terima Tunai Langsung di Kantor -->
-                                            @if (in_array($b->status, ['pending', 'booked']))
+                                            @if (in_array($b->status ?? '', ['pending', 'booked']))
                                                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#modalTunai{{ $b->id }}"
                                                     title="Terima Tunai di Kantor">
@@ -167,7 +168,7 @@
                                                                 <p class="mb-1"><strong>Pemesan:</strong>
                                                                     {{ $b->nama_pemesan }}</p>
                                                                 <p class="mb-2"><strong>Sisa Tagihan:</strong> Rp
-                                                                    {{ number_format($b->sisa_pembayaran, 0, ',', '.') }}
+                                                                    {{ number_format($b->sisa_pembayaran ?? 0, 0, ',', '.') }}
                                                                 </p>
                                                                 <hr>
                                                                 <div class="mb-3">
@@ -175,7 +176,8 @@
                                                                         Tunai (Rp)</label>
                                                                     <input type="number" name="jumlah_bayar" min="100000"
                                                                         class="form-control"
-                                                                        value="{{ round($b->sisa_pembayaran) }}" required>
+                                                                        value="{{ (int) ($b->sisa_pembayaran ?? 0) }}"
+                                                                        required>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
@@ -191,7 +193,7 @@
                                             @endif
 
                                             <!-- 4. Cetak Bukti Sewa -->
-                                            @if (in_array($b->status, ['booked', 'lunas']))
+                                            @if (in_array($b->status ?? '', ['booked', 'lunas']))
                                                 <a href="{{ route('admin.booking.cetak-bukti-sewa', $b->uuid) }}"
                                                     target="_blank" class="btn btn-secondary btn-sm"
                                                     title="Cetak Bukti Sewa">
@@ -202,7 +204,11 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">Belum ada data pemesanan.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
