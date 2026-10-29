@@ -214,15 +214,13 @@
                     <!-- DESTINASI YANG DIKUNJUNGI -->
                     <div id="destinasi" class="mb-5">
                         <h4 class="font-weight-bold text-dark mb-3">Destinasi Wisata Yang Dikunjungi</h4>
-                        <div class="row">
-                            @foreach ($paket->proposalDestinasi as $pDest)
-                                <div class="col-md-6 mb-3">
-                                    <h6 class="mb-0 font-weight-bold text-secondary">
-                                        {{ $pDest->destinasi->nama_destinasi ?? '-' }}
-                                    </h6>
-                                </div>
-                            @endforeach
-                        </div>
+                        @foreach ($paket->proposalDestinasi as $pDest)
+                            <div class="mb-3">
+                                <h6 class="mb-0 font-weight-bold text-secondary">
+                                    {{ $pDest->destinasi->nama_destinasi ?? '-' }}
+                                </h6>
+                            </div>
+                        @endforeach
                     </div>
 
                     <!-- FASILITAS & LAYANAN -->
