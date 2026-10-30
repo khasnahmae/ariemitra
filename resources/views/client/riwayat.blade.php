@@ -43,6 +43,19 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="d-flex justify-content-end gap-1">
+                                            @php
+                                                $tglBerangkat = \Carbon\Carbon::parse($b->tanggal_keberangkatan);
+                                                $sisaHari = \Carbon\Carbon::today()->diffInDays($tglBerangkat, false);
+                                            @endphp
+
+                                            <!-- Warning Pelunasan H-7 s/d H-3 -->
+                                            @if ($b->status == 'booked' && $sisaHari <= 7 && $sisaHari >= 0)
+                                                <div class="alert alert-warning py-2 mb-2 small">
+                                                    <i class="fa fa-exclamation-triangle me-1"></i>
+                                                    <strong>Pengingat Pelunasan:</strong> Tanggal keberangkatan tinggal
+                                                    {{ $sisaHari }} hari lagi. Harap lakukan pelunasan maksimal H-3.
+                                                </div>
+                                            @endif
 
                                             <!-- 1. Invoice Perintah Bayar -->
                                             <a href="{{ route('admin.booking.cetak-invoice', $b->uuid) }}" target="_blank"
@@ -67,6 +80,57 @@
                                                     {{ $b->status == 'booked' ? 'Pelunasan / Bayar DP2' : 'Bayar / Upload DP' }}
                                                 </button>
                                             @endif
+                                            <!-- Tombol Reschedule (Tampil jika transaksi sudah Booked/Lunas dan belum ada pengajuan pending) -->
+                                            @if (in_array($b->status, ['booked', 'lunas']) && $b->status_reschedule != 'pending')
+                                                <button type="button" class="btn btn-sm btn-outline-warning"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalReschedule{{ $b->id }}">
+                                                    <i class="fa fa-calendar-alt me-1"></i> Reschedule
+                                                </button>
+                                            @elseif($b->status_reschedule == 'pending')
+                                                <span class="badge bg-warning text-dark"><i class="fa fa-clock me-1"></i>
+                                                    Reschedule Menunggu Admin</span>
+                                            @endif
+
+                                            <!-- Modal Form Ajukan Reschedule Tanggal -->
+                                            <div class="modal fade" id="modalReschedule{{ $b->id }}" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <form action="{{ route('client.reschedule.store', $b->uuid) }}"
+                                                        method="POST" class="modal-content">
+                                                        @csrf
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title fw-bold"><i
+                                                                    class="fa fa-calendar-alt me-2 text-warning"></i>Ajukan
+                                                                Ubah Jadwal (Reschedule)</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body text-start">
+                                                            <div class="alert alert-info py-2 small mb-3">
+                                                                <i class="fa fa-info-circle me-1"></i> Jadwal saat ini:
+                                                                <strong>{{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d M Y') }}</strong>.<br>
+                                                                Perubahan tanggal dapat disetujui selama jadwal PO Bus pada
+                                                                tanggal baru masih tersedia.
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-bold">Pilih Tanggal
+                                                                    Keberangkatan Baru</label>
+                                                                <input type="date" name="tanggal_reschedule"
+                                                                    class="form-control"
+                                                                    min="{{ \Carbon\Carbon::now()->addDays(7)->format('Y-m-d') }}"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Batal</button>
+                                                            <button type="submit" class="btn btn-warning fw-bold"><i
+                                                                    class="fa fa-paper-plane me-1"></i> Kirim
+                                                                Pengajuan</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </td>
@@ -111,7 +175,8 @@
                                                     <div id="infoBank{{ $b->id }}"
                                                         class="p-3 bg-light rounded mb-3 border">
                                                         <h6 class="fw-bold mb-1 text-primary"><i
-                                                                class="fa fa-university me-1"></i> Rekening Tujuan Transfer:
+                                                                class="fa fa-university me-1"></i> Rekening Tujuan
+                                                            Transfer:
                                                         </h6>
                                                         <p class="mb-1 text-dark"><strong>Bank BCA:</strong> 1234-5678-90
                                                             (a.n. Arie Mitra Sejati)</p>
@@ -143,7 +208,8 @@
 
                                                     <div id="infoTunai{{ $b->id }}"
                                                         class="alert alert-info py-2 d-none">
-                                                        <i class="fa fa-info-circle me-1"></i> Silakan datang ke kantor kami
+                                                        <i class="fa fa-info-circle me-1"></i> Silakan datang ke kantor
+                                                        kami
                                                         di <strong>Jl. Perintis Kemerdekaan No. 20 Taman Pemalang</strong>
                                                         untuk melakukan pembayaran secara tunai.
                                                     </div>
@@ -160,7 +226,8 @@
                                 </div>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">Belum ada riwayat pemesanan.</td>
+                                    <td colspan="7" class="text-center text-muted py-4">Belum ada riwayat pemesanan.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -32,6 +32,8 @@ return new class extends Migration {
             $table->string('metode_dp_2')->nullable();
 
             $table->enum('status', ['pending', 'pending_verification', 'booked', 'lunas', 'cancelled'])->default('pending');
+            $table->date('tanggal_reschedule')->nullable();
+            $table->enum('status_reschedule', ['none', 'pending', 'approved', 'rejected'])->default('none');
             $table->timestamps();
         });
     }

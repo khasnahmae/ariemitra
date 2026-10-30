@@ -57,4 +57,22 @@ class BookingAdminController extends Controller
 
         return back()->with('success', 'Pembayaran berhasil diverifikasi!');
     }
+    public function approveReschedule(Request $request, $uuid)
+    {
+        $booking = Booking::where('uuid', $uuid)->firstOrFail();
+
+        if ($request->action === 'approve') {
+            $booking->tanggal_keberangkatan = $booking->tanggal_reschedule;
+            $booking->tanggal_reschedule = null;
+            $booking->status_reschedule = 'approved';
+            $message = 'Perubahan tanggal keberangkatan disetujui!';
+        } else {
+            $booking->tanggal_reschedule = null;
+            $booking->status_reschedule = 'rejected';
+            $message = 'Pengajuan perubahan tanggal ditolak.';
+        }
+
+        $booking->save();
+        return back()->with('success', $message);
+    }
 }

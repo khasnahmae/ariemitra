@@ -78,10 +78,18 @@
                                 <textarea name="alamat_penjemputan" class="form-control" rows="3" required
                                     placeholder="Alamat lengkap lokasi penjemputan rombongan"></textarea>
                             </div>
-
-                            <div class="alert alert-info py-2 small">
-                                <i class="fa fa-info-circle me-1"></i> Setelah mengajukan booking, Admin akan memeriksa
-                                jadwal dan menerbitkan invoice resmi.
+                            <div class="alert alert-secondary border-start border-4 border-warning small my-3">
+                                <h6 class="fw-bold text-dark mb-1"><i class="fa fa-file-contract me-1"></i> Syarat &
+                                    Ketentuan Pemesanan:</h6>
+                                <ul class="ps-3 mb-0 text-muted">
+                                    <li>DP yang sudah dibayarkan <strong>tidak dapat dikembalikan (Non-Refundable)</strong>
+                                        jika terjadi pembatalan[cite: 51].</li>
+                                    <li>Pelunasan dilakukan minimal H-7 dan <strong>maksimal H-3 sebelum hari
+                                            keberangkatan</strong>[cite: 51].</li>
+                                    <li>Perubahan jadwal (Reschedule) dapat diajukan selama ketersediaan PO Bus pada tanggal
+                                        baru masih ada[cite: 51].</li>
+                                    <li>Harga paket wisata bersifat <strong>NET (Fixed Price)</strong>[cite: 51].</li>
+                                </ul>
                             </div>
 
                             <button type="submit" class="btn btn-success btn-round w-100 fw-bold mb-3">
@@ -104,7 +112,7 @@
             if (bookedDates.includes(this.value)) {
                 alert(
                     'Tanggal ini sudah dipesan oleh rombongan lain untuk tujuan wisata ini. Silakan pilih tanggal lain.'
-                    );
+                );
                 this.value = '';
             }
         });

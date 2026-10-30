@@ -123,4 +123,28 @@ class BookingController extends Controller
 
         return redirect()->route('client.riwayat')->with('success', 'Konfirmasi pembayaran dikirim! Menunggu verifikasi admin.');
     }
+    public function ajukanReschedule(Request $request, $uuid)
+    {
+        $booking = Booking::where('uuid', $uuid)->where('user_id', Auth::id())->firstOrFail();
+
+        $request->validate([
+            'tanggal_reschedule' => 'required|date|after_or_equal:today',
+        ]);
+
+        // Cek Bentrok Tanggal Baru
+        $isBooked = Booking::where('tujuan_wisata', $booking->tujuan_wisata)
+            ->where('tanggal_keberangkatan', $request->tanggal_reschedule)
+            ->whereIn('status', ['booked', 'lunas'])
+            ->exists();
+
+        if ($isBooked) {
+            return back()->withErrors(['tanggal_reschedule' => 'Jadwal PO Bus pada tanggal tersebut sudah terisi rombongan lain.']);
+        }
+
+        $booking->tanggal_reschedule = $request->tanggal_reschedule;
+        $booking->status_reschedule = 'pending';
+        $booking->save();
+
+        return back()->with('success', 'Pengajuan jadwal ulang berhasil dikirim ke Admin!');
+    }
 }

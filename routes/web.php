@@ -51,6 +51,7 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->as('client.')->gro
     Route::post('/booking/{proposal:uuid}', [ClientBookingController::class, 'store'])->name('booking.store');
     Route::get('/riwayat', [ClientBookingController::class, 'riwayat'])->name('riwayat');
     Route::post('/riwayat/{booking:uuid}/upload', [ClientBookingController::class, 'uploadPembayaran'])->name('upload.pembayaran');
+    Route::post('/riwayat/{booking:uuid}/reschedule', [ClientBookingController::class, 'ajukanReschedule'])->name('reschedule.store');
     Route::get('/akun', [ClientAccountController::class, 'index'])->name('account');
     Route::put('/akun', [ClientAccountController::class, 'update'])->name('account.update');
 });
@@ -93,6 +94,7 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
     Route::get('/booking/{uuid}/cetak-bukti-sewa', [BookingAdminController::class, 'cetakBuktiSewa'])->name('booking.cetak-bukti-sewa');
 
     Route::post('/booking/{uuid}/verifikasi', [BookingAdminController::class, 'verifikasiPembayaran'])->name('booking.verifikasi-pembayaran');
+    Route::post('/booking/{uuid}/approve-reschedule', [BookingAdminController::class, 'approveReschedule'])->name('booking.approve-reschedule');
 
     // KHUSUS ROLE Owner
     Route::middleware(['role:owner'])->group(function () {

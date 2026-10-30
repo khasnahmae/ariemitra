@@ -79,18 +79,21 @@
             left: 50%;
             transform: translate(-50%, -50%) rotate(-15deg);
             color: rgba(220, 53, 69, 0.45);
-            /* Warna merah dengan transparansi overlay */
             border: 5px double rgba(220, 53, 69, 0.45);
-            font-size: 52px;
+            font-size: 42px;
+            /* Ukuran font disesuaikan agar proporsional */
             font-weight: bold;
             font-family: 'Courier New', Courier, monospace;
             text-transform: uppercase;
-            padding: 10px 30px;
-            letter-spacing: 6px;
+            padding: 8px 25px;
+            letter-spacing: 12px;
+            /* Menggunakan letter-spacing bawaan CSS */
             border-radius: 12px;
             pointer-events: none;
             z-index: 9999;
             user-select: none;
+            white-space: nowrap;
+            /* Mengunci teks agar tidak bisa patah/turun ke bawah */
         }
 
         @media print {
@@ -109,7 +112,7 @@
 
     <!-- STEMPEL WATERMARK LUNAS (Tampil Hanya Jika Status Lunas atau Sisa Bayar <= 0) -->
     @if (strtolower($booking->status) == 'lunas' || $booking->sisa_pembayaran <= 0)
-        <div class="stamp-lunas">L U N A S</div>
+        <div class="stamp-lunas">LUNAS</div>
     @endif
 
     <div class="header">

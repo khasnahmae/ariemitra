@@ -192,6 +192,106 @@
                                                     <i class="fa fa-print me-1"></i> Bukti Sewa
                                                 </a>
                                             @endif
+                                            <!-- Badge Penanda Jika Ada Pengajuan Reschedule -->
+                                            @if ($b->status_reschedule == 'pending')
+                                                <div class="mt-1">
+                                                    <span
+                                                        class="badge bg-warning text-dark animate__animated animate__flash">
+                                                        <i class="fa fa-exclamation-circle me-1"></i> Ajuan Reschedule ke
+                                                        {{ \Carbon\Carbon::parse($b->tanggal_reschedule)->format('d/m/Y') }}
+                                                    </span>
+                                                </div>
+                                            @endif
+
+                                            <!-- Tombol Aksi Verifikasi Reschedule bagi Admin -->
+                                            @if ($b->status_reschedule == 'pending')
+                                                <button type="button" class="btn btn-sm btn-warning"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalCekReschedule{{ $b->id }}">
+                                                    <i class="fa fa-calendar-check me-1"></i> Cek Reschedule
+                                                </button>
+
+                                                <!-- Modal Admin Cek Ketersediaan Tanggal & Persetujuan -->
+                                                <div class="modal fade" id="modalCekReschedule{{ $b->id }}"
+                                                    tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title fw-bold">Pemeriksaan Ketersediaan
+                                                                    Reschedule</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <p class="mb-1"><strong>Pemesan:</strong>
+                                                                    {{ $b->nama_pemesan }}</p>
+                                                                <p class="mb-1"><strong>Paket Wisata:</strong>
+                                                                    {{ $b->tujuan_wisata }}</p>
+                                                                <p class="mb-1"><strong>Jadwal Lama:</strong>
+                                                                    {{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d M Y') }}
+                                                                </p>
+                                                                <p class="mb-3"><strong>Pengajuan Tanggal Baru:</strong>
+                                                                    <span
+                                                                        class="badge bg-primary fs-6">{{ \Carbon\Carbon::parse($b->tanggal_reschedule)->format('d M Y') }}</span>
+                                                                </p>
+
+                                                                @php
+                                                                    // Cek Otomatis Ketersediaan Tanggal di Sistem Admin
+                                                                    $isBentrok = \App\Models\Booking::where(
+                                                                        'tujuan_wisata',
+                                                                        $b->tujuan_wisata,
+                                                                    )
+                                                                        ->where(
+                                                                            'tanggal_keberangkatan',
+                                                                            $b->tanggal_reschedule,
+                                                                        )
+                                                                        ->whereIn('status', ['booked', 'lunas'])
+                                                                        ->where('id', '!=', $b->id)
+                                                                        ->exists();
+                                                                @endphp
+
+                                                                @if ($isBentrok)
+                                                                    <div class="alert alert-danger py-2 small">
+                                                                        <i class="fa fa-times-circle me-1"></i>
+                                                                        <strong>JADWAL BENTROK!</strong> Sudah ada rombongan
+                                                                        lain yang memesan paket ini pada tanggal tersebut.
+                                                                    </div>
+                                                                @else
+                                                                    <div class="alert alert-success py-2 small">
+                                                                        <i class="fa fa-check-circle me-1"></i>
+                                                                        <strong>JADWAL TERSEDIA!</strong> Belum ada
+                                                                        pemesanan pada tanggal baru yang diajukan.
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="modal-footer justify-content-between">
+                                                                <!-- Form Tolak Reschedule -->
+                                                                <form
+                                                                    action="{{ route('admin.booking.approve-reschedule', $b->uuid) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="action" value="reject">
+                                                                    <button type="submit" class="btn btn-danger"><i
+                                                                            class="fa fa-times me-1"></i> Tolak</button>
+                                                                </form>
+
+                                                                <!-- Form Setujui Reschedule -->
+                                                                <form
+                                                                    action="{{ route('admin.booking.approve-reschedule', $b->uuid) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="action" value="approve">
+                                                                    <button type="submit" class="btn btn-success"
+                                                                        {{ $isBentrok ? 'disabled' : '' }}>
+                                                                        <i class="fa fa-check me-1"></i> Setujui & Update
+                                                                        Jadwal
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
 
                                         </div>
                                     </td>
