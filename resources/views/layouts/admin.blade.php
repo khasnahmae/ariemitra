@@ -153,6 +153,13 @@
                                     <p>Galeri Foto</p>
                                 </a>
                             </li>
+                            <!-- MENU BARU: MANAJEMEN TESTIMONI CLIENT -->
+                            <li class="nav-item {{ request()->is('admin/testimonial*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.testimonial.index') }}">
+                                    <i class="fas fa-star"></i>
+                                    <p>Testimoni Client</p>
+                                </a>
+                            </li>
 
                             {{-- KHUSUS OWNER --}}
                             @if (auth()->user()->role === 'owner')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 use App\Models\Galeri;
+use App\Models\Testimonial;
 
 class HomeController extends Controller
 {
@@ -16,9 +17,14 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
+        $testimonials = Testimonial::with('user')
+            ->where('is_published', true)
+            ->latest()
+            ->get();
+
         $galeriTerbaru = Galeri::latest()->take(6)->get();
 
-        return view('frontend.home', compact('paketPopuler', 'galeriTerbaru'));
+        return view('frontend.home', compact('paketPopuler', 'galeriTerbaru', 'testimonials'));
     }
 
     public function profil()

@@ -303,6 +303,53 @@
         </section>
     @endif
 
+    <!-- Testimonial Section Dinamis Real Client -->
+    @if (isset($testimonials) && $testimonials->count() > 0)
+        <section class="ftco-section testimony-section bg-bottom"
+            style="background-image: url('{{ asset('frontend/images/bg_1.jpg') }}');">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row justify-content-center pb-4">
+                    <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+                        <span class="subheading">Testimonial</span>
+                        <h2 class="mb-4">Apa Kata Client Rombongan Kami?</h2>
+                    </div>
+                </div>
+                <div class="row ftco-animate">
+                    <div class="col-md-12">
+                        <div class="carousel-testimony owl-carousel">
+                            @foreach ($testimonials as $testi)
+                                <div class="item">
+                                    <div class="testimony-wrap py-4">
+                                        <div class="text">
+                                            <p class="star">
+                                                @for ($s = 1; $s <= 5; $s++)
+                                                    <span
+                                                        class="fa {{ $s <= $testi->rating ? 'fa-star' : 'fa-star-o' }}"></span>
+                                                @endfor
+                                            </p>
+                                            <p class="mb-4">"{{ $testi->pesan_testimoni }}"</p>
+                                            <div class="d-flex align-items-center">
+                                                <div class="user-img"
+                                                    style="background-image: url('{{ asset('frontend/images/profile.webp') }}')">
+                                                </div>
+                                                <div class="pl-3">
+                                                    <p class="name">{{ $testi->user->nama ?? 'Client' }}</p>
+                                                    <span
+                                                        class="position">{{ $testi->jabatan_profesi ?? 'Client Rombongan' }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
+
     <!-- B2B Call To Action Section -->
     <section class="ftco-section ftco-intro ftco-no-pt">
         <div class="container">

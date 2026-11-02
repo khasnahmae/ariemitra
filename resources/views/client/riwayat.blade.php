@@ -126,6 +126,67 @@
                                                 </div>
                                             @endif
 
+                                            <!-- Tombol Beri Ulasan / Testimoni (Hanya untuk Transaksi LUNAS) -->
+                                            @if ($b->status == 'lunas')
+                                                <button type="button" class="btn btn-sm btn-outline-warning"
+                                                    data-bs-toggle="modal" data-bs-target="#modalTesti{{ $b->id }}">
+                                                    <i class="fa fa-star me-1"></i> Beri Testimoni
+                                                </button>
+
+                                                <!-- Modal Form Testimoni -->
+                                                <div class="modal fade" id="modalTesti{{ $b->id }}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <form action="{{ route('client.testimonial.store', $b->uuid) }}"
+                                                            method="POST" class="modal-content text-start">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title fw-bold"><i
+                                                                        class="fa fa-star text-warning me-2"></i>Ulasan
+                                                                    Pengalaman Tour</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label fw-bold">Beri Rating
+                                                                        Penilaian</label>
+                                                                    <select name="rating"
+                                                                        class="form-select text-warning fw-bold" required>
+                                                                        <option value="5">⭐⭐⭐⭐⭐ (5/5) Sangat Memuaskan
+                                                                        </option>
+                                                                        <option value="4">⭐⭐⭐⭐ (4/5) Memuaskan</option>
+                                                                        <option value="3">⭐⭐⭐ (3/3) Cukup Baik</option>
+                                                                        <option value="2">⭐⭐ (2/5) Kurang Memuaskan
+                                                                        </option>
+                                                                        <option value="1">⭐ (1/5) Buruk</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label class="form-label fw-bold">Profesi / Jabatan
+                                                                        (Opsional)</label>
+                                                                    <input type="text" name="jabatan_profesi"
+                                                                        class="form-control"
+                                                                        placeholder="Contoh: Ketua Panitia Tour / Kepala Sekolah">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label class="form-label fw-bold">Ulasan & Pesan
+                                                                        Kesan</label>
+                                                                    <textarea name="pesan_testimoni" class="form-control" rows="4"
+                                                                        placeholder="Ceritakan pengalaman rombongan Anda selama menggunakan armada & paket wisata kami..." required></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-primary fw-bold"><i
+                                                                        class="fa fa-paper-plane me-1"></i> Kirim
+                                                                    Ulasan</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            @endif
+
                                             <!-- 3. Tombol Upload Pembayaran / Pelunasan -->
                                             @if (in_array($b->status, ['pending', 'booked']))
                                                 <button class="btn btn-sm btn-success" data-bs-toggle="modal"
@@ -147,7 +208,8 @@
                                             @endif
 
                                             <!-- Modal Form Ajukan Reschedule Tanggal -->
-                                            <div class="modal fade" id="modalReschedule{{ $b->id }}" tabindex="-1">
+                                            <div class="modal fade" id="modalReschedule{{ $b->id }}"
+                                                tabindex="-1">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <form action="{{ route('client.reschedule.store', $b->uuid) }}"
                                                         method="POST" class="modal-content">

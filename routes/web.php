@@ -55,6 +55,7 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->as('client.')->gro
     Route::get('/akun', [ClientAccountController::class, 'index'])->name('account');
     Route::put('/akun', [ClientAccountController::class, 'update'])->name('account.update');
     Route::post('/riwayat/{booking:uuid}/cancel', [ClientBookingController::class, 'batalkanBooking'])->name('booking.cancel');
+    Route::post('/riwayat/{booking:uuid}/testimonial', [App\Http\Controllers\Client\TestimonialClientController::class, 'store'])->name('testimonial.store');
 });
 
 // ROUTE PANEL ADMIN & OWNER
@@ -64,6 +65,10 @@ Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
 
     Route::get('/schedule', [App\Http\Controllers\Admin\ScheduleController::class, 'index'])->name('schedule.index');
     Route::get('/schedule/events', [App\Http\Controllers\Admin\ScheduleController::class, 'getEvents'])->name('schedule.events');
+
+    Route::get('/testimonial', [App\Http\Controllers\Admin\TestimonialAdminController::class, 'index'])->name('testimonial.index');
+    Route::post('/testimonial/{uuid}/toggle', [App\Http\Controllers\Admin\TestimonialAdminController::class, 'toggleStatus'])->name('testimonial.toggle');
+    Route::delete('/testimonial/{uuid}', [App\Http\Controllers\Admin\TestimonialAdminController::class, 'destroy'])->name('testimonial.destroy');
 
     // CRUD Master Data
     Route::resource('destinasi', DestinasiController::class)->scoped(['destinasi' => 'uuid']);
