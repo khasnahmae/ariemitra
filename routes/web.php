@@ -54,12 +54,16 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->as('client.')->gro
     Route::post('/riwayat/{booking:uuid}/reschedule', [ClientBookingController::class, 'ajukanReschedule'])->name('reschedule.store');
     Route::get('/akun', [ClientAccountController::class, 'index'])->name('account');
     Route::put('/akun', [ClientAccountController::class, 'update'])->name('account.update');
+    Route::post('/riwayat/{booking:uuid}/cancel', [ClientBookingController::class, 'batalkanBooking'])->name('booking.cancel');
 });
 
 // ROUTE PANEL ADMIN & OWNER
 Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/schedule', [App\Http\Controllers\Admin\ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('/schedule/events', [App\Http\Controllers\Admin\ScheduleController::class, 'getEvents'])->name('schedule.events');
 
     // CRUD Master Data
     Route::resource('destinasi', DestinasiController::class)->scoped(['destinasi' => 'uuid']);

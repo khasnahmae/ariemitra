@@ -83,12 +83,12 @@
                                     Ketentuan Pemesanan:</h6>
                                 <ul class="ps-3 mb-0 text-muted">
                                     <li>DP yang sudah dibayarkan <strong>tidak dapat dikembalikan (Non-Refundable)</strong>
-                                        jika terjadi pembatalan[cite: 51].</li>
+                                        jika terjadi pembatalan.</li>
                                     <li>Pelunasan dilakukan minimal H-7 dan <strong>maksimal H-3 sebelum hari
-                                            keberangkatan</strong>[cite: 51].</li>
+                                            keberangkatan</strong>.</li>
                                     <li>Perubahan jadwal (Reschedule) dapat diajukan selama ketersediaan PO Bus pada tanggal
-                                        baru masih ada[cite: 51].</li>
-                                    <li>Harga paket wisata bersifat <strong>NET (Fixed Price)</strong>[cite: 51].</li>
+                                        baru masih ada.</li>
+                                    <li>Harga paket wisata bersifat <strong>NET (Fixed Price)</strong>.</li>
                                 </ul>
                             </div>
 

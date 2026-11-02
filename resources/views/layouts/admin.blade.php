@@ -75,6 +75,12 @@
                                     <p>Dashboard</p>
                                 </a>
                             </li>
+                            <li class="nav-item {{ request()->is('admin/schedule*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.schedule.index') }}">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <p>Jadwal Tour (Schedule)</p>
+                                </a>
+                            </li>
 
                             <li class="nav-section">
                                 <span class="sidebar-mini-icon"><i class="fa fa-ellipsis-h"></i></span>

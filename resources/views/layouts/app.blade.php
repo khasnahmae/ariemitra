@@ -35,6 +35,7 @@
                             Wisata</a></li>
                     <li class="nav-item"><a href="{{ route('frontend.profil') }}" class="nav-link">Profil</a></li>
                     <li class="nav-item"><a href="{{ route('frontend.kontak') }}" class="nav-link">Kontak</a></li>
+                    <a href="{{ route('login') }}" class="btn btn-primary py-3 px-4 mr-2">Login</a>
                 </ul>
             </div>
         </div>

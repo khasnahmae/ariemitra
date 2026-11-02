@@ -147,4 +147,23 @@ class BookingController extends Controller
 
         return back()->with('success', 'Pengajuan jadwal ulang berhasil dikirim ke Admin!');
     }
+    public function batalkanBooking($uuid)
+    {
+        $booking = Booking::where('uuid', $uuid)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Validasi Keamanan: Hanya bisa dibatalkan jika BELUM ADA DP yang diverifikasi admin
+        if ($booking->dp_1 > 0 || in_array($booking->status, ['booked', 'lunas'])) {
+            return back()->withErrors([
+                'batal' => 'Pemesanan yang sudah dikonfirmasi DP tidak dapat dibatalkan (Non-Refundable).'
+            ]);
+        }
+
+        // Ubah status transaksi menjadi cancelled (Batal)
+        $booking->status = 'cancelled';
+        $booking->save();
+
+        return back()->with('success', 'Pemesanan berhasil dibatalkan.');
+    }
 }

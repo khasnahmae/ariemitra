@@ -72,6 +72,60 @@
                                                 </a>
                                             @endif
 
+                                            <!-- Tombol Batal (Hanya Tampil Jika Belum Ada DP Terverifikasi / Status 'pending' atau 'pending_verification') -->
+                                            @if (in_array($b->status, ['pending', 'pending_verification']) && $b->dp_1 == 0)
+                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#modalBatal{{ $b->id }}"
+                                                    title="Batalkan Pemesanan">
+                                                    <i class="fa fa-times-circle me-1"></i> Batal
+                                                </button>
+
+                                                <!-- Modal Konfirmasi Batal -->
+                                                <div class="modal fade" id="modalBatal{{ $b->id }}" tabindex="-1"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <form action="{{ route('client.booking.cancel', $b->uuid) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <div class="modal-header bg-danger text-white">
+                                                                    <h5 class="modal-title fw-bold text-white"><i
+                                                                            class="fa fa-exclamation-triangle me-2"></i>Konfirmasi
+                                                                        Pembatalan</h5>
+                                                                    <button type="button" class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"></button>
+                                                                </div>
+                                                                <div class="modal-body text-start">
+                                                                    <p class="mb-2">Apakah Anda yakin ingin membatalkan
+                                                                        pemesanan berikut?</p>
+                                                                    <div class="p-3 bg-light rounded border mb-2">
+                                                                        <p class="mb-1"><strong>No Invoice:</strong>
+                                                                            {{ $b->no_invoice }}</p>
+                                                                        <p class="mb-1"><strong>Tujuan Paket:</strong>
+                                                                            {{ $b->tujuan_wisata }}</p>
+                                                                        <p class="mb-0"><strong>Tgl
+                                                                                Keberangkatan:</strong>
+                                                                            {{ \Carbon\Carbon::parse($b->tanggal_keberangkatan)->format('d M Y') }}
+                                                                        </p>
+                                                                    </div>
+                                                                    <small class="text-muted"><i
+                                                                            class="fa fa-info-circle me-1"></i> Setelah
+                                                                        dibatalkan, status invoice akan berubah menjadi
+                                                                        <strong>Batal</strong>.</small>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Kembali</button>
+                                                                    <button type="submit" class="btn btn-danger fw-bold"><i
+                                                                            class="fa fa-check me-1"></i> Ya,
+                                                                        Batalkan</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+
                                             <!-- 3. Tombol Upload Pembayaran / Pelunasan -->
                                             @if (in_array($b->status, ['pending', 'booked']))
                                                 <button class="btn btn-sm btn-success" data-bs-toggle="modal"
@@ -141,8 +195,8 @@
                                     aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
-                                            <form action="{{ route('client.upload.pembayaran', $b->uuid) }}" method="POST"
-                                                enctype="multipart/form-data">
+                                            <form action="{{ route('client.upload.pembayaran', $b->uuid) }}"
+                                                method="POST" enctype="multipart/form-data">
                                                 @csrf
                                                 <div class="modal-header">
                                                     <h5 class="modal-title fw-bold">
